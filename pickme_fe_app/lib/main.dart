@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/pages/login.dart';
+import 'package:pickme_fe_app/pages/register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +15,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(debugShowCheckedModeBanner: false, home: Login());
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: RegisterScreen(),
+    );
   }
 }

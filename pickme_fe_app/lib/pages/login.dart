@@ -138,21 +138,24 @@ class _LoginState extends State<Login> {
               const SizedBox(height: 14),
 
               // Login button
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 115,
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffFC7A1F),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  child: const Text(
+                    "Đăng nhập",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
-                ),
-                child: const Text(
-                  "Đăng nhập",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
 

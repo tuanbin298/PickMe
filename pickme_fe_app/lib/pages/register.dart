@@ -186,8 +186,8 @@ class _RegisterState extends State<Register> {
                         suffixIcon: IconButton(
                           icon: Icon(
                             showPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                             color: Colors.grey[600],
                           ),
                           onPressed: () {
@@ -252,8 +252,8 @@ class _RegisterState extends State<Register> {
                         suffixIcon: IconButton(
                           icon: Icon(
                             showConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                             color: Colors.grey[600],
                           ),
                           onPressed: () {
@@ -285,7 +285,7 @@ class _RegisterState extends State<Register> {
                       child: ElevatedButton(
                         onPressed: isLoading ? null : handleRegister,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xfffc7f20),
+                          backgroundColor: const Color(0xffFC7A1F),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(

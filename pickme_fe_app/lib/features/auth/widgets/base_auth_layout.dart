@@ -9,6 +9,7 @@ class BaseAuthLayout extends StatelessWidget {
   final bool showGoogleButton;
   final VoidCallback? onGooglePressed;
 
+  // Parameters for the layout
   const BaseAuthLayout({
     super.key,
     required this.title,
@@ -104,6 +105,8 @@ class BaseAuthLayout extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 16),
+
+                // Google sign-in button
                 OutlinedButton.icon(
                   onPressed: onGooglePressed,
                   style: OutlinedButton.styleFrom(

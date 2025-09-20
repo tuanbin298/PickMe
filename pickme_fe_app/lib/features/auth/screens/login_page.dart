@@ -3,62 +3,49 @@ import '../widgets/base_auth_layout.dart';
 import '../widgets/login_form.dart';
 import '../screens/register_page.dart';
 
-class AuthSwitchText extends StatelessWidget {
-  final String label;
-  final String actionLabel;
-  final VoidCallback onTap;
-
-  const AuthSwitchText({
-    super.key,
-    required this.label,
-    required this.actionLabel,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 16, color: Colors.black54),
-        ),
-        TextButton(
-          onPressed: onTap,
-          child: Text(
-            actionLabel,
-            style: const TextStyle(fontSize: 16, color: Colors.orange),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BaseAuthLayout(
+      // Tittle and subtitle
       title: "Chào mừng bạn",
       subtitle: "Đăng nhập để tiếp tục",
-      topSection: AuthSwitchText(
-        label: "Hoặc",
-        actionLabel: "Tạo tài khoản",
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const RegisterPage()),
-          );
-        },
+
+      // Top section with "Or" and "Create Account"
+      topSection: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Hoặc",
+            style: TextStyle(fontSize: 16, color: Colors.black54),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RegisterPage()),
+              );
+            },
+            child: const Text(
+              "Tạo tài khoản",
+              style: TextStyle(fontSize: 16, color: Colors.orange),
+            ),
+          ),
+        ],
       ),
+
+      // Form login
       form: const LoginForm(),
+
+      // Bottom section with "Forgot Password"
       bottomSection: Column(
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              // Logic for "Forgot Password"
+            },
             child: const Text(
               "Quên mật khẩu?",
               style: TextStyle(color: Colors.orange),
@@ -69,7 +56,7 @@ class LoginPage extends StatelessWidget {
       ),
       showGoogleButton: true,
       onGooglePressed: () {
-        // TODO: Handle Google login
+        // Logic for Google Sign-In
       },
     );
   }

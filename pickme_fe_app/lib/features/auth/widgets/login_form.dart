@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -9,10 +8,14 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  // Variable
   bool _obscurePassword = true;
 
+  // Controller to get data from inputs
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // Release memory that controller stored
   @override
   void dispose() {
     phoneController.dispose();
@@ -55,6 +58,7 @@ class _LoginFormState extends State<LoginForm> {
           decoration: InputDecoration(
             suffixIcon: IconButton(
               onPressed: () {
+                // Logic to show/hide password
                 setState(() {
                   _obscurePassword = !_obscurePassword;
                 });

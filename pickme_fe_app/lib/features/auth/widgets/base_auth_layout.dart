@@ -104,7 +104,7 @@ class BaseAuthLayout extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 // Google sign-in button
                 OutlinedButton.icon(
@@ -128,7 +128,8 @@ class BaseAuthLayout extends StatelessWidget {
                     style: TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ),
-                const SizedBox(height: 24),
+
+                const SizedBox(height: 26),
               ],
             ],
           ),

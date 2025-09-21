@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/base_auth_layout.dart';
 import '../widgets/login_form.dart';
-import '../screens/register_page.dart';
+import 'register_page.dart';
+import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/features/auth/presentation/screens/forgot_password_page.dart';
 
 class AuthSwitchText extends StatelessWidget {
   final String label;
@@ -28,7 +30,7 @@ class AuthSwitchText extends StatelessWidget {
           onPressed: onTap,
           child: Text(
             actionLabel,
-            style: const TextStyle(fontSize: 16, color: Colors.orange),
+            style: const TextStyle(fontSize: 16, color: AppColors.primary),
           ),
         ),
       ],
@@ -58,7 +60,12 @@ class LoginPage extends StatelessWidget {
       bottomSection: Column(
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
+              );
+            },
             child: const Text(
               "Quên mật khẩu?",
               style: TextStyle(color: Colors.orange),

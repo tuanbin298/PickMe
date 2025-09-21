@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pickme_fe_app/features/auth/presentation/screens/forgot_password_page.dart';
 import '../widgets/base_auth_layout.dart';
 import '../widgets/register_form.dart';
 
@@ -17,6 +18,10 @@ class RegisterPage extends StatelessWidget {
           TextButton(
             onPressed: () {
               // TODO: Forgot password (optional cho Register)
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
+              );
             },
             child: const Text(
               "Quên mật khẩu?",

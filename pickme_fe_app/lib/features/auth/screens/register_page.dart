@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/features/auth/presentation/screens/forgot_password_page.dart';
+import 'package:pickme_fe_app/features/auth/screens/forgot_password_page.dart';
 import '../widgets/base_auth_layout.dart';
 import '../widgets/register_form.dart';
 

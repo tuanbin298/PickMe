@@ -3,7 +3,7 @@ import '../widgets/base_auth_layout.dart';
 import '../widgets/login_form.dart';
 import 'register_page.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
-import 'package:pickme_fe_app/features/auth/presentation/screens/forgot_password_page.dart';
+import 'package:pickme_fe_app/features/auth/screens/forgot_password_page.dart';
 
 class AuthSwitchText extends StatelessWidget {
   final String label;

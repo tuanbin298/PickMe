@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/features/auth/presentation/screens/login_page.dart';
+import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 
 class ForgotPasswordPage extends StatefulWidget {

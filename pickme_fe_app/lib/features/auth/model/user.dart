@@ -20,4 +20,14 @@ class User {
       expiresAt: DateTime.parse(json['expiresAt']),
     );
   }
+
+  // Parse data from model into JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'username': username,
+      'token': token,
+      'expiresAt': expiresAt.toIso8601String(),
+    };
+  }
 }

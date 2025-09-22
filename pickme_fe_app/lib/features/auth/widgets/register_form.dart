@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/features/auth/services/register_services.dart';
+import 'package:pickme_fe_app/core/utils/notification_service.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -11,7 +12,10 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
-  final fullNameController = TextEditingController();
+
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -20,30 +24,43 @@ class _RegisterFormState extends State<RegisterForm> {
   bool showConfirmPassword = false;
   bool isLoading = false;
 
-  String selectedRole = 'customer';
+  String selectedRole = 'Customer';
 
   void handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("fullName", fullNameController.text.trim());
-    await prefs.setString("phone", phoneController.text.trim());
+    final service = RegisterServices();
+    final result = await service.register(
+      username: phoneController.text.trim(),
+      email: emailController.text.trim(),
+      firstName: firstNameController.text.trim(),
+      lastName: lastNameController.text.trim(),
+      password: passwordController.text.trim(),
+      role: selectedRole.toLowerCase(), // backend thường dùng lowercase
+    );
 
     setState(() => isLoading = false);
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Đăng ký thành công")));
+    if (result != null) {
+      NotificationService.showSuccess(context, "Đăng ký thành công");
+
+      Future.delayed(const Duration(milliseconds: 800), () {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
+    } else {
+      NotificationService.showError(
+        context,
+        "Đăng ký thất bại. Vui lòng thử lại",
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -68,27 +85,26 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 Row(
                   children: [
                     // Customer
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() => selectedRole = 'customer');
+                          setState(() => selectedRole = 'Customer');
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: selectedRole == 'customer'
+                            color: selectedRole == 'Customer'
                                 ? AppColors.primary.withOpacity(0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: selectedRole == 'customer'
+                              color: selectedRole == 'Customer'
                                   ? AppColors.primary
                                   : Colors.grey[300]!,
-                              width: selectedRole == 'customer' ? 2 : 1,
+                              width: selectedRole == 'Customer' ? 2 : 1,
                             ),
                           ),
                           child: Column(
@@ -96,7 +112,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               Icon(
                                 Icons.person,
                                 size: 32,
-                                color: selectedRole == 'customer'
+                                color: selectedRole == 'Customer'
                                     ? AppColors.primary
                                     : Colors.grey[600],
                               ),
@@ -106,7 +122,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: selectedRole == 'customer'
+                                  color: selectedRole == 'Customer'
                                       ? AppColors.primary
                                       : Colors.grey[700],
                                 ),
@@ -117,24 +133,25 @@ class _RegisterFormState extends State<RegisterForm> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Vendor
+
+                    // Merchant
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() => selectedRole = 'vendor');
+                          setState(() => selectedRole = 'Merchant');
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: selectedRole == 'vendor'
+                            color: selectedRole == 'Merchant'
                                 ? AppColors.primary.withOpacity(0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: selectedRole == 'vendor'
+                              color: selectedRole == 'Merchant'
                                   ? AppColors.primary
                                   : Colors.grey[300]!,
-                              width: selectedRole == 'vendor' ? 2 : 1,
+                              width: selectedRole == 'Merchant' ? 2 : 1,
                             ),
                           ),
                           child: Column(
@@ -142,7 +159,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               Icon(
                                 Icons.store,
                                 size: 32,
-                                color: selectedRole == 'vendor'
+                                color: selectedRole == 'Merchant'
                                     ? AppColors.primary
                                     : Colors.grey[600],
                               ),
@@ -152,7 +169,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: selectedRole == 'vendor'
+                                  color: selectedRole == 'Merchant'
                                       ? AppColors.primary
                                       : Colors.grey[700],
                                 ),
@@ -172,45 +189,77 @@ class _RegisterFormState extends State<RegisterForm> {
           // Form Fields
           Column(
             children: [
-              // Full Name
-              TextFormField(
-                controller: fullNameController,
-                decoration: InputDecoration(
-                  labelText: "Họ và tên",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              // First + Last Name (Row)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: lastNameController,
+                      decoration: InputDecoration(
+                        labelText: "Họ",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Họ không được để trống";
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: firstNameController,
+                      decoration: InputDecoration(
+                        labelText: "Tên",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Tên không được để trống";
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Họ và tên không được để trống";
-                  } else if (value.trim().length < 2) {
-                    return "Họ và tên phải có ít nhất 2 ký tự";
-                  } else if (!RegExp(r'^[a-zA-ZÀ-ỹ\s]+$').hasMatch(value)) {
-                    return "Họ và tên chỉ được chứa chữ cái và khoảng trắng";
-                  }
-                  return null;
-                },
+                ],
               ),
 
               const SizedBox(height: 16),
 
-              // Phone Number
+              // Email
               TextFormField(
-                controller: phoneController,
-                keyboardType: TextInputType.phone,
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: "Email",
                   border: OutlineInputBorder(
@@ -236,7 +285,6 @@ class _RegisterFormState extends State<RegisterForm> {
                     return "Email không được để trống";
                   }
 
-                  // Regex kiểm tra email
                   if (!RegExp(
                     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                   ).hasMatch(trimmed)) {

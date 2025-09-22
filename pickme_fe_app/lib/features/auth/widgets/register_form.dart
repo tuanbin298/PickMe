@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/auth/services/register_services.dart';
 import 'package:pickme_fe_app/core/utils/notification_service.dart';
+import 'package:pickme_fe_app/core/utils/error_messages.dart';
+import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -32,28 +34,35 @@ class _RegisterFormState extends State<RegisterForm> {
     setState(() => isLoading = true);
 
     final service = RegisterServices();
-    final result = await service.register(
-      username: phoneController.text.trim(),
-      email: emailController.text.trim(),
-      firstName: firstNameController.text.trim(),
-      lastName: lastNameController.text.trim(),
-      password: passwordController.text.trim(),
-      role: selectedRole.toLowerCase(), // backend thường dùng lowercase
-    );
 
-    setState(() => isLoading = false);
+    try {
+      final result = await service.register(
+        username: phoneController.text.trim(),
+        email: emailController.text.trim(),
+        firstName: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
+        password: passwordController.text.trim(),
+        role: selectedRole.toLowerCase(),
+      );
 
-    if (result != null) {
+      setState(() => isLoading = false);
+
       NotificationService.showSuccess(context, "Đăng ký thành công");
 
-      Future.delayed(const Duration(milliseconds: 800), () {
-        Navigator.of(context).pushReplacementNamed('/login');
-      });
-    } else {
-      NotificationService.showError(
-        context,
-        "Đăng ký thất bại. Vui lòng thử lại",
+      await Future.delayed(const Duration(milliseconds: 1000));
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+
+      final errorMessage = ErrorMessages.from(
+        e.toString().replaceFirst('Exception: ', ''),
       );
+
+      NotificationService.showError(context, errorMessage);
     }
   }
 

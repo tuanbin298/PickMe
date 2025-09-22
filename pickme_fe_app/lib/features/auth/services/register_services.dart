@@ -34,15 +34,28 @@ class RegisterServices {
       final data = jsonDecode(response.body);
       final registeredUser = RegisteredUser.fromJson(data);
 
-      // Lưu thông tin user đã đăng ký (nếu cần)
+      // Save user info locally if needed
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString("registered_user", jsonEncode(data));
 
       return registeredUser;
     } else {
-      print('Đăng ký thất bại: ${response.statusCode}');
-      print('Response: ${response.body}');
-      return null;
+      // Extract error message from response body if available
+      final errorMessage = _extractErrorMessage(response);
+      throw Exception(errorMessage);
+    }
+  }
+
+  /// Helper to extract error message from the response (JSON or plain text)
+  String _extractErrorMessage(http.Response response) {
+    try {
+      final body = jsonDecode(response.body);
+      if (body is Map && body['message'] != null) {
+        return body['message'];
+      }
+      return response.body.toString(); // fallback: raw body as string
+    } catch (_) {
+      return response.body.toString(); // fallback: not a JSON response
     }
   }
 }

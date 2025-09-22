@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../widgets/base_auth_layout.dart';
 import '../widgets/login_form.dart';
 import '../screens/register_page.dart';
@@ -23,10 +24,7 @@ class LoginPage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const RegisterPage()),
-              );
+              context.push("/register");
             },
             child: const Text(
               "Tạo tài khoản",
@@ -44,7 +42,7 @@ class LoginPage extends StatelessWidget {
         children: [
           TextButton(
             onPressed: () {
-              // Logic for "Forgot Password"
+              // context.push("/forgot-password");
             },
             child: const Text(
               "Quên mật khẩu?",

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/core/theme/app_colors.dart';
 
+// A service to show success and error notifications using SnackBar
 class NotificationService {
   static void showSuccess(BuildContext context, String message) {
     _showCustomSnackBar(
       context,
       message,
       icon: Icons.check_circle_outline,
-      backgroundColor: Colors.orangeAccent,
+      backgroundColor: Colors.greenAccent,
     );
   }
 

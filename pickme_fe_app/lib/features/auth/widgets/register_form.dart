@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/features/auth/model/user.dart';
 import 'package:pickme_fe_app/features/auth/services/register_services.dart';
 import 'package:pickme_fe_app/core/utils/notification_service.dart';
-import 'package:pickme_fe_app/core/utils/error_messages.dart';
-import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -13,8 +13,14 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
-  final _formKey = GlobalKey<FormState>();
+  // Variable
+  String selectedRole = 'Customer';
+  bool showPassword = false;
+  bool showConfirmPassword = false;
+  bool isLoading = false;
 
+  // Controller to get data from inputs
+  final _formKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -22,47 +28,43 @@ class _RegisterFormState extends State<RegisterForm> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  bool showPassword = false;
-  bool showConfirmPassword = false;
-  bool isLoading = false;
+  // Create instance object of RegisterServices
+  final RegisterServices registerServices = RegisterServices();
 
-  String selectedRole = 'Customer';
-
-  void handleRegister() async {
+  // Method register
+  Future<void> handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+    });
 
-    final service = RegisterServices();
+    // Create new object
+    final newUser = {
+      "username": phoneController.text.trim(),
+      "email": emailController.text.trim(),
+      "firstName": firstNameController.text.trim(),
+      "lastName": lastNameController.text.trim(),
+      "password": passwordController.text.trim(),
+      "role": selectedRole.toLowerCase(),
+    };
 
     try {
-      final result = await service.register(
-        username: phoneController.text.trim(),
-        email: emailController.text.trim(),
-        firstName: firstNameController.text.trim(),
-        lastName: lastNameController.text.trim(),
-        password: passwordController.text.trim(),
-        role: selectedRole.toLowerCase(),
-      );
+      final User? registeredUser = await registerServices.register(newUser);
 
-      setState(() => isLoading = false);
+      if (registeredUser != null) {
+        // ignore: use_build_context_synchronously
+        NotificationService.showSuccess(context, "Đăng ký thành công!");
 
-      NotificationService.showSuccess(context, "Đăng ký thành công");
-
-      await Future.delayed(const Duration(milliseconds: 1000));
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginPage()),
+        context.go("/login");
+      } else {
+        NotificationService.showError(
+          context,
+          "Đăng ký thất bại. Vui lòng thử lại.",
         );
       }
     } catch (e) {
-      setState(() => isLoading = false);
-
-      final errorMessage = ErrorMessages.from(
-        e.toString().replaceFirst('Exception: ', ''),
-      );
-
-      NotificationService.showError(context, errorMessage);
+      NotificationService.showError(context, "Có lỗi xảy ra: $e");
     }
   }
 
@@ -70,7 +72,6 @@ class _RegisterFormState extends State<RegisterForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -195,6 +196,7 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
 
           const SizedBox(height: 24),
+
           // Form Fields
           Column(
             children: [
@@ -230,7 +232,9 @@ class _RegisterFormState extends State<RegisterForm> {
                       },
                     ),
                   ),
+
                   const SizedBox(width: 12),
+
                   Expanded(
                     child: TextFormField(
                       controller: firstNameController,
@@ -252,6 +256,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           vertical: 16,
                         ),
                       ),
+                      // Validation
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Tên không được để trống";
@@ -287,17 +292,18 @@ class _RegisterFormState extends State<RegisterForm> {
                     vertical: 16,
                   ),
                 ),
+                // Validation
                 validator: (value) {
-                  final trimmed = value?.trim() ?? '';
-
-                  if (trimmed.isEmpty) {
-                    return "Email không được để trống";
+                  if (value == null || value.isEmpty) {
+                    return "Vui lòng nhập email";
                   }
 
-                  if (!RegExp(
-                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                  ).hasMatch(trimmed)) {
-                    return "Email không hợp lệ. Ví dụ: ten@gmail.com";
+                  // Email Regex
+                  final emailReg = RegExp(
+                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                  );
+                  if (!emailReg.hasMatch(value)) {
+                    return "Email không hợp lệ";
                   }
 
                   return null;
@@ -328,14 +334,15 @@ class _RegisterFormState extends State<RegisterForm> {
                     vertical: 16,
                   ),
                 ),
+                // Validation phone
                 validator: (value) {
-                  final trimmed = value?.trim() ?? '';
-
-                  if (trimmed.isEmpty) {
-                    return "Số điện thoại không được để trống";
+                  if (value == null || value.isEmpty) {
+                    return "Vui lòng nhập số điện thoại";
                   }
 
-                  if (!RegExp(r'^(84|0)(3|5|7|8|9)\d{8}$').hasMatch(trimmed)) {
+                  // Phone Regex
+                  final phoneReg = RegExp(r'^(84|0)(3|5|7|8|9)\d{8}$');
+                  if (!phoneReg.hasMatch(value)) {
                     return "Số điện thoại không hợp lệ. Ví dụ: 0371234567";
                   }
 
@@ -376,31 +383,14 @@ class _RegisterFormState extends State<RegisterForm> {
                     },
                   ),
                 ),
+                // Validation password
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Mật khẩu không được để trống";
                   }
 
-                  if (value.length < 8) {
-                    return "Mật khẩu phải có ít nhất 8 ký tự";
-                  }
-
-                  if (!value.contains(RegExp(r'[A-Z]'))) {
-                    return "Mật khẩu phải chứa ít nhất 1 chữ cái viết hoa (A-Z)";
-                  }
-
-                  if (!value.contains(RegExp(r'[a-z]'))) {
-                    return "Mật khẩu phải chứa ít nhất 1 chữ cái viết thường (a-z)";
-                  }
-
-                  if (!value.contains(RegExp(r'[0-9]'))) {
-                    return "Mật khẩu phải chứa ít nhất 1 chữ số (0-9)";
-                  }
-
-                  if (!value.contains(
-                    RegExp(r'[!@#\$%^&*(),.?":{}|<>_\[\]~\-+=]'),
-                  )) {
-                    return "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#\$...)";
+                  if (value.length < 6) {
+                    return "Mật khẩu phải có ít nhất 6 ký tự";
                   }
 
                   return null;
@@ -453,6 +443,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   return null;
                 },
               ),
+
               const SizedBox(height: 16),
             ],
           ),

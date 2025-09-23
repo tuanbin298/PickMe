@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 
@@ -223,14 +224,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) {
-                              return const LoginPage();
-                            },
-                          ),
-                        );
+                        context.push("/login");
                       },
                       child: const Text(
                         'Đăng nhập',

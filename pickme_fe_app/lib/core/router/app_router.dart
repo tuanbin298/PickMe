@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/screens/forgot_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
+import 'package:pickme_fe_app/features/home/screens/home_page.dart';
 
 // Router configuration for the application
 class AppRouter {
@@ -24,6 +25,12 @@ class AppRouter {
         path: "/forgot-password",
         name: "forgot-password",
         builder: (context, state) => const ForgotPasswordPage(),
+      ),
+
+      GoRoute(
+        path: "/home-page",
+        name: "home-page",
+        builder: (context, state) => const Homepage(),
       ),
     ],
   );

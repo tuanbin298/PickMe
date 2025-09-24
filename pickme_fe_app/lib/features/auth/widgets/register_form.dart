@@ -48,14 +48,13 @@ class _RegisterFormState extends State<RegisterForm> {
       "password": passwordController.text.trim(),
       "role": selectedRole.toLowerCase(),
     };
-
     try {
       final User? registeredUser = await registerServices.register(newUser);
 
-      if (registeredUser != null) {
-        // ignore: use_build_context_synchronously
-        NotificationService.showSuccess(context, "Đăng ký thành công!");
+      if (!mounted) return;
 
+      if (registeredUser != null) {
+        NotificationService.showSuccess(context, "Đăng ký thành công!");
         context.go("/login");
       } else {
         NotificationService.showError(
@@ -64,7 +63,13 @@ class _RegisterFormState extends State<RegisterForm> {
         );
       }
     } catch (e) {
-      NotificationService.showError(context, "Có lỗi xảy ra: $e");
+      if (!mounted) return;
+      final message = e.toString().replaceFirst("Exception: ", "");
+      NotificationService.showError(context, message);
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
@@ -144,24 +149,24 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                     const SizedBox(width: 12),
 
-                    // Merchant
+                    // Restaurant Owner
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() => selectedRole = 'Merchant');
+                          setState(() => selectedRole = 'Restaurant Owner');
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: selectedRole == 'Merchant'
+                            color: selectedRole == 'Restaurant Owner'
                                 ? AppColors.primary.withOpacity(0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: selectedRole == 'Merchant'
+                              color: selectedRole == 'Restaurant Owner'
                                   ? AppColors.primary
                                   : Colors.grey[300]!,
-                              width: selectedRole == 'Merchant' ? 2 : 1,
+                              width: selectedRole == 'Restaurant Owner' ? 2 : 1,
                             ),
                           ),
                           child: Column(
@@ -169,7 +174,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               Icon(
                                 Icons.store,
                                 size: 32,
-                                color: selectedRole == 'Merchant'
+                                color: selectedRole == 'Restaurant Owner'
                                     ? AppColors.primary
                                     : Colors.grey[600],
                               ),
@@ -179,7 +184,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: selectedRole == 'Merchant'
+                                  color: selectedRole == 'Restaurant Owner'
                                       ? AppColors.primary
                                       : Colors.grey[700],
                                 ),

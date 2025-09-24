@@ -47,7 +47,7 @@ class _LoginFormState extends State<LoginForm> {
             "Chào mừng bạn đã đến với PickMe!",
           );
 
-          context.push("/register");
+          context.go("/home-page");
         } else {
           // Login failed
           NotificationService.showError(

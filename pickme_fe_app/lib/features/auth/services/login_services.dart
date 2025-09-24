@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pickme_fe_app/features/auth/model/user.dart';
 
 class LoginServices {
-  final String baseUrl = dotenv.env['API_URL'] ?? '';
+  final String baseUrl = dotenv.env['API_URL_USER_SERVICE'] ?? '';
 
   // Future - asynchronous
   Future<User?> login(String email, String password) async {

@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/screens/forgot_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
-import 'package:pickme_fe_app/features/home/screens/home_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/home_page.dart';
 
 // Router configuration for the application
 class AppRouter {

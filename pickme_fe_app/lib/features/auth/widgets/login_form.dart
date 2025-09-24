@@ -39,6 +39,7 @@ class _LoginFormState extends State<LoginForm> {
 
       try {
         final User? user = await loginServices.login(emailValue, passwordValue);
+        if (!mounted) return;
 
         if (user != null) {
           // Login successful
@@ -56,6 +57,7 @@ class _LoginFormState extends State<LoginForm> {
           );
         }
       } catch (e) {
+        if (!mounted) return;
         NotificationService.showError(context, "Có lỗi xảy ra: $e");
       }
     }

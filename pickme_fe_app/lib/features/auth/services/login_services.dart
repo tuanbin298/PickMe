@@ -8,13 +8,13 @@ class LoginServices {
   final String baseUrl = dotenv.env['API_URL'] ?? '';
 
   // Future - asynchronous
-  Future<User?> login(String phone, String password) async {
-    final url = Uri.parse('$baseUrl/users/login');
+  Future<User?> login(String email, String password) async {
+    final url = Uri.parse('$baseUrl/Users/login');
 
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': phone, 'password': password}),
+      body: jsonEncode({'email': email, 'password': password}),
     );
 
     if (response.statusCode == 200) {

@@ -30,7 +30,7 @@ class RegisterPage extends StatelessWidget {
 
       showGoogleButton: true,
       onGooglePressed: () {
-        // TODO: Handle Google login
+        // Handle Google login
       },
     );
   }

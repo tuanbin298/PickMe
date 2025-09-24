@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
-import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/auth/services/login_services.dart';
+import 'package:pickme_fe_app/core/utils/notification_service.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -16,7 +17,7 @@ class _LoginFormState extends State<LoginForm> {
 
   // Controller to get data from inputs
   final formKey = GlobalKey<FormState>();
-  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   // Create instance object of LoginServices
@@ -25,7 +26,7 @@ class _LoginFormState extends State<LoginForm> {
   // Release memory that controller stored
   @override
   void dispose() {
-    phoneController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -33,57 +34,29 @@ class _LoginFormState extends State<LoginForm> {
   // Mehthod login
   Future<void> submitLogin() async {
     if (formKey.currentState!.validate()) {
-      final phoneValue = phoneController.text;
+      final emailValue = emailController.text;
       final passwordValue = passwordController.text;
 
-      final User? user = await loginServices.login(phoneValue, passwordValue);
+      try {
+        final User? user = await loginServices.login(emailValue, passwordValue);
 
-      if (user != null) {
-        // Login successful
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Chào mừng bạn đã đến với PickMe!",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        if (user != null) {
+          // Login successful
+          NotificationService.showSuccess(
+            context,
+            "Chào mừng bạn đã đến với PickMe!",
+          );
 
-        // Ví dụ: chuyển sang màn hình HomePage
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const RegisterPage()),
-        );
-      } else {
-        // Login failed
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: const [
-                Icon(Icons.error, color: Colors.white),
-                SizedBox(width: 8),
-                Text(
-                  "Sai tài khoản hoặc mật khẩu!",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.redAccent,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            margin: const EdgeInsets.all(16),
-            duration: const Duration(seconds: 3),
-          ),
-        );
+          context.push("/register");
+        } else {
+          // Login failed
+          NotificationService.showError(
+            context,
+            "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
+          );
+        }
+      } catch (e) {
+        NotificationService.showError(context, "Có lỗi xảy ra: $e");
       }
     }
   }
@@ -100,10 +73,10 @@ class _LoginFormState extends State<LoginForm> {
 
           // Phone input
           TextFormField(
-            controller: phoneController,
-            keyboardType: TextInputType.phone,
+            controller: emailController,
+            keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              hintText: "Số điện thoại",
+              hintText: "Email",
               filled: true,
               fillColor: Colors.grey[200],
               contentPadding: const EdgeInsets.symmetric(
@@ -118,13 +91,15 @@ class _LoginFormState extends State<LoginForm> {
             // Validation
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "Vui lòng nhập số điên thoại";
+                return "Vui lòng nhập email";
               }
 
-              // Viet Nam phone Regex
-              final phoneReg = RegExp(r'^(0|\+84)[0-9]{9}$');
-              if (!phoneReg.hasMatch(value)) {
-                return "Số điện thoại không hợp lệ";
+              // Email Regex
+              final emailReg = RegExp(
+                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+              );
+              if (!emailReg.hasMatch(value)) {
+                return "Email không hợp lệ";
               }
 
               return null;

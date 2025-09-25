@@ -36,6 +36,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                 color: Color(0xff172B4D),
               ),
             ),
+
             const SizedBox(height: 16),
 
             Row(
@@ -69,6 +70,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                     Icon(Icons.location_on, color: AppColors.primary, size: 20),
                   ],
                 ),
+
                 const SizedBox(width: 8),
 
                 // right side (texts)
@@ -98,6 +100,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                 ),
               ],
             ),
+
             const SizedBox(height: 16),
 
             // Search bar

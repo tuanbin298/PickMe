@@ -3,6 +3,7 @@ import 'package:pickme_fe_app/features/auth/screens/forgot_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home_page.dart';
+import 'package:pickme_fe_app/features/merchant/screens/merchant_home_page.dart';
 
 // Router configuration for the application
 class AppRouter {
@@ -31,6 +32,12 @@ class AppRouter {
         path: "/home-page",
         name: "home-page",
         builder: (context, state) => const Homepage(),
+      ),
+
+      GoRoute(
+        path: "/merchant-home-page",
+        name: "merchant-home-page",
+        builder: (context, state) => const MerchantPage(),
       ),
     ],
   );

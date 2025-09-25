@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
 import 'package:pickme_fe_app/features/auth/services/login_services.dart';
-import 'package:pickme_fe_app/core/utils/notification_service.dart';
+import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -14,6 +14,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   // Variable
   bool _obscurePassword = true;
+  bool isLoading = false;
 
   // Controller to get data from inputs
   final formKey = GlobalKey<FormState>();
@@ -37,8 +38,14 @@ class _LoginFormState extends State<LoginForm> {
       final emailValue = emailController.text;
       final passwordValue = passwordController.text;
 
+      setState(() {
+        isLoading = true;
+      });
+
       try {
         final User? user = await loginServices.login(emailValue, passwordValue);
+
+        // If user leave this screen then stop logic below
         if (!mounted) return;
 
         if (user != null) {
@@ -48,7 +55,13 @@ class _LoginFormState extends State<LoginForm> {
             "Chào mừng bạn đã đến với PickMe!",
           );
 
-          context.go("/home-page");
+          if (user.role == "Customer") {
+            context.go("/home-page");
+          }
+
+          if (user.role == "RestaurantOwner") {
+            context.go("/merchant-home-page");
+          }
         } else {
           // Login failed
           NotificationService.showError(
@@ -59,6 +72,10 @@ class _LoginFormState extends State<LoginForm> {
       } catch (e) {
         if (!mounted) return;
         NotificationService.showError(context, "Có lỗi xảy ra: $e");
+      } finally {
+        if (mounted) {
+          setState(() => isLoading = false);
+        }
       }
     }
   }
@@ -157,9 +174,7 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                submitLogin();
-              },
+              onPressed: isLoading ? null : submitLogin,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xffFC7A1F),
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -167,9 +182,9 @@ class _LoginFormState extends State<LoginForm> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                "Đăng nhập",
-                style: TextStyle(fontSize: 18, color: Colors.white),
+              child: Text(
+                isLoading ? "Đang đăng nhập..." : "Đăng nhập",
+                style: const TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
           ),

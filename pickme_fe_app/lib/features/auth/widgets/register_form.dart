@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
 import 'package:pickme_fe_app/features/auth/services/register_services.dart';
-import 'package:pickme_fe_app/core/utils/notification_service.dart';
+import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -51,6 +51,7 @@ class _RegisterFormState extends State<RegisterForm> {
     try {
       final User? registeredUser = await registerServices.register(newUser);
 
+      // If user leave this screen then stop logic below
       if (!mounted) return;
 
       if (registeredUser != null) {
@@ -99,7 +100,9 @@ class _RegisterFormState extends State<RegisterForm> {
                     color: Colors.black87,
                   ),
                 ),
+
                 const SizedBox(height: 12),
+
                 Row(
                   children: [
                     // Customer
@@ -147,26 +150,27 @@ class _RegisterFormState extends State<RegisterForm> {
                         ),
                       ),
                     ),
+
                     const SizedBox(width: 12),
 
                     // Restaurant Owner
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() => selectedRole = 'Restaurant Owner');
+                          setState(() => selectedRole = 'RestaurantOwner');
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: selectedRole == 'Restaurant Owner'
+                            color: selectedRole == 'RestaurantOwner'
                                 ? AppColors.primary.withOpacity(0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: selectedRole == 'Restaurant Owner'
+                              color: selectedRole == 'RestaurantOwner'
                                   ? AppColors.primary
                                   : Colors.grey[300]!,
-                              width: selectedRole == 'Restaurant Owner' ? 2 : 1,
+                              width: selectedRole == 'RestaurantOwner' ? 2 : 1,
                             ),
                           ),
                           child: Column(
@@ -229,6 +233,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           vertical: 16,
                         ),
                       ),
+                      // Validation
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Họ không được để trống";
@@ -439,6 +444,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     },
                   ),
                 ),
+                // Validation confirm password
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Vui lòng nhập lại mật khẩu";

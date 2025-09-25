@@ -14,9 +14,13 @@ class Homepage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
+              // Custom Location App Bar
               CustomLocationAppBar(),
+
               SizedBox(height: 10),
+
+              // Category Horizontal List
               CategoryHorizontalList(),
             ],
           ),

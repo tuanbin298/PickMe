@@ -41,8 +41,12 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
-            Divider(color: Colors.grey, thickness: 1), // Divider line
+
+            // Divider line
+            Divider(color: Colors.grey, thickness: 1),
+
             const SizedBox(height: 20),
 
             // Horizontal scroll list
@@ -92,7 +96,9 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
               backgroundImage: AssetImage(imagePath), // Load asset image
             ),
           ),
+
           const SizedBox(height: 8),
+
           Text(
             title, // Category name
             style: const TextStyle(fontSize: 14, color: Color(0xff172B4D)),

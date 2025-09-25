@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
-import 'package:pickme_fe_app/core/utils/error_messages.dart';
+import 'package:pickme_fe_app/core/common_widgets/error_messages.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 

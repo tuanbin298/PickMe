@@ -14,15 +14,14 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   // Variable
-  String selectedRole = 'Customer';
+  String selectedRole = 'CUSTOMER';
   bool showPassword = false;
   bool showConfirmPassword = false;
   bool isLoading = false;
 
   // Controller to get data from inputs
   final _formKey = GlobalKey<FormState>();
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
+  final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
@@ -41,12 +40,12 @@ class _RegisterFormState extends State<RegisterForm> {
 
     // Create new object
     final newUser = {
-      "username": phoneController.text.trim(),
+      "phoneNumber": phoneController.text.trim(),
       "email": emailController.text.trim(),
-      "firstName": firstNameController.text.trim(),
-      "lastName": lastNameController.text.trim(),
+      "fullName": fullNameController.text.trim(),
       "password": passwordController.text.trim(),
-      "role": selectedRole.toLowerCase(),
+      "imageUrl": "https://example.com/avatar.jpg",
+      "role": selectedRole,
     };
     try {
       final User? registeredUser = await registerServices.register(newUser);
@@ -109,20 +108,20 @@ class _RegisterFormState extends State<RegisterForm> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() => selectedRole = 'Customer');
+                          setState(() => selectedRole = 'CUSTOMER');
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: selectedRole == 'Customer'
+                            color: selectedRole == 'CUSTOMER'
                                 ? AppColors.primary.withOpacity(0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: selectedRole == 'Customer'
+                              color: selectedRole == 'CUSTOMER'
                                   ? AppColors.primary
                                   : Colors.grey[300]!,
-                              width: selectedRole == 'Customer' ? 2 : 1,
+                              width: selectedRole == 'CUSTOMER' ? 2 : 1,
                             ),
                           ),
                           child: Column(
@@ -130,7 +129,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               Icon(
                                 Icons.person,
                                 size: 32,
-                                color: selectedRole == 'Customer'
+                                color: selectedRole == 'CUSTOMER'
                                     ? AppColors.primary
                                     : Colors.grey[600],
                               ),
@@ -140,7 +139,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: selectedRole == 'Customer'
+                                  color: selectedRole == 'CUSTOMER'
                                       ? AppColors.primary
                                       : Colors.grey[700],
                                 ),
@@ -157,20 +156,20 @@ class _RegisterFormState extends State<RegisterForm> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() => selectedRole = 'RestaurantOwner');
+                          setState(() => selectedRole = 'RESTAURANT_OWNER');
                         },
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: selectedRole == 'RestaurantOwner'
+                            color: selectedRole == 'RESTAURANT_OWNER'
                                 ? AppColors.primary.withOpacity(0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: selectedRole == 'RestaurantOwner'
+                              color: selectedRole == 'RESTAURANT_OWNER'
                                   ? AppColors.primary
                                   : Colors.grey[300]!,
-                              width: selectedRole == 'RestaurantOwner' ? 2 : 1,
+                              width: selectedRole == 'RESTAURANT_OWNER' ? 2 : 1,
                             ),
                           ),
                           child: Column(
@@ -178,7 +177,7 @@ class _RegisterFormState extends State<RegisterForm> {
                               Icon(
                                 Icons.store,
                                 size: 32,
-                                color: selectedRole == 'Restaurant Owner'
+                                color: selectedRole == 'RESTAURANT_OWNER'
                                     ? AppColors.primary
                                     : Colors.grey[600],
                               ),
@@ -188,7 +187,7 @@ class _RegisterFormState extends State<RegisterForm> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: selectedRole == 'Restaurant Owner'
+                                  color: selectedRole == 'RESTAURANT_OWNER'
                                       ? AppColors.primary
                                       : Colors.grey[700],
                                 ),
@@ -209,45 +208,12 @@ class _RegisterFormState extends State<RegisterForm> {
           // Form Fields
           Column(
             children: [
-              // First + Last Name (Row)
+              // Full name
               Row(
                 children: [
                   Expanded(
                     child: TextFormField(
-                      controller: lastNameController,
-                      decoration: InputDecoration(
-                        labelText: "Họ",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                      ),
-                      // Validation
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return "Họ không được để trống";
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  Expanded(
-                    child: TextFormField(
-                      controller: firstNameController,
+                      controller: fullNameController,
                       decoration: InputDecoration(
                         labelText: "Tên",
                         border: OutlineInputBorder(

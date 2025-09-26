@@ -5,10 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class RegisterServices {
-  final String baseUrl = dotenv.env['API_URL_USER_SERVICE'] ?? '';
+  final String baseUrl = dotenv.env['API_URL'] ?? '';
 
   Future<User?> register(Map<String, dynamic> newUser) async {
-    final url = Uri.parse('$baseUrl/Users');
+    final url = Uri.parse('$baseUrl/auth/register');
 
     final response = await http.post(
       url,

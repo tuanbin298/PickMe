@@ -55,11 +55,11 @@ class _LoginFormState extends State<LoginForm> {
             "Chào mừng bạn đã đến với PickMe!",
           );
 
-          if (user.role == "Customer") {
+          if (user.role == "CUSTOMER") {
             context.go("/home-page");
           }
 
-          if (user.role == "RestaurantOwner") {
+          if (user.role == "RESTAURANT_OWNER") {
             context.go("/merchant-home-page");
           }
         } else {

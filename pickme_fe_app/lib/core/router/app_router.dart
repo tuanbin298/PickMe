@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/screens/forgot_password_page.dart';
+import 'package:pickme_fe_app/features/auth/screens/otp_verification_page.dart';
+import 'package:pickme_fe_app/features/auth/screens/reset_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home_page.dart';
@@ -26,6 +28,27 @@ class AppRouter {
         path: "/forgot-password",
         name: "forgot-password",
         builder: (context, state) => const ForgotPasswordPage(),
+      ),
+
+      GoRoute(
+        path: "/otp",
+        name: "otp",
+        builder: (context, state) {
+          final email =
+              state.extra as String; // get email from ForgotPasswordPage
+          return OtpVerificationPage(email: email);
+        },
+      ),
+
+      GoRoute(
+        path: "/reset-password",
+        name: "reset-password",
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          final email = data["email"] as String;
+          final otp = data["otp"] as String;
+          return ResetPasswordPage(email: email, otp: otp);
+        },
       ),
 
       GoRoute(

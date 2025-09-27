@@ -41,7 +41,7 @@ class LoginPage extends StatelessWidget {
         children: [
           TextButton(
             onPressed: () {
-              // context.push("/forgot-password");
+              context.push("/forgot-password");
             },
             child: const Text(
               "Quên mật khẩu?",

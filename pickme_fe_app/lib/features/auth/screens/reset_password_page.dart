@@ -3,64 +3,75 @@ import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/auth/services/forgot_password_service.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({super.key});
+class ResetPasswordPage extends StatefulWidget {
+  final String email;
+  final String otp;
+
+  const ResetPasswordPage({super.key, required this.email, required this.otp});
 
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
 
   final ForgotPasswordService _forgotPasswordService = ForgotPasswordService();
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleResetPassword() async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      final success = await _forgotPasswordService.sendOtp(
-        _emailController.text.trim(),
+      final isSuccess = await _forgotPasswordService.resetPassword(
+        widget.email,
+        widget.otp,
+        _passwordController.text.trim(),
+        _confirmPasswordController.text.trim(),
       );
 
-      if (success) {
+      if (isSuccess) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Mã OTP đã được gửi đến email của bạn"),
+              content: Text("Đặt lại mật khẩu thành công"),
               backgroundColor: Colors.green,
             ),
           );
-
-          // Điều hướng sang màn hình OTP, truyền email qua extra
-          context.push("/otp", extra: _emailController.text.trim());
+          context.go("/login");
         }
       } else {
-        throw Exception("Gửi OTP thất bại");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Đặt lại mật khẩu thất bại, vui lòng thử lại"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Có lỗi xảy ra: ${e.toString()}'),
+            content: Text("Có lỗi xảy ra: ${e.toString()}"),
             backgroundColor: Colors.red,
           ),
         );
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -76,7 +87,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Quên mật khẩu",
+          "Đặt lại mật khẩu",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -95,7 +106,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               children: [
                 const SizedBox(height: 40),
 
-                //Icon
+                // Icon
                 Center(
                   child: Container(
                     width: 80,
@@ -105,7 +116,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
-                      Icons.lock,
+                      Icons.lock_reset,
                       color: Color(0xffFC7A1F),
                       size: 40,
                     ),
@@ -114,9 +125,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 32),
 
-                //Title
                 const Text(
-                  "Đặt lại mật khẩu",
+                  "Tạo mật khẩu mới",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -127,11 +137,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 12),
 
-                //Description
-                const Text(
-                  "Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn mã OTP để đặt lại mật khẩu.",
+                Text(
+                  "Đặt lại mật khẩu cho tài khoản (${widget.email})",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Color(0xff666666),
                     height: 1.5,
@@ -140,49 +149,64 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 40),
 
-                //Email input
+                // New Password
                 TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
+                  controller: _passwordController,
+                  obscureText: true,
                   decoration: InputDecoration(
-                    labelText: "Email",
-                    hintText: "Nhập email của bạn",
-                    prefixIcon: const Icon(Icons.email_outlined),
+                    labelText: "Mật khẩu mới",
+                    prefixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: Color(0xfffc7f20)),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
-                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Vui lòng nhập email';
+                      return 'Vui lòng nhập mật khẩu mới';
                     }
-                    if (!RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    ).hasMatch(value)) {
-                      return 'Vui lòng nhập địa chỉ email hợp lệ';
+                    if (value.length < 6) {
+                      return 'Mật khẩu phải có ít nhất 6 ký tự';
                     }
                     return null;
                   },
                 ),
+
+                const SizedBox(height: 20),
+
+                // Confirm Password
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Xác nhận mật khẩu",
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xfffc7f20)),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value != _passwordController.text) {
+                      return 'Mật khẩu xác nhận không khớp';
+                    }
+                    return null;
+                  },
+                ),
+
                 const SizedBox(height: 32),
 
-                //Reset Password Button
+                // Submit Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleResetPassword,
+                    onPressed: _isLoading ? null : _handleSubmit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
@@ -204,68 +228,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             ),
                           )
                         : const Text(
-                            "Gửi mã OTP",
+                            "Xác nhận",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                //Back to Login
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Nhớ mật khẩu? ',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        context.push("/login");
-                      },
-                      child: const Text(
-                        'Đăng nhập',
-                        style: TextStyle(
-                          color: Color(0xffEF9F27),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 40),
-
-                // Additional Help Text
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[200]!),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        color: Colors.grey[600],
-                        size: 20,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Không nhận được email? Kiểm tra thư mục spam hoặc thử lại sau vài phút.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
 

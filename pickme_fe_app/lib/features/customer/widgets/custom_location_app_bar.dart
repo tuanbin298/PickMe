@@ -82,7 +82,6 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                         "Vị trí hiện tại",
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
                           color: Color(0xff172B4D),
                         ),
                       ),
@@ -91,7 +90,6 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                         "Đại học FPT HCM",
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
                           color: AppColors.primary,
                         ),
                       ),

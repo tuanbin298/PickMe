@@ -20,7 +20,7 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16, right: 0, top: 16, bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -35,9 +35,12 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
                     color: Color(0xff172B4D),
                   ),
                 ),
-                Text(
-                  "Tất cả",
-                  style: TextStyle(fontSize: 18, color: Color(0xff172B4D)),
+                Padding(
+                  padding: EdgeInsets.only(right: 16),
+                  child: Text(
+                    "Tất cả",
+                    style: TextStyle(fontSize: 18, color: Color(0xff172B4D)),
+                  ),
                 ),
               ],
             ),
@@ -45,7 +48,7 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
             const SizedBox(height: 20),
 
             // Divider line
-            Divider(color: Colors.grey, thickness: 1),
+            Divider(),
 
             const SizedBox(height: 20),
 
@@ -87,10 +90,7 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
         children: [
           Container(
             padding: const EdgeInsets.all(4),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              // You can add a border here if needed
-            ),
+            decoration: const BoxDecoration(shape: BoxShape.circle),
             child: CircleAvatar(
               radius: 36,
               backgroundImage: AssetImage(imagePath), // Load asset image

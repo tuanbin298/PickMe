@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import images from "../../../constants/images";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -10,10 +12,10 @@ import {
   TextField,
 } from "@mui/material";
 import authService from "../../../services/auth/authService";
-import { toast } from "react-toastify";
 
 export default function LoginPage() {
   // State
+  const navigate = useNavigate();
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -63,6 +65,8 @@ export default function LoginPage() {
     try {
       const data = await authService.login(input.email, input.password);
 
+      window.dispatchEvent(new Event("login-status-changed"));
+
       // Save data to localStorage
       localStorage.setItem("sessionToken", data.token);
       localStorage.setItem("id", data.id);
@@ -72,7 +76,12 @@ export default function LoginPage() {
       localStorage.setItem("phoneNumber", data.phoneNumber);
       localStorage.setItem("imageUrl", data.imageUrl);
 
-      toast.success("Đăng nhập thành công");
+      if (data.role === "ADMIN") {
+        toast.success("Đăng nhập thành công");
+        navigate("/dashboard");
+      } else {
+        toast.error("Tài khoản không có quyền truy cập");
+      }
     } catch (error) {
       toast.error(
         "Đăng nhập thất bại: " + (error.message || "Lỗi kết nối server")

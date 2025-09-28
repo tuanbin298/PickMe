@@ -11,20 +11,23 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
+  final _emailController =
+      TextEditingController(); // Controller for email input
+  bool _isLoading = false; // Track loading state
 
-  final ForgotPasswordService _forgotPasswordService = ForgotPasswordService();
+  final ForgotPasswordService _forgotPasswordService =
+      ForgotPasswordService(); // Service to handle API
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _emailController.dispose(); // Clean up controller
     super.dispose();
   }
 
+  /// Handle reset password flow (send OTP)
   Future<void> _handleResetPassword() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return; // Validate form
 
     setState(() => _isLoading = true);
 
@@ -35,31 +38,33 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
       if (success) {
         if (mounted) {
+          // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Mã OTP đã được gửi đến email của bạn"),
+              content: Text("OTP has been sent to your email"),
               backgroundColor: Colors.green,
             ),
           );
 
-          // Điều hướng sang màn hình OTP, truyền email qua extra
+          // Navigate to OTP page with email
           context.push("/otp", extra: _emailController.text.trim());
         }
       } else {
-        throw Exception("Gửi OTP thất bại");
+        throw Exception("Failed to send OTP");
       }
     } catch (e) {
       if (mounted) {
+        // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Có lỗi xảy ra: ${e.toString()}'),
+            content: Text('Error: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
       }
     } finally {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() => _isLoading = false); // Stop loading
       }
     }
   }
@@ -73,10 +78,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context), // Back button
         ),
         title: const Text(
-          "Quên mật khẩu",
+          "Forgot Password",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -95,7 +100,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               children: [
                 const SizedBox(height: 40),
 
-                //Icon
+                // Lock icon
                 Center(
                   child: Container(
                     width: 80,
@@ -114,9 +119,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 32),
 
-                //Title
+                // Page title
                 const Text(
-                  "Đặt lại mật khẩu",
+                  "Reset your password",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -127,9 +132,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 12),
 
-                //Description
+                // Page description
                 const Text(
-                  "Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn mã OTP để đặt lại mật khẩu.",
+                  "Enter your email address and we will send you an OTP to reset your password.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -140,13 +145,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 40),
 
-                //Email input
+                // Email input field
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: "Email",
-                    hintText: "Nhập email của bạn",
+                    hintText: "Enter your email",
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -166,19 +171,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Vui lòng nhập email';
+                      return 'Please enter your email';
                     }
                     if (!RegExp(
                       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                     ).hasMatch(value)) {
-                      return 'Vui lòng nhập địa chỉ email hợp lệ';
+                      return 'Please enter a valid email address';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 32),
 
-                //Reset Password Button
+                // Submit button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -204,7 +209,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             ),
                           )
                         : const Text(
-                            "Gửi mã OTP",
+                            "Send OTP",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -214,12 +219,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
                 const SizedBox(height: 16),
 
-                //Back to Login
+                // Back to login link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Nhớ mật khẩu? ',
+                      'Remember your password? ',
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                     GestureDetector(
@@ -227,7 +232,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         context.push("/login");
                       },
                       child: const Text(
-                        'Đăng nhập',
+                        'Login',
                         style: TextStyle(
                           color: Color(0xffEF9F27),
                           fontSize: 14,
@@ -240,7 +245,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 40),
 
-                // Additional Help Text
+                // Additional help message
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -257,7 +262,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Không nhận được email? Kiểm tra thư mục spam hoặc thử lại sau vài phút.',
+                        'Didn’t receive the email? Check your spam folder or try again later.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,

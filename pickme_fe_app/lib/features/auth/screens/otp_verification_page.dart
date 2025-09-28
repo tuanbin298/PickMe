@@ -12,6 +12,7 @@ class OtpVerificationPage extends StatefulWidget {
 }
 
 class _OtpVerificationPageState extends State<OtpVerificationPage> {
+  // Controllers & focus nodes for 6 OTP input boxes
   final _otpControllers = List.generate(6, (_) => TextEditingController());
   final _focusNodes = List.generate(6, (_) => FocusNode());
   bool _isLoading = false;
@@ -20,6 +21,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   @override
   void dispose() {
+    // Clean up controllers and focus nodes
     for (final c in _otpControllers) {
       c.dispose();
     }
@@ -29,12 +31,15 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     super.dispose();
   }
 
+  /// Handle OTP verification
   Future<void> _handleVerifyOtp() async {
     final otp = _otpControllers.map((c) => c.text).join();
+
+    // Require full 6 digits
     if (otp.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Vui lòng nhập đầy đủ 6 chữ số OTP"),
+          content: Text("Please enter the full 6-digit OTP"),
           backgroundColor: Colors.red,
         ),
       );
@@ -50,25 +55,26 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Xác thực OTP thành công"),
+              content: Text("OTP verified successfully"),
               backgroundColor: Colors.green,
             ),
           );
 
-          // Navigate to the ResetPassword page
+          // Navigate to Reset Password page with email + otp
           context.push(
             "/reset-password",
             extra: {"email": widget.email, "otp": otp},
           );
         }
       } else {
-        throw Exception("OTP không hợp lệ");
+        throw Exception("Invalid OTP");
       }
     } catch (e) {
+      // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Có lỗi xảy ra: ${e.toString()}"),
+            content: Text("Error: ${e.toString()}"),
             backgroundColor: Colors.red,
           ),
         );
@@ -78,6 +84,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     }
   }
 
+  /// Build a single OTP input box
   Widget _buildOtpBox(int index) {
     return SizedBox(
       width: 50,
@@ -97,9 +104,11 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           ),
         ),
         onChanged: (value) {
+          // Auto move to next field when typing
           if (value.isNotEmpty && index < 5) {
             FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
           }
+          // Move back if field is empty
           if (value.isEmpty && index > 0) {
             FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
           }
@@ -112,6 +121,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // App Bar
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
@@ -120,7 +131,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Xác thực OTP",
+          "OTP Verification",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -129,6 +140,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         ),
         centerTitle: true,
       ),
+
+      // Body content
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -137,7 +150,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             children: [
               const SizedBox(height: 40),
 
-              // Icon
+              // Lock icon
               Center(
                 child: Container(
                   width: 80,
@@ -158,7 +171,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
               // Title
               const Text(
-                "Nhập mã OTP",
+                "Enter OTP",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,
@@ -169,9 +182,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
               const SizedBox(height: 12),
 
-              // Description
+              // Description with email
               Text(
-                "Mã xác thực gồm 6 chữ số đã gửi đến: ${widget.email}",
+                "A 6-digit code was sent to: ${widget.email}",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
@@ -190,7 +203,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
               const SizedBox(height: 32),
 
-              // Verify Button
+              // Verify button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -216,7 +229,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                           ),
                         )
                       : const Text(
-                          "Xác nhận",
+                          "Verify",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -227,12 +240,12 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
               const SizedBox(height: 16),
 
-              // Resend OTP
+              // Resend OTP section
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Không nhận được mã? ',
+                    'Didn’t receive the code? ',
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                   GestureDetector(
@@ -242,7 +255,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text("Đã gửi lại OTP"),
+                              content: Text("OTP resent successfully"),
                               backgroundColor: Colors.orange,
                             ),
                           );
@@ -251,7 +264,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text("Không thể gửi lại OTP"),
+                              content: Text("Failed to resend OTP"),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -259,7 +272,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                       }
                     },
                     child: const Text(
-                      'Gửi lại',
+                      'Resend',
                       style: TextStyle(
                         color: Color(0xffEF9F27),
                         fontSize: 14,

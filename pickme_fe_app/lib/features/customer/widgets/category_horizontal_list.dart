@@ -24,11 +24,12 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Title row: "Danh mục" on the left, "Tất cả" on the right
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
                 Text(
-                  "Danh mục",
+                  "Danh mục", // "Category"
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -38,7 +39,7 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
                 Padding(
                   padding: EdgeInsets.only(right: 16),
                   child: Text(
-                    "Tất cả",
+                    "Tất cả", // "All"
                     style: TextStyle(fontSize: 18, color: Color(0xff172B4D)),
                   ),
                 ),
@@ -48,30 +49,30 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
             const SizedBox(height: 20),
 
             // Divider line
-            Divider(),
+            const Divider(),
 
             const SizedBox(height: 20),
 
-            // Horizontal scroll list
+            // Horizontal list of categories
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
                   _buildCategoryItem(
                     "lib/assets/images/category_item.png",
-                    "Cơm",
+                    "Cơm", // "Rice"
                   ),
                   _buildCategoryItem(
                     "lib/assets/images/category_item.png",
-                    "Bún-Phở-Cháo",
+                    "Bún-Phở-Cháo", // "Noodles - Pho - Porridge"
                   ),
                   _buildCategoryItem(
                     "lib/assets/images/category_item.png",
-                    "Nước uống",
+                    "Nước uống", // "Drinks"
                   ),
                   _buildCategoryItem(
                     "lib/assets/images/category_item.png",
-                    "Khác",
+                    "Khác", // "Others"
                   ),
                 ],
               ),
@@ -82,12 +83,13 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
     );
   }
 
-  // Build one category item (circle image + label)
+  /// Build one category item (circle image + text label)
   static Widget _buildCategoryItem(String imagePath, String title) {
     return Padding(
       padding: const EdgeInsets.only(right: 20),
       child: Column(
         children: [
+          // Circle image
           Container(
             padding: const EdgeInsets.all(4),
             decoration: const BoxDecoration(shape: BoxShape.circle),
@@ -99,8 +101,9 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
 
           const SizedBox(height: 8),
 
+          // Category name
           Text(
-            title, // Category name
+            title,
             style: const TextStyle(fontSize: 14, color: Color(0xff172B4D)),
           ),
         ],

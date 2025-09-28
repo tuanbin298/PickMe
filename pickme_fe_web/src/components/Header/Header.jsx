@@ -35,22 +35,6 @@ const Header = () => {
           </Typography>
         </Box>
 
-        {/* Search box */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            px: 2,
-            py: 0.5,
-            borderRadius: 2,
-            backgroundColor: "#f5f5f5",
-            width: 300,
-          }}
-        >
-          <Search sx={{ mr: 1, color: "gray" }} />
-          <InputBase placeholder="Tìm kiếm quán ăn" fullWidth />
-        </Box>
-
         {/* Right side */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <IconButton>

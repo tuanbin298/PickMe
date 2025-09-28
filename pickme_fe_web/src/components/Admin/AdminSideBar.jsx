@@ -28,7 +28,7 @@ const AdminSidebar = () => {
 
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: <Dashboard /> },
-    { id: "customer", label: "Người dùng", icon: <People /> },
+    { id: "userlist", label: "Người dùng", icon: <People /> },
     { id: "restaurants", label: "Quán ăn", icon: <Store /> },
     { id: "promotions", label: "Khuyến mãi", icon: <LocalOffer /> },
   ];
@@ -78,7 +78,10 @@ const AdminSidebar = () => {
           <ListItem key={item.id} disablePadding>
             <ListItemButton
               selected={active === item.id}
-              onClick={() => setActive(item.id)}
+              onClick={() => {
+                setActive(item.id);
+                navigate(`/dashboard/${item.id}`);
+              }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.label} />

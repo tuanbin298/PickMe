@@ -16,10 +16,9 @@ class ResetPasswordPage extends StatefulWidget {
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>(); // Form key for validation
 
-  final _passwordController =
-      TextEditingController(); // New password controller
-  final _confirmPasswordController =
-      TextEditingController(); // Confirm password controller
+  // Controller for input form
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false; // Track loading state
   bool _obscurePassword = true; // Toggle new password visibility
@@ -54,7 +53,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Password reset successful"),
+              content: Text("Thay đổi mật khẩu thành công"),
               backgroundColor: Colors.green,
             ),
           );
@@ -65,7 +64,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           // Show failure message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Password reset failed, please try again"),
+              content: Text("Thay đổi thất bại, vui lòng thử lại"),
               backgroundColor: Colors.red,
             ),
           );
@@ -76,7 +75,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Error: ${e.toString()}"),
+            content: Text("Lỗi: ${e.toString()}"),
             backgroundColor: Colors.red,
           ),
         );
@@ -99,7 +98,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           onPressed: () => Navigator.pop(context), // Back button
         ),
         title: const Text(
-          "Reset Password",
+          "Thay đổi mật khẩu",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -140,7 +139,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                 // Title
                 const Text(
-                  "Create New Password",
+                  "Mật khẩu mới",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -153,7 +152,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                 // Description
                 Text(
-                  "Reset password for account (${widget.email})",
+                  "Thay đổi mật khẩu cho tài khoản (${widget.email})",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 16,
@@ -169,7 +168,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: "New Password",
+                    labelText: "Mật khẩu mới",
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -194,10 +193,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please enter new password';
+                      return 'Nhập mật khẩu mới';
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return 'Mật khẩu cần ít nhát 6 ký tự';
                     }
                     return null;
                   },
@@ -210,7 +209,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
-                    labelText: "Confirm Password",
+                    labelText: "Xác nhận mật khẩu",
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -235,7 +234,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   ),
                   validator: (value) {
                     if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return 'Mật khẩu không trùng';
                     }
                     return null;
                   },
@@ -269,7 +268,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             ),
                           )
                         : const Text(
-                            "Confirm",
+                            "Thay đổi mật khẩu",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

@@ -54,6 +54,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                       color: Colors.grey,
                       size: 20,
                     ),
+
                     SizedBox(height: 4),
 
                     // Dotted line between start and destination
@@ -72,6 +73,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                         ),
                       ),
                     ),
+
                     SizedBox(height: 4),
 
                     // Destination icon

@@ -3,7 +3,7 @@ import App from "./App.jsx";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
-import CustomCloseButton from "./utils/components/closeButton.jsx";
+import CustomCloseButton from "./components/Button/CloseButton.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

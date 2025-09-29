@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Homepage from "./pages/HomePage/HomePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import AdminDashboard from "./pages/AdminPage/AdminDashboard";
+import UserManagementPage from "./pages/AdminPage/UserManagement";
 
 export default function MainLayout() {
   const location = useLocation();
@@ -13,7 +14,9 @@ export default function MainLayout() {
     <>
       {isDashboard ? (
         <Routes>
-          <Route path="/dashboard" element={<AdminDashboard />}></Route>
+          <Route path="/dashboard" element={<AdminDashboard />}>
+            <Route path="userlist" element={<UserManagementPage />} />
+          </Route>
         </Routes>
       ) : (
         <Routes>

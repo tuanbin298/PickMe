@@ -39,7 +39,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     if (otp.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please enter the full 6-digit OTP"),
+          content: Text("Vui lòng nhập OTP"),
           backgroundColor: Colors.red,
         ),
       );
@@ -55,7 +55,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("OTP verified successfully"),
+              content: Text("Xác thực OTP thành công"),
               backgroundColor: Colors.green,
             ),
           );
@@ -67,14 +67,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           );
         }
       } else {
-        throw Exception("Invalid OTP");
+        throw Exception("OTP không hợp lệ");
       }
     } catch (e) {
       // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Error: ${e.toString()}"),
+            content: Text("Lỗi: ${e.toString()}"),
             backgroundColor: Colors.red,
           ),
         );
@@ -131,7 +131,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "OTP Verification",
+          "Xác thực OTP",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -171,7 +171,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
               // Title
               const Text(
-                "Enter OTP",
+                "Nhập OTP",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,
@@ -184,7 +184,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
               // Description with email
               Text(
-                "A 6-digit code was sent to: ${widget.email}",
+                "Mã OTP đã được gửi đến: ${widget.email}",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
@@ -229,7 +229,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                           ),
                         )
                       : const Text(
-                          "Verify",
+                          "Xác thực",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -245,7 +245,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Didn’t receive the code? ',
+                    'Không nhận được mã? ',
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                   GestureDetector(
@@ -255,7 +255,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text("OTP resent successfully"),
+                              content: Text("Gửi OTP thành công"),
                               backgroundColor: Colors.orange,
                             ),
                           );
@@ -264,7 +264,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text("Failed to resend OTP"),
+                              content: Text("Gửi OTP thất bại"),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -272,7 +272,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                       }
                     },
                     child: const Text(
-                      'Resend',
+                      'Gửi lại',
                       style: TextStyle(
                         color: Color(0xffEF9F27),
                         fontSize: 14,

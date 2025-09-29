@@ -42,10 +42,12 @@ class _HomepageState extends State<Homepage> {
             children: [
               /// Top app bar: location selector
               const CustomLocationAppBar(),
+
               const SizedBox(height: 10),
 
               /// Horizontal category list
               const CategoryHorizontalList(),
+
               const SizedBox(height: 10),
 
               /// Custom top tab navigation ("Along the route / Discounts")

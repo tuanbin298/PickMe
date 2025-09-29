@@ -41,7 +41,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("OTP has been sent to your email"),
+              content: Text("OTP đã được gửi tới email của bạn"),
               backgroundColor: Colors.green,
             ),
           );
@@ -50,7 +50,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           context.push("/otp", extra: _emailController.text.trim());
         }
       } else {
-        throw Exception("Failed to send OTP");
+        throw Exception("Lỗi gửi mã OTP, vui lòng kiểm tra lại email");
       }
     } catch (e) {
       if (mounted) {
@@ -81,7 +81,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           onPressed: () => Navigator.pop(context), // Back button
         ),
         title: const Text(
-          "Forgot Password",
+          "Quên mật khẩu",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -121,7 +121,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 // Page title
                 const Text(
-                  "Reset your password",
+                  "Thay đổi mật khẩu",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -134,7 +134,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 // Page description
                 const Text(
-                  "Enter your email address and we will send you an OTP to reset your password.",
+                  "Vui lòng nhập địa chỉ email, chúng tôi sẽ gửi cho bạn mã OTP để Thay đổi mật khẩu",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -151,7 +151,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: "Email",
-                    hintText: "Enter your email",
+                    hintText: "Nhập email",
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -171,12 +171,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your email';
+                      return 'Vui lòng nhập email';
                     }
                     if (!RegExp(
                       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                     ).hasMatch(value)) {
-                      return 'Please enter a valid email address';
+                      return 'Địa chỉ email không hợp lệ';
                     }
                     return null;
                   },
@@ -209,7 +209,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             ),
                           )
                         : const Text(
-                            "Send OTP",
+                            "Gửi OTP",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -224,7 +224,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Remember your password? ',
+                      'Đã nhớ được mật khẩu? ',
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                     GestureDetector(
@@ -232,7 +232,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         context.push("/login");
                       },
                       child: const Text(
-                        'Login',
+                        'Đăng nhập',
                         style: TextStyle(
                           color: Color(0xffEF9F27),
                           fontSize: 14,
@@ -262,7 +262,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Didn’t receive the email? Check your spam folder or try again later.',
+                        'Không nhận được email? Vui lòng kiểm tra thư mục thư rác',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,

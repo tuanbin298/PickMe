@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 
+// Custom app bar showing current route + search bar
 class CustomLocationAppBar extends StatefulWidget {
   const CustomLocationAppBar({super.key});
 
@@ -28,6 +29,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// Title
             const Text(
               "Lộ trình của bạn",
               style: TextStyle(
@@ -39,18 +41,23 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
 
             const SizedBox(height: 16),
 
+            /// Route section (icons + texts)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // left side (icons)
+                // Left side: route icons
                 Column(
                   children: [
+                    // Starting point
                     Icon(
                       Icons.radio_button_unchecked,
                       color: Colors.grey,
                       size: 20,
                     ),
+
                     SizedBox(height: 4),
+
+                    // Dotted line between start and destination
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(
@@ -66,14 +73,17 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                         ),
                       ),
                     ),
+
                     SizedBox(height: 4),
+
+                    // Destination icon
                     Icon(Icons.location_on, color: AppColors.primary, size: 20),
                   ],
                 ),
 
                 const SizedBox(width: 8),
 
-                // right side (texts)
+                // Right side: texts
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +92,6 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                         "Vị trí hiện tại",
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
                           color: Color(0xff172B4D),
                         ),
                       ),
@@ -91,7 +100,6 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                         "Đại học FPT HCM",
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
                           color: AppColors.primary,
                         ),
                       ),
@@ -103,7 +111,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
 
             const SizedBox(height: 16),
 
-            // Search bar
+            /// Search bar
             TextField(
               decoration: InputDecoration(
                 hintText: "Tìm món ăn",

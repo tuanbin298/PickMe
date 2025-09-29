@@ -35,7 +35,6 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   Future<void> _handleVerifyOtp() async {
     final otp = _otpControllers.map((c) => c.text).join();
 
-    // Require full 6 digits
     if (otp.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -49,28 +48,25 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     setState(() => _isLoading = true);
 
     try {
-      final success = await _forgotPasswordService.verifyOtp(widget.email, otp);
+      final result = await _forgotPasswordService.verifyOtp(widget.email, otp);
 
-      if (success) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Xác thực OTP thành công"),
-              backgroundColor: Colors.green,
-            ),
-          );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result["message"]),
+            backgroundColor: result["success"] ? Colors.green : Colors.red,
+          ),
+        );
+      }
 
-          // Navigate to Reset Password page with email + otp
-          context.push(
-            "/reset-password",
-            extra: {"email": widget.email, "otp": otp},
-          );
-        }
-      } else {
-        throw Exception("OTP không hợp lệ");
+      if (result["success"]) {
+        // Navigate to Reset Password page
+        context.push(
+          "/reset-password",
+          extra: {"email": widget.email, "otp": otp},
+        );
       }
     } catch (e) {
-      // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

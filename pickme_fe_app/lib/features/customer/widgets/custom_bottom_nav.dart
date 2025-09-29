@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // Custom bottom navigation bar widget
 class CustomBottomNav extends StatelessWidget {
@@ -43,7 +44,17 @@ class CustomBottomNav extends StatelessWidget {
           final isSelected = selectedIndex == index;
 
           return GestureDetector(
-            onTap: () => onItemSelected(index), // notify parent
+            onTap: () {
+              onItemSelected(index);
+              // Navigate to different pages based on index
+              if (index == 2) {
+                context.goNamed("profile");
+              } else if (index == 1) {
+                context.goNamed("orders");
+              } else {
+                context.goNamed("home");
+              }
+            },
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

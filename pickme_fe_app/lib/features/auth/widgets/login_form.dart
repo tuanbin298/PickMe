@@ -22,7 +22,7 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController passwordController = TextEditingController();
 
   // Create instance object of LoginServices
-  final LoginServices loginServices = LoginServices();
+  final LoginServices _loginServices = LoginServices();
 
   // Release memory that controller stored
   @override
@@ -43,7 +43,10 @@ class _LoginFormState extends State<LoginForm> {
       });
 
       try {
-        final User? user = await loginServices.login(emailValue, passwordValue);
+        final User? user = await _loginServices.login(
+          emailValue,
+          passwordValue,
+        );
 
         // If user leave this screen then stop logic below
         if (!mounted) return;
@@ -60,7 +63,7 @@ class _LoginFormState extends State<LoginForm> {
           }
 
           if (user.role == "RESTAURANT_OWNER") {
-            context.go("/merchant-home-page");
+            context.go("/merchant-navigate");
           }
         } else {
           // Login failed

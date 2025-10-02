@@ -5,13 +5,17 @@ import 'package:pickme_fe_app/features/auth/screens/reset_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home_page.dart';
-import 'package:pickme_fe_app/features/merchant/screens/merchant_home_page.dart';
+import 'package:pickme_fe_app/features/merchant/screens/create_restaurant/create_restaurant_intro.dart';
+import 'package:pickme_fe_app/features/merchant/screens/create_restaurant/create_restaurant_page.dart';
+import 'package:pickme_fe_app/features/merchant/screens/merchant_navigate_page.dart';
+import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 
 // Router configuration for the application
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: "/login",
     routes: [
+      // ================= AUTH =================
       GoRoute(
         path: "/login",
         name: "login",
@@ -34,8 +38,29 @@ class AppRouter {
         path: "/otp",
         name: "otp",
         builder: (context, state) {
-          final email =
-              state.extra as String; // get email from ForgotPasswordPage
+          // get email from ForgotPasswordPage
+          final email = state.extra as String;
+          return OtpVerificationPage(email: email);
+        },
+      ),
+
+      GoRoute(
+        path: "/reset-password",
+        name: "reset-password",
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          final email = data["email"] as String;
+          final otp = data["otp"] as String;
+          return ResetPasswordPage(email: email, otp: otp);
+        },
+      ),
+
+      GoRoute(
+        path: "/otp",
+        name: "otp",
+        builder: (context, state) {
+          // get email from ForgotPasswordPage
+          final email = state.extra as String;
           return OtpVerificationPage(email: email);
         },
       ),
@@ -57,11 +82,25 @@ class AppRouter {
         builder: (context, state) => const Homepage(),
       ),
 
+      // ================= MERCHANT =================
       GoRoute(
-        path: "/merchant-home-page",
-        name: "merchant-home-page",
-        builder: (context, state) => const MerchantPage(),
+        path: "/merchant-navigate",
+        name: "merchant-navigate",
+        builder: (context, state) => const MerchantNavigatePage(),
+      ),
+
+      GoRoute(
+        path: "/merchant-intro",
+        name: "merchant-intro",
+        builder: (context, state) => const CreateRestaurantIntro(),
+      ),
+
+      GoRoute(
+        path: "/merchant-create-resaurant",
+        name: "merchant-create-resaurant",
+        builder: (context, state) => const CreateRestaurantPage(),
       ),
     ],
+    errorBuilder: (context, state) => const NotFoundPage(),
   );
 }

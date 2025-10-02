@@ -23,7 +23,13 @@ class LoginServices {
 
       // Save data into SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("user", jsonEncode(data));
+      await prefs.setString("email", jsonEncode(user.email));
+      await prefs.setString("fullName", jsonEncode(user.fullName));
+      await prefs.setString("id", jsonEncode(user.id));
+      await prefs.setString("imageUrl", jsonEncode(user.imageUrl));
+      await prefs.setString("role", jsonEncode(user.role));
+      await prefs.setString("phoneNumber", jsonEncode(user.phoneNumber));
+      await prefs.setString("token", user.token ?? "");
 
       return user;
     } else {

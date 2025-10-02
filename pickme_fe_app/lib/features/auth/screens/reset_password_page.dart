@@ -125,7 +125,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: const Color(0xffFC7A1F).withOpacity(0.1),
+                      color: const Color(0xffFC7A1F).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(

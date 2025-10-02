@@ -78,10 +78,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context), // Back button
+          onPressed: () => context.pop(), // Back button
         ),
         title: const Text(
-          "Forgot Password",
+          "Quên mật khẩu",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -107,7 +107,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: const Color(0xffFC7A1F).withOpacity(0.1),
+                      color: const Color(0xffFC7A1F).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(

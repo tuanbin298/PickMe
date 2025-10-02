@@ -59,8 +59,8 @@ class AppRouter {
         path: "/otp",
         name: "otp",
         builder: (context, state) {
-          final email =
-              state.extra as String; // get email from ForgotPasswordPage
+          // get email from ForgotPasswordPage
+          final email = state.extra as String;
           return OtpVerificationPage(email: email);
         },
       ),

@@ -56,6 +56,27 @@ class AppRouter {
       ),
 
       GoRoute(
+        path: "/otp",
+        name: "otp",
+        builder: (context, state) {
+          final email =
+              state.extra as String; // get email from ForgotPasswordPage
+          return OtpVerificationPage(email: email);
+        },
+      ),
+
+      GoRoute(
+        path: "/reset-password",
+        name: "reset-password",
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          final email = data["email"] as String;
+          final otp = data["otp"] as String;
+          return ResetPasswordPage(email: email, otp: otp);
+        },
+      ),
+
+      GoRoute(
         path: "/home-page",
         name: "home-page",
         builder: (context, state) => const Homepage(),

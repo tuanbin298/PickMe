@@ -81,7 +81,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           onPressed: () => Navigator.pop(context), // Back button
         ),
         title: const Text(
-          "Quên mật khẩu",
+          "Forgot Password",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -100,6 +100,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               children: [
                 const SizedBox(height: 40),
 
+                // Lock icon
                 // Lock icon
                 Center(
                   child: Container(
@@ -120,6 +121,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 32),
 
                 // Page title
+                // Page title
                 const Text(
                   "Thay đổi mật khẩu",
                   textAlign: TextAlign.center,
@@ -133,6 +135,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 12),
 
                 // Page description
+                // Page description
                 const Text(
                   "Vui lòng nhập địa chỉ email, chúng tôi sẽ gửi cho bạn mã OTP để Thay đổi mật khẩu",
                   textAlign: TextAlign.center,
@@ -145,6 +148,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 40),
 
+                // Email input field
                 // Email input field
                 TextFormField(
                   controller: _emailController,
@@ -171,7 +175,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Vui lòng nhập email';
+                      return 'Please enter your email';
                     }
                     if (!RegExp(
                       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
@@ -183,6 +187,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
                 const SizedBox(height: 32),
 
+                // Submit button
                 // Submit button
                 SizedBox(
                   width: double.infinity,
@@ -220,6 +225,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 16),
 
                 // Back to login link
+                // Back to login link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -232,7 +238,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         context.push("/login");
                       },
                       child: const Text(
-                        'Đăng nhập',
+                        'Login',
                         style: TextStyle(
                           color: Color(0xffEF9F27),
                           fontSize: 14,
@@ -245,6 +251,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 40),
 
+                // Additional help message
                 // Additional help message
                 Container(
                   padding: const EdgeInsets.all(16),

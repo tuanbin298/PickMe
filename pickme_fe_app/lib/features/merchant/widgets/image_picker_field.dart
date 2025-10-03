@@ -41,6 +41,9 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
+
+      // Call outside
+      widget.onImageSelected(File(pickedFile.path));
     }
   }
 
@@ -61,18 +64,23 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
         color: Colors.grey.shade100,
       ),
       child: _selectedImage == null
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.add_a_photo, size: 40, color: Colors.grey),
+          ? InkWell(
+              onTap: _pickImage,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                // UI when dont have photo
+                children: const [
+                  Icon(Icons.add_a_photo, size: 40, color: Colors.grey),
 
-                SizedBox(height: 8),
+                  SizedBox(height: 8),
 
-                Text("Thêm ảnh", style: TextStyle(color: Colors.grey)),
-              ],
+                  Text("Thêm ảnh", style: TextStyle(color: Colors.grey)),
+                ],
+              ),
             )
           : Stack(
               children: [
+                // UI when have photo
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.file(

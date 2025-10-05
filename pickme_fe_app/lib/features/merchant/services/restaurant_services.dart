@@ -8,7 +8,7 @@ class RestaurantServices {
 
   // Future - asynchronous
   Future<Restaurant?> getRestaurantsByOwner(String token) async {
-    final url = Uri.parse('$baseUrl/restaurants/owner');
+    final url = Uri.parse('$baseUrl/restaurants/my-restaurants');
 
     final response = await http.get(
       url,

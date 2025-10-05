@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/features/merchant/model/food_item.dart';
 
 class Restaurant {
-  final int? id;
   final String? name;
   final String? description;
   final String? address;
@@ -12,16 +10,9 @@ class Restaurant {
   final String? imageUrl;
   final TimeOfDay? openingTime;
   final TimeOfDay? closingTime;
-  final bool? isActive;
-  final double? averageRating;
-  final int? totalReviews;
-  final String? ownerName;
-  final List<FoodItem>? foodItems;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final List<String>? categories;
 
   Restaurant({
-    this.id,
     this.name,
     this.description,
     this.address,
@@ -31,19 +22,12 @@ class Restaurant {
     this.imageUrl,
     this.openingTime,
     this.closingTime,
-    this.isActive,
-    this.averageRating,
-    this.totalReviews,
-    this.ownerName,
-    this.foodItems,
-    this.createdAt,
-    this.updatedAt,
+    this.categories,
   });
 
   // Parse data from JSON into model
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
-      id: json['id'],
       name: json['name'],
       description: json['description'],
       address: json['address'],

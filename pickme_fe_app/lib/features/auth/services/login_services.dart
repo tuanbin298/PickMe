@@ -18,7 +18,8 @@ class LoginServices {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
       final user = User.fromJson(data);
 
       // Save data into SharedPreferences

@@ -14,6 +14,7 @@ import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: "/login",
+    debugLogDiagnostics: true, //console router
     routes: [
       // ================= AUTH =================
       GoRoute(

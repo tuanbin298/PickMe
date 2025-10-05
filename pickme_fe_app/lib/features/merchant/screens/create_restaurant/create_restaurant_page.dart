@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/image_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/information_form.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/time_picker_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateRestaurantPage extends StatefulWidget {
@@ -17,6 +18,11 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
   final _fullName = TextEditingController();
   final _phoneNumber = TextEditingController();
   final _email = TextEditingController();
+  final _restaurantName = TextEditingController();
+  final _description = TextEditingController();
+  final _address = TextEditingController();
+  TimeOfDay? _openingTime;
+  TimeOfDay? _closingTime;
 
   // Variable to store image, if dont have image = null
   File? _coverImage;
@@ -72,7 +78,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
           children: [
             // Get photo from gallery
             ImagePickerField(
-              height: 500,
+              height: 200,
               onImageSelected: (file) {
                 setState(() {
                   _coverImage = file;
@@ -82,7 +88,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
             const SizedBox(height: 20),
 
-            // Card information form
+            // Card information form - owner
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -128,6 +134,89 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                       icon: Icons.email,
                       controller: _email,
                       readOnly: true,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Card ìnormation form - restaurant
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Thông tin cửa hàng",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Information form - restaurant name
+                    InformationForm(
+                      label: "Tên cửa hàng",
+                      icon: Icons.store,
+                      controller: _restaurantName,
+                      readOnly: false,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Information form - restaurant description
+                    InformationForm(
+                      label: "Mô tả",
+                      icon: Icons.description,
+                      controller: _description,
+                      readOnly: false,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Information form - restaurant address
+                    InformationForm(
+                      label: "Địa chỉ",
+                      icon: Icons.location_on,
+                      controller: _address,
+                      readOnly: false,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Time picker - Open time - close time
+                    TimePickerField(
+                      label: "Giờ mở cửa",
+                      icon: Icons.lock_open,
+                      initialTime: _openingTime,
+                      readOnly: false,
+                      onTimeSelected: (time) {
+                        setState(() {
+                          _openingTime = time;
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    TimePickerField(
+                      label: "Giờ đóng cửa",
+                      icon: Icons.lock_clock,
+                      initialTime: _closingTime,
+                      readOnly: false,
+                      onTimeSelected: (time) {
+                        setState(() {
+                          _closingTime = time;
+                        });
+                      },
                     ),
                   ],
                 ),

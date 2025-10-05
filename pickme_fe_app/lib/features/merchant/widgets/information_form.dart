@@ -41,8 +41,6 @@ class _InformationFormState extends State<InformationForm> {
             ],
           ),
         ),
-        filled: true,
-        fillColor: Colors.grey[100],
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 12,

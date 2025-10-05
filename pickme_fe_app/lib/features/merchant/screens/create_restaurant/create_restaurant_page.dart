@@ -1,11 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/image_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/information_form.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/location_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/time_picker_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CreateRestaurantPage extends StatefulWidget {
   const CreateRestaurantPage({super.key});
@@ -23,12 +24,11 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
   final _address = TextEditingController();
   TimeOfDay? _openingTime;
   TimeOfDay? _closingTime;
+  double? _latitude;
+  double? _longitude;
 
   // Variable to store image, if dont have image = null
   File? _coverImage;
-
-  // Controller to get data from inputs
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -45,6 +45,10 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
       _phoneNumber.text = prefs.getString("phoneNumber") ?? "";
       _email.text = prefs.getString("email") ?? "";
     });
+  }
+
+  void _onConfirmPressed() {
+    return null;
   }
 
   @override
@@ -112,6 +116,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     InformationForm(
                       label: "Tên chủ quán",
                       icon: Icons.person,
+                      color: Colors.teal,
                       controller: _fullName,
                       readOnly: true,
                     ),
@@ -122,6 +127,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     InformationForm(
                       label: "Số điện thoại",
                       icon: Icons.phone,
+                      color: Colors.green,
                       controller: _phoneNumber,
                       readOnly: true,
                     ),
@@ -132,6 +138,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     InformationForm(
                       label: "Mail",
                       icon: Icons.email,
+                      color: Colors.deepOrange,
                       controller: _email,
                       readOnly: true,
                     ),
@@ -166,6 +173,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     InformationForm(
                       label: "Tên cửa hàng",
                       icon: Icons.store,
+                      color: Colors.orange,
                       controller: _restaurantName,
                       readOnly: false,
                     ),
@@ -176,6 +184,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     InformationForm(
                       label: "Mô tả",
                       icon: Icons.description,
+                      color: Colors.indigo,
                       controller: _description,
                       readOnly: false,
                     ),
@@ -186,6 +195,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     InformationForm(
                       label: "Địa chỉ",
                       icon: Icons.location_on,
+                      color: Colors.redAccent,
                       controller: _address,
                       readOnly: false,
                     ),
@@ -196,6 +206,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     TimePickerField(
                       label: "Giờ mở cửa",
                       icon: Icons.lock_open,
+                      color: Colors.green,
                       initialTime: _openingTime,
                       readOnly: false,
                       onTimeSelected: (time) {
@@ -210,6 +221,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     TimePickerField(
                       label: "Giờ đóng cửa",
                       icon: Icons.lock_clock,
+                      color: Colors.deepOrange,
                       initialTime: _closingTime,
                       readOnly: false,
                       onTimeSelected: (time) {
@@ -218,7 +230,45 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                         });
                       },
                     ),
+
+                    const SizedBox(height: 16),
+
+                    // Location
+                    LocationPickerField(
+                      latitude: _latitude,
+                      longitude: _longitude,
+                      onLocationSelected: (object) {
+                        setState(() {
+                          _latitude = object["latitude"];
+                          _longitude = object["longitude"];
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
                   ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Button "xác nhận"
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _onConfirmPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  "Xác nhận",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

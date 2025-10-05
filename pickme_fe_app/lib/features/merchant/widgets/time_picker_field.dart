@@ -5,11 +5,13 @@ class TimePickerField extends StatefulWidget {
   final IconData icon;
   final TimeOfDay? initialTime;
   final ValueChanged<TimeOfDay> onTimeSelected;
+  final Color? color;
   final bool readOnly;
 
   const TimePickerField({
     super.key,
     this.initialTime,
+    this.color,
     required this.label,
     required this.icon,
     required this.onTimeSelected,
@@ -129,7 +131,7 @@ class _TimePickerFieldState extends State<TimePickerField> {
               ],
             ),
           ),
-          prefixIcon: Icon(widget.icon, color: Colors.grey),
+          prefixIcon: Icon(widget.icon, color: widget.color),
           suffixIcon: const Icon(Icons.access_time),
           contentPadding: const EdgeInsets.symmetric(
             vertical: 16,

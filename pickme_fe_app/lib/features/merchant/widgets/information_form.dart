@@ -4,12 +4,14 @@ class InformationForm extends StatefulWidget {
   final String label;
   final IconData icon;
   final TextEditingController? controller;
+  final Color? color;
   final bool readOnly;
 
   const InformationForm({
     super.key,
     required this.label,
     this.controller,
+    this.color,
     required this.icon,
     required this.readOnly,
   });
@@ -59,7 +61,7 @@ class _InformationFormState extends State<InformationForm> {
         ),
 
         // Icon
-        prefixIcon: Icon(widget.icon, color: Colors.grey),
+        prefixIcon: Icon(widget.icon, color: widget.color),
       ),
 
       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),

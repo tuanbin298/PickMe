@@ -114,7 +114,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: selectedRole == 'CUSTOMER'
-                                ? AppColors.primary.withOpacity(0.1)
+                                ? AppColors.primary.withValues(alpha: 0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
@@ -162,7 +162,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: selectedRole == 'RESTAURANT_OWNER'
-                                ? AppColors.primary.withOpacity(0.1)
+                                ? AppColors.primary.withValues(alpha: 0.1)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(

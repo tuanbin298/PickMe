@@ -90,12 +90,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     return Scaffold(
       backgroundColor: Colors.white,
 
+      // AppBar
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context), // Back button
+          onPressed: () => context.pop(), // Back button
         ),
         title: const Text(
           "Thay đổi mật khẩu",
@@ -124,7 +125,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: const Color(0xffFC7A1F).withOpacity(0.1),
+                      color: const Color(0xffFC7A1F).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(

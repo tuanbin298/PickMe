@@ -18,12 +18,19 @@ class LoginServices {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
       final user = User.fromJson(data);
 
       // Save data into SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("user", jsonEncode(data));
+      await prefs.setString("email", user.email ?? "");
+      await prefs.setString("fullName", user.fullName ?? "");
+      await prefs.setString("id", jsonEncode(user.id));
+      await prefs.setString("imageUrl", jsonEncode(user.imageUrl));
+      await prefs.setString("role", user.role ?? "");
+      await prefs.setString("phoneNumber", user.phoneNumber ?? "");
+      await prefs.setString("token", user.token ?? "");
 
       return user;
     } else {

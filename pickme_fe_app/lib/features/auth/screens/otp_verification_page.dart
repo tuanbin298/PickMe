@@ -124,7 +124,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         title: const Text(
           "Xác thực OTP",
@@ -152,7 +152,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: const Color(0xffFC7A1F).withOpacity(0.1),
+                    color: const Color(0xffFC7A1F)..withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

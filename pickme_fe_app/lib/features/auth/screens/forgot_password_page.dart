@@ -78,7 +78,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context), // Back button
+          onPressed: () => context.pop(), // Back button
         ),
         title: const Text(
           "Quên mật khẩu",
@@ -101,12 +101,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 40),
 
                 // Lock icon
+                // Lock icon
                 Center(
                   child: Container(
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: const Color(0xffFC7A1F).withOpacity(0.1),
+                      color: const Color(0xffFC7A1F).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -119,6 +120,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 32),
 
+                // Page title
                 // Page title
                 const Text(
                   "Thay đổi mật khẩu",
@@ -133,6 +135,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 12),
 
                 // Page description
+                // Page description
                 const Text(
                   "Vui lòng nhập địa chỉ email, chúng tôi sẽ gửi cho bạn mã OTP để Thay đổi mật khẩu",
                   textAlign: TextAlign.center,
@@ -145,6 +148,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 40),
 
+                // Email input field
                 // Email input field
                 TextFormField(
                   controller: _emailController,
@@ -184,6 +188,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 32),
 
                 // Submit button
+                // Submit button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -220,6 +225,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 const SizedBox(height: 16),
 
                 // Back to login link
+                // Back to login link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -245,6 +251,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 const SizedBox(height: 40),
 
+                // Additional help message
                 // Additional help message
                 Container(
                   padding: const EdgeInsets.all(16),

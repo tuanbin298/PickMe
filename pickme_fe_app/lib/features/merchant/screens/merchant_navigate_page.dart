@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
-import 'package:pickme_fe_app/features/merchant/services/restaurant_services.dart';
+import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantNavigatePage extends StatefulWidget {

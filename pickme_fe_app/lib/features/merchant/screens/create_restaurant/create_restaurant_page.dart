@@ -90,6 +90,8 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
       selectedCategories: _selectedCategories,
     );
 
+    if (!isValid) return;
+
     // Get token
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -134,6 +136,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
     } catch (e) {
       if (!mounted) return;
       final message = e.toString().replaceFirst("Exception: ", "");
+      NotificationService.showError(context, message);
     } finally {
       if (mounted) {
         setState(() => isLoading = false);

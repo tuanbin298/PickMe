@@ -6,7 +6,7 @@ import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
 class RestaurantServices {
   final String baseUrl = dotenv.env['API_URL'] ?? '';
 
-  // Future - asynchronous
+  // Future - asynchronous getRestaurantsByOwner
   Future<Restaurant?> getRestaurantsByOwner(String token) async {
     final url = Uri.parse('$baseUrl/restaurants/my-restaurants');
 
@@ -38,6 +38,38 @@ class RestaurantServices {
       // Handle error
       // ignore: avoid_print
       print('Lỗi tải cửa hàng: ${response.statusCode}');
+      return null;
+    }
+  }
+
+  // Future - asynchronous createRestaurantsByOwner
+  Future<Restaurant?> createRestaurantsByOwner(
+    String token,
+    Map<String, dynamic> restaurantData,
+  ) async {
+    final url = Uri.parse('$baseUrl/restaurants');
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+
+      body: jsonEncode(restaurantData),
+    );
+
+    if (response.statusCode == 200) {
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      final restaurant = Restaurant.fromJson(data);
+
+      return restaurant;
+    } else {
+      // Handle error
+      // ignore: avoid_print
+      print('Tạo cửa hàng thất bại: ${response.statusCode}');
       return null;
     }
   }

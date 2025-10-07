@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
-import 'package:pickme_fe_app/features/auth/services/forgot_password_service.dart';
+import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -16,8 +16,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       TextEditingController(); // Controller for email input
   bool _isLoading = false; // Track loading state
 
-  final ForgotPasswordService _forgotPasswordService =
-      ForgotPasswordService(); // Service to handle API
+  final UserServices userServices = UserServices(); // Service to handle API
 
   @override
   void dispose() {
@@ -32,9 +31,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     setState(() => _isLoading = true);
 
     try {
-      final success = await _forgotPasswordService.sendOtp(
-        _emailController.text.trim(),
-      );
+      final success = await userServices.sendOtp(_emailController.text.trim());
 
       if (success) {
         if (mounted) {

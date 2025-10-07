@@ -25,11 +25,11 @@ class TimePickerField extends StatefulWidget {
 class _TimePickerFieldState extends State<TimePickerField> {
   TimeOfDay? _selectedTime;
 
-  // Assign TimeOfDay.now() to _selectedTime when init screen
+  // Assign TimeOfDay(hour: 0, minute: 0) to _selectedTime when init screen
   @override
   void initState() {
     super.initState();
-    _selectedTime = TimeOfDay.now();
+    _selectedTime = TimeOfDay(hour: 0, minute: 0);
   }
 
   // Method to display clock and get time

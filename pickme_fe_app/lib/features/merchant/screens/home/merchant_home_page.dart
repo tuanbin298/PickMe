@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MerchantPage extends StatefulWidget {
-  const MerchantPage({super.key});
+class MerchantHomePage extends StatefulWidget {
+  const MerchantHomePage({super.key});
 
   @override
-  State<MerchantPage> createState() => _MerchantPageState();
+  State<MerchantHomePage> createState() => _MerchantHomePageState();
 }
 
-class _MerchantPageState extends State<MerchantPage> {
+class _MerchantHomePageState extends State<MerchantHomePage> {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(

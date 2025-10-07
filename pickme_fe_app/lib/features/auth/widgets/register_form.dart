@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
-import 'package:pickme_fe_app/features/auth/services/register_services.dart';
 import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
+import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -28,7 +28,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final confirmPasswordController = TextEditingController();
 
   // Create instance object of RegisterServices
-  final RegisterServices registerServices = RegisterServices();
+  final UserServices userServices = UserServices();
 
   // Method register
   Future<void> handleRegister() async {
@@ -48,7 +48,7 @@ class _RegisterFormState extends State<RegisterForm> {
       "role": selectedRole,
     };
     try {
-      final User? registeredUser = await registerServices.register(newUser);
+      final User? registeredUser = await userServices.register(newUser);
 
       // If user leave this screen then stop logic below
       if (!mounted) return;

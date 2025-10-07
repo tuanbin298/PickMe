@@ -7,6 +7,7 @@ import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/create_restaurant/create_restaurant_intro.dart';
 import 'package:pickme_fe_app/features/merchant/screens/create_restaurant/create_restaurant_page.dart';
+import 'package:pickme_fe_app/features/merchant/screens/home/merchant_home_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant_navigate_page.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 
@@ -79,6 +80,12 @@ class AppRouter {
         path: "/merchant-create-resaurant",
         name: "merchant-create-resaurant",
         builder: (context, state) => const CreateRestaurantPage(),
+      ),
+
+      GoRoute(
+        path: "/merchant-homepage",
+        name: "merchant-homepage",
+        builder: (context, state) => const MerchantHomePage(),
       ),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),

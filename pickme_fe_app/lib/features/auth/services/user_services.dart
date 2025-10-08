@@ -86,7 +86,7 @@ class UserServices {
   }
 
   /// Verify OTP
-  Future<bool> verifyOtp(String email, String otp) async {
+  Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
     final url = Uri.parse('$baseUrl/auth/verify-otp');
     final response = await http.post(
       url,
@@ -94,7 +94,20 @@ class UserServices {
       body: jsonEncode({"email": email, "otp": otp}),
     );
 
-    return response.statusCode == 200;
+    final decodedBody = utf8.decode(response.bodyBytes);
+    final data = jsonDecode(decodedBody);
+
+    if (response.statusCode == 200) {
+      return {
+        "success": true,
+        "message": data["message"] ?? "Xác thực OTP thành công",
+      };
+    } else {
+      return {
+        "success": false,
+        "message": data["message"] ?? "OTP không hợp lệ",
+      };
+    }
   }
 
   /// Reset Password with OTP

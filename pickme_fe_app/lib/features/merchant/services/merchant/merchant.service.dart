@@ -24,6 +24,8 @@ class MerchantService {
       // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
       final data = jsonDecode(utf8.decode(response.bodyBytes));
       final user = User.fromJson(data);
+
+      return user;
     } else {
       // Handle error
       // ignore: avoid_print

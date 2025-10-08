@@ -48,7 +48,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     setState(() => _isLoading = true);
 
     try {
-      final result = await _forgotPasswordService.verifyOtp(widget.email, otp);
+      final result = await userServices.verifyOtp(widget.email, otp);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

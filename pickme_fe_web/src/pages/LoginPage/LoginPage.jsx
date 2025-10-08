@@ -12,62 +12,43 @@ import {
   TextField,
 } from "@mui/material";
 import authService from "../../../services/auth/authService";
+import ForgotPasswordModal from "../../components/Admin/ForgotPasswordModal";
 
 export default function LoginPage() {
-  // State
   const navigate = useNavigate();
-  const [input, setInput] = useState({
-    email: "",
-    password: "",
-  });
+  const [input, setInput] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isForgotOpen, setIsForgotOpen] = useState(false); // modal state
 
-  // Function change state of input
   const handleInputChange = (e) => {
-    // Name of input, value of input
     const { name, value } = e.target;
-    setInput({
-      ...input,
-      [name]: value,
-    });
+    setInput({ ...input, [name]: value });
 
-    // Validate input
     let newErrors = { ...errors };
-
     if (name === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       newErrors.email = emailRegex.test(value) ? "" : "Email không hợp lệ!";
     }
-
     if (name === "password") {
       newErrors.password =
         value.length >= 6 ? "" : "Mật khẩu phải có ít nhất 6 ký tự!";
     }
-
     setErrors(newErrors);
   };
 
-  // Logic submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check for validation errors
     if (Object.values(errors).some((error) => error)) {
       toast.error("Vui lòng kiểm tra lại thông tin!");
       return;
     }
 
     setLoading(true);
-
-    // Call API
     try {
       const data = await authService.login(input.email, input.password);
-
       window.dispatchEvent(new Event("login-status-changed"));
-
-      // Save data to localStorage
       localStorage.setItem("sessionToken", data.token);
       localStorage.setItem("id", data.id);
       localStorage.setItem("email", data.email);
@@ -92,99 +73,92 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center 
-                bg-gradient-to-br from-orange-500 via-orange-400 to-orange-600 px-4"
-    >
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-500 via-orange-400 to-orange-600 px-4">
       <div className="flex w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden">
         {/* Left: Form */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-          <h2 className="text-orange-500 font-extrabold text-4xl font-bold text-center">
+          <h2 className="text-orange-500 font-extrabold text-4xl font-bold text-center mb-6">
             PickMe
           </h2>
 
-          {/* Form */}
-          <form className="space-y-6 p-6" onSubmit={handleSubmit}>
-            {/* Email */}
-            <div>
-              <TextField
-                fullWidth
-                label="Email"
-                type="email"
-                variant="outlined"
-                color="warning"
-                name="email"
-                value={input.email}
-                onChange={handleInputChange}
-                error={errors.email}
-                helperText={errors.email}
-                InputProps={{ className: "rounded-xl" }}
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              variant="outlined"
+              color="warning"
+              name="email"
+              value={input.email}
+              onChange={handleInputChange}
+              error={errors.email}
+              helperText={errors.email}
+              InputProps={{ className: "rounded-xl" }}
+            />
 
-            {/* Password */}
-            <div>
-              <TextField
-                fullWidth
-                label="Mật khẩu"
-                name="password"
-                value={input.password}
-                onChange={handleInputChange}
-                error={errors.password}
-                helperText={errors.password}
-                type={showPassword ? "text" : "password"}
-                variant="outlined"
-                color="warning"
-                InputProps={{
-                  className: "rounded-xl",
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword((show) => !show)}
-                        edge="end"
-                      >
-                        {showPassword ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </div>
+            <TextField
+              fullWidth
+              label="Mật khẩu"
+              name="password"
+              value={input.password}
+              onChange={handleInputChange}
+              error={errors.password}
+              helperText={errors.password}
+              type={showPassword ? "text" : "password"}
+              variant="outlined"
+              color="warning"
+              InputProps={{
+                className: "rounded-xl",
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((show) => !show)}
+                      edge="end"
+                    >
+                      {showPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-            <div>
-              <Button
-                disabled={loading}
-                fullWidth
-                variant="contained"
-                color="warning"
-                size="large"
-                sx={{
-                  py: 1.5,
-                  fontSize: "1rem",
-                  borderRadius: "12px",
-                  fontWeight: 600,
-                  textTransform: "none",
-                }}
-                type="submit"
-              >
-                {loading ? (
-                  <>
-                    <CircularProgress
-                      size={16}
-                      sx={{ color: "white", mr: 1 }}
-                    />
-                    <span>Đang đăng nhập...</span>
-                  </>
-                ) : (
-                  "Đăng nhập"
-                )}
-              </Button>
-            </div>
+            <Button
+              disabled={loading}
+              fullWidth
+              variant="contained"
+              color="warning"
+              size="large"
+              sx={{
+                py: 1.5,
+                fontSize: "1rem",
+                borderRadius: "12px",
+                fontWeight: 600,
+                textTransform: "none",
+              }}
+              type="submit"
+            >
+              {loading ? (
+                <>
+                  <CircularProgress size={16} sx={{ color: "white", mr: 1 }} />
+                  <span>Đang đăng nhập...</span>
+                </>
+              ) : (
+                "Đăng nhập"
+              )}
+            </Button>
           </form>
+
+          {/* Forgot password */}
+          <p
+            className="mt-4 text-sm text-right text-orange-500 hover:underline cursor-pointer"
+            onClick={() => setIsForgotOpen(true)}
+          >
+            Quên mật khẩu?
+          </p>
         </div>
 
         {/* Right: Image */}
@@ -192,6 +166,12 @@ export default function LoginPage() {
           <img src={images.loginImage} className="h-full w-full object-cover" />
         </div>
       </div>
+
+      {/* Modal */}
+      <ForgotPasswordModal
+        isOpen={isForgotOpen}
+        onClose={() => setIsForgotOpen(false)}
+      />
     </div>
   );
 }

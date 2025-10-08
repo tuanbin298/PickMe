@@ -1,158 +1,332 @@
+import { DataGrid } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
 import {
+  Chip,
   Box,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Modal,
   Paper,
   Typography,
+  TextField,
+  Divider,
+  Stack,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import {
+  CheckCircle,
+  Close,
+  Info,
+  Block,
+  Visibility,
+  LocationOn,
+} from "@mui/icons-material";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import restaurantService from "../../../../services/restaurant/restaurantService";
 
 export default function RestaurantTable({ searchKeyword, statusFilter }) {
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurantsData, setRestaurantsData] = useState([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
-  // Demo data (sau này bạn sẽ gọi API)
-  const mockData = [
+  const token = localStorage.getItem("sessionToken");
+
+  const fetchRestaurants = async () => {
+    try {
+      const data = await restaurantService.getPendingRestaurants(token);
+      setRestaurantsData(data);
+    } catch (error) {
+      console.error("Lỗi tải quán ăn:", error);
+      setRestaurantsData([]);
+      toast.error("Lỗi tải danh sách quán ăn");
+    }
+  };
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const handleView = (restaurant) => {
+    setSelectedRestaurant(restaurant);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedRestaurant(null);
+    setRejectReason("");
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await restaurantService.approveRestaurant(id, token);
+      toast.success("Duyệt quán thành công");
+      fetchRestaurants();
+      handleCloseModal();
+    } catch (error) {
+      toast.error("Lỗi khi duyệt quán");
+      console.error(error);
+    }
+  };
+
+  const handleReject = async (id) => {
+    if (!rejectReason.trim()) {
+      toast.warning("Vui lòng nhập lý do từ chối");
+      return;
+    }
+    try {
+      await restaurantService.rejectRestaurant(id, rejectReason, token);
+      toast.success("Từ chối quán thành công");
+      fetchRestaurants();
+      handleCloseModal();
+    } catch (error) {
+      toast.error("Lỗi khi từ chối quán");
+      console.error(error);
+    }
+  };
+
+  const filteredRestaurants = restaurantsData.filter((r) => {
+    const matchName = r.name
+      .toLowerCase()
+      .includes(searchKeyword.toLowerCase());
+    const matchStatus = statusFilter ? r.approvalStatus === statusFilter : true;
+    return matchName && matchStatus;
+  });
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 90 },
+    { field: "name", headerName: "Tên quán ăn", flex: 1 },
+    { field: "ownerName", headerName: "Chủ sở hữu", flex: 1 },
+    { field: "phoneNumber", headerName: "Số điện thoại", flex: 1 },
     {
-      id: 1,
-      name: "Quán Ăn Ngon Hà Nội",
-      owner: "Nguyễn Văn A",
-      status: "PENDING",
-      phone: "0912345678",
+      field: "approvalStatus",
+      headerName: "Trạng thái",
+      flex: 1,
+      renderCell: (params) => {
+        const colors = {
+          PENDING: "warning",
+          APPROVED: "success",
+          REJECTED: "error",
+        };
+        const labels = {
+          PENDING: "Đang chờ duyệt",
+          APPROVED: "Đã duyệt",
+          REJECTED: "Bị từ chối",
+        };
+        return (
+          <Chip
+            label={labels[params.value]}
+            color={colors[params.value]}
+            size="small"
+          />
+        );
+      },
     },
     {
-      id: 2,
-      name: "Nhà hàng Sài Gòn",
-      owner: "Trần Thị B",
-      status: "APPROVED",
-      phone: "0987654321",
-    },
-    {
-      id: 3,
-      name: "Ẩm thực Miền Trung",
-      owner: "Phạm Văn C",
-      status: "REJECTED",
-      phone: "0901122334",
+      field: "actions",
+      headerName: "Hành động",
+      flex: 1.2,
+      sortable: false,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center", // căn giữa ngang
+            alignItems: "center", // căn giữa dọc
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <Button
+            size="small"
+            variant="outlined"
+            color="info"
+            startIcon={<Visibility />}
+            onClick={() => handleView(params.row)}
+          >
+            Xem
+          </Button>
+        </Box>
+      ),
     },
   ];
 
-  useEffect(() => {
-    // Lọc dữ liệu theo từ khóa và trạng thái
-    let filtered = mockData;
-
-    if (searchKeyword) {
-      filtered = filtered.filter((item) =>
-        item.name.toLowerCase().includes(searchKeyword.toLowerCase())
-      );
-    }
-
-    if (statusFilter) {
-      filtered = filtered.filter((item) => item.status === statusFilter);
-    }
-
-    setRestaurants(filtered);
-  }, [searchKeyword, statusFilter]);
-
-  const handleApprove = (id) => {
-    alert(`✅ Đã duyệt quán ăn ID: ${id}`);
-  };
-
-  const handleReject = (id) => {
-    alert(`❌ Đã từ chối quán ăn ID: ${id}`);
-  };
-
-  const handleView = (id) => {
-    alert(`📄 Xem hồ sơ quán ăn ID: ${id}`);
-  };
-
   return (
-    <TableContainer component={Paper} sx={{ mt: 3, borderRadius: 3 }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Tên quán ăn</TableCell>
-            <TableCell>Chủ sở hữu</TableCell>
-            <TableCell>Số điện thoại</TableCell>
-            <TableCell>Trạng thái</TableCell>
-            <TableCell align="center">Hành động</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {restaurants.map((r) => (
-            <TableRow key={r.id}>
-              <TableCell>{r.id}</TableCell>
-              <TableCell>{r.name}</TableCell>
-              <TableCell>{r.owner}</TableCell>
-              <TableCell>{r.phone}</TableCell>
-              <TableCell>
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    color:
-                      r.status === "APPROVED"
-                        ? "green"
-                        : r.status === "REJECTED"
-                        ? "red"
-                        : "orange",
-                  }}
-                >
-                  {r.status === "PENDING"
-                    ? "Đang chờ duyệt"
-                    : r.status === "APPROVED"
-                    ? "Đã duyệt"
-                    : "Bị từ chối"}
+    <>
+      <ToastContainer position="top-right" autoClose={2000} />
+      <Box sx={{ height: 520, width: "100%", mt: 2 }}>
+        <DataGrid
+          rows={filteredRestaurants}
+          columns={columns}
+          pageSizeOptions={[5, 10]}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 5, page: 0 } },
+          }}
+        />
+      </Box>
+
+      {/* Modal chi tiết */}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Paper
+          elevation={6}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            maxHeight: "90vh",
+            overflowY: "auto",
+            p: 3,
+            borderRadius: 3,
+          }}
+        >
+          {selectedRestaurant && (
+            <>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                <Info sx={{ mr: 1, color: "primary.main" }} />
+                Hồ sơ quán ăn
+              </Typography>
+
+              <Divider sx={{ mb: 2 }} />
+
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {selectedRestaurant.name}
                 </Typography>
-              </TableCell>
-              <TableCell align="center">
-                <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
+                <Typography variant="body2" color="text.secondary">
+                  {selectedRestaurant.address}
+                </Typography>
+
+                {/* 🗺️ Xem vị trí trên Google Maps */}
+                <Stack direction="row" spacing={1} alignItems="center" mt={1}>
+                  <LocationOn color="error" />
                   <Button
+                    variant="text"
+                    color="primary"
                     size="small"
-                    variant="outlined"
-                    color="info"
-                    onClick={() => handleView(r.id)}
+                    sx={{ textTransform: "none", p: 0 }}
+                    href={`https://www.google.com/maps?q=${selectedRestaurant.latitude},${selectedRestaurant.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    Xem hồ sơ
+                    Xem trên Google Maps
                   </Button>
+                </Stack>
 
-                  {r.status === "PENDING" && (
-                    <>
-                      <Button
-                        size="small"
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleApprove(r.id)}
-                      >
-                        Duyệt
-                      </Button>
-                      <Button
-                        size="small"
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleReject(r.id)}
-                      >
-                        Từ chối
-                      </Button>
-                    </>
-                  )}
+                <Stack spacing={0.5} mt={2}>
+                  <Typography>
+                    <strong>Chủ sở hữu:</strong> {selectedRestaurant.ownerName}
+                  </Typography>
+                  <Typography>
+                    <strong>Số điện thoại:</strong>{" "}
+                    {selectedRestaurant.phoneNumber}
+                  </Typography>
+                  <Typography>
+                    <strong>Email:</strong> {selectedRestaurant.email}
+                  </Typography>
+                  <Typography>
+                    <strong>Trạng thái:</strong>{" "}
+                    <Chip
+                      label={
+                        selectedRestaurant.approvalStatus === "PENDING"
+                          ? "Đang chờ duyệt"
+                          : selectedRestaurant.approvalStatus === "APPROVED"
+                          ? "Đã duyệt"
+                          : "Bị từ chối"
+                      }
+                      color={
+                        selectedRestaurant.approvalStatus === "APPROVED"
+                          ? "success"
+                          : selectedRestaurant.approvalStatus === "REJECTED"
+                          ? "error"
+                          : "warning"
+                      }
+                      size="small"
+                      sx={{ ml: 1 }}
+                    />
+                  </Typography>
+                </Stack>
+
+                {selectedRestaurant.description && (
+                  <Box mt={2}>
+                    <Typography fontWeight="bold">Mô tả:</Typography>
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      {selectedRestaurant.description}
+                    </Typography>
+                  </Box>
+                )}
+
+                {selectedRestaurant.imageUrl && (
+                  <Box
+                    component="img"
+                    src={selectedRestaurant.imageUrl}
+                    alt={selectedRestaurant.name}
+                    sx={{
+                      width: "100%",
+                      mt: 2,
+                      borderRadius: 2,
+                      boxShadow: 1,
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
+              </Box>
+
+              {/* Lý do từ chối + nút thao tác */}
+              {selectedRestaurant.approvalStatus === "PENDING" && (
+                <Box mt={3}>
+                  <TextField
+                    label="Nhập lý do từ chối"
+                    fullWidth
+                    multiline
+                    rows={2}
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                  />
+                  <Stack
+                    direction="row"
+                    spacing={1.5}
+                    justifyContent="flex-end"
+                    mt={2}
+                  >
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleReject(selectedRestaurant.id)}
+                    >
+                      Từ chối
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() => handleApprove(selectedRestaurant.id)}
+                    >
+                      Chấp nhận
+                    </Button>
+                    <Button variant="outlined" onClick={handleCloseModal}>
+                      Hủy
+                    </Button>
+                  </Stack>
                 </Box>
-              </TableCell>
-            </TableRow>
-          ))}
+              )}
 
-          {restaurants.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={6} align="center">
-                Không có dữ liệu phù hợp
-              </TableCell>
-            </TableRow>
+              {selectedRestaurant.approvalStatus !== "PENDING" && (
+                <Box mt={3} textAlign="right">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleCloseModal}
+                  >
+                    Đóng
+                  </Button>
+                </Box>
+              )}
+            </>
           )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+        </Paper>
+      </Modal>
+    </>
   );
 }

@@ -5,15 +5,11 @@ import 'package:pickme_fe_app/features/auth/screens/reset_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home_page.dart';
-<<<<<<< HEAD
-import 'package:pickme_fe_app/features/customer/screens/profile_page.dart';
-import 'package:pickme_fe_app/features/merchant/screens/merchant_home_page.dart';
-=======
 import 'package:pickme_fe_app/features/merchant/screens/create_restaurant/create_restaurant_intro.dart';
 import 'package:pickme_fe_app/features/merchant/screens/create_restaurant/create_restaurant_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant_navigate_page.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
->>>>>>> 15cd14b8795497b13d745a161a6fc37ed81390b5
 
 // Router configuration for the application
 class AppRouter {
@@ -67,19 +63,14 @@ class AppRouter {
         builder: (context, state) => const Homepage(),
       ),
 
-      // ================= MERCHANT =================
       GoRoute(
-<<<<<<< HEAD
         path: "/profile",
         name: "profile",
         builder: (context, state) => const ProfilePage(),
       ),
 
+      // ================= MERCHANT =================
       GoRoute(
-        path: "/merchant-home-page",
-        name: "merchant-home-page",
-        builder: (context, state) => const MerchantPage(),
-=======
         path: "/merchant-navigate",
         name: "merchant-navigate",
         builder: (context, state) => const MerchantNavigatePage(),
@@ -95,7 +86,6 @@ class AppRouter {
         path: "/merchant-create-resaurant",
         name: "merchant-create-resaurant",
         builder: (context, state) => const CreateRestaurantPage(),
->>>>>>> 15cd14b8795497b13d745a161a6fc37ed81390b5
       ),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),

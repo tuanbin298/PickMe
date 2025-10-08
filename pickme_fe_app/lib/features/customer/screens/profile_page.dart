@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile_header.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile_menu_item.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile_notification_tile.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
-import 'package:pickme_fe_app/features/auth/services/forgot_password_service.dart';
+import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String email;
@@ -17,7 +17,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   final _focusNodes = List.generate(6, (_) => FocusNode());
   bool _isLoading = false;
 
-  final ForgotPasswordService _forgotPasswordService = ForgotPasswordService();
+  final UserServices userServices = UserServices();
 
   @override
   void dispose() {
@@ -247,7 +247,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   GestureDetector(
                     onTap: () async {
                       try {
-                        await _forgotPasswordService.sendOtp(widget.email);
+                        await userServices.sendOtp(widget.email);
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(

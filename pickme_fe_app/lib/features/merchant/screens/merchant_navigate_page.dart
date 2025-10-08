@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
-import 'package:pickme_fe_app/features/merchant/services/restaurant_services.dart';
+import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantNavigatePage extends StatefulWidget {
@@ -16,31 +16,32 @@ class _MerchantNavigatePageState extends State<MerchantNavigatePage> {
   final RestaurantServices _restaurantServices = RestaurantServices();
 
   // Init variable
-  Future<Restaurant?>? _futureRestaurant;
+  Future<List<Restaurant>>? _futureRestaurants;
 
   // Store data from _loadRestaurant into variable
   @override
   void initState() {
     super.initState();
-    _futureRestaurant = _loadRestaurant();
+    _futureRestaurants = _loadRestaurants();
   }
 
   // Method get restaurant data from services
-  Future<Restaurant?> _loadRestaurant() async {
+  Future<List<Restaurant>> _loadRestaurants() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
-    if (token == null) return null;
+    if (token == null) return [];
 
-    return await _restaurantServices.getRestaurantsByOwner(token);
+    final restaurants = await _restaurantServices.getRestaurantsByOwner(token);
+    return restaurants;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // FutureBuilder: listen to state, render ui base on state
-      body: FutureBuilder<Restaurant?>(
-        future: _futureRestaurant,
+      body: FutureBuilder<List<Restaurant>>(
+        future: _futureRestaurants,
         builder: (context, snapshot) {
           // snapshot: contain current state of future
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -51,22 +52,22 @@ class _MerchantNavigatePageState extends State<MerchantNavigatePage> {
             return Center(child: Text("Có lỗi xảy ra: ${snapshot.error}"));
           }
 
-          // Navigate base on data of restaurant
-          if (snapshot.data != null) {
-            // WidgetsBinding.instance.addPostFrameCallback: navigate after next UI is rendered
-            // This prevents calling context.go() during the build phase
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.go("/merchant-intro");
-            });
+          final restaurants = snapshot.data ?? [];
 
-            return const SizedBox.shrink(); //If dont return not thing it will return SizedBox.shrink()
-          } else {
+          // Have restaurants
+          if (restaurants.isNotEmpty) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.go("/merchant-intro");
+              context.go("/merchant-homepage");
             });
-
-            return const SizedBox.shrink(); //If dont return not thing it will return SizedBox.shrink()
           }
+          // Dont have restaurants
+          else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.go("/merchant-intro");
+            });
+          }
+
+          return const SizedBox.shrink();
         },
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
-import 'package:pickme_fe_app/features/auth/services/login_services.dart';
+import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 
 class LoginForm extends StatefulWidget {
@@ -21,8 +21,8 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // Create instance object of LoginServices
-  final LoginServices _loginServices = LoginServices();
+  // Create instance object of UserServices
+  final UserServices userServices = UserServices();
 
   // Release memory that controller stored
   @override
@@ -43,10 +43,7 @@ class _LoginFormState extends State<LoginForm> {
       });
 
       try {
-        final User? user = await _loginServices.login(
-          emailValue,
-          passwordValue,
-        );
+        final User? user = await userServices.login(emailValue, passwordValue);
 
         // If user leave this screen then stop logic below
         if (!mounted) return;

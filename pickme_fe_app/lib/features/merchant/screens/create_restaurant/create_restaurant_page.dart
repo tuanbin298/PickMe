@@ -1,12 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pickme_fe_app/core/common_services/upload_image_cloudinary.dart';
+import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/features/merchant/services/restaurant/form_validator_service.dart';
+import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/categories_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/image_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/information_form.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/location_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/time_picker_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:geolocator/geolocator.dart';
 
 class CreateRestaurantPage extends StatefulWidget {
   const CreateRestaurantPage({super.key});
@@ -26,9 +31,28 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
   TimeOfDay? _closingTime;
   double? _latitude;
   double? _longitude;
+  List<String> _selectedCategories = [];
+  bool isLoading = false;
+
+  // Create instance object of UploadImageCloudinary
+  final UploadImageCloudinary _uploadImageCloudinary = UploadImageCloudinary();
+
+  // Create instance object of RestaurantServices
+  final RestaurantServices restaurantServices = RestaurantServices();
 
   // Variable to store image, if dont have image = null
   File? _coverImage;
+
+  // Variable for categories dropdown
+  final List<String> _allCategories = [
+    "Cafe",
+    "Trà sữa",
+    "Ăn vặt",
+    "Cơm trưa",
+    "Bánh ngọt",
+    "Đồ ăn chay",
+    "Đồ ăn sáng",
+  ];
 
   @override
   void initState() {
@@ -47,8 +71,77 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
     });
   }
 
-  void _onConfirmPressed() {
-    return null;
+  void _onConfirmPressed() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Check valid
+    final isValid = FormValidatorService.validateRestaurantForm(
+      context: context,
+      coverImage: _coverImage,
+      restaurantName: _restaurantName.text,
+      description: _description.text,
+      address: _address.text,
+      openingTime: _openingTime,
+      closingTime: _closingTime,
+      latitude: _latitude,
+      longitude: _longitude,
+      selectedCategories: _selectedCategories,
+    );
+
+    if (!isValid) return;
+
+    // Get token
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    // Upload image into cloudinary
+    String? imageUrl;
+    if (_coverImage != null) {
+      imageUrl = await _uploadImageCloudinary.uploadImage(_coverImage!);
+    }
+
+    final restaurantData = {
+      "name": _restaurantName.text,
+      "description": _description.text,
+      "address": _address.text,
+      "phoneNumber": _phoneNumber.text,
+      "email": _email.text,
+      "imageUrl": imageUrl,
+      "latitude": _latitude,
+      "longitude": _longitude,
+      "openingTime": "${_openingTime!.format(context)}:00",
+      "closingTime": "${_closingTime!.format(context)}:00",
+      "selectedCategories": _selectedCategories,
+    };
+
+    try {
+      final newRestaurant = await restaurantServices.createRestaurantsByOwner(
+        token!,
+        restaurantData,
+      );
+
+      if (!mounted) return;
+
+      if (newRestaurant != null) {
+        NotificationService.showSuccess(context, "Tạo cửa hàng thành công!");
+
+        await Future.delayed(const Duration(seconds: 1));
+
+        context.go("/merchant-homepage");
+      } else {
+        NotificationService.showSuccess(context, "Tạo cửa hàng thất bại!");
+      }
+    } catch (e) {
+      if (!mounted) return;
+      final message = e.toString().replaceFirst("Exception: ", "");
+      NotificationService.showError(context, message);
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
   }
 
   @override
@@ -149,7 +242,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
             const SizedBox(height: 20),
 
-            // Card ìnormation form - restaurant
+            // Card information form - restaurant
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -246,6 +339,17 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     ),
 
                     const SizedBox(height: 16),
+
+                    // Categories
+                    CategoriesPickerField(
+                      allCategories: _allCategories,
+                      selectedCategories: _selectedCategories,
+                      onCategoriesSelected: (cate) {
+                        setState(() {
+                          _selectedCategories = cate;
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -253,12 +357,12 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
             const SizedBox(height: 16),
 
-            // Button "xác nhận"
+            // Button "Đăng ký"
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: _onConfirmPressed,
+                onPressed: isLoading ? null : _onConfirmPressed,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -266,8 +370,8 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  "Xác nhận",
+                child: Text(
+                  isLoading ? "Đang đăng ký" : "Đăng ký",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),

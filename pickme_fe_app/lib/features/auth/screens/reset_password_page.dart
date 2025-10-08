@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
-import 'package:pickme_fe_app/features/auth/services/forgot_password_service.dart';
+import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final String email; // User email passed from previous screen
@@ -24,8 +24,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   bool _obscurePassword = true; // Toggle new password visibility
   bool _obscureConfirmPassword = true; // Toggle confirm password visibility
 
-  final ForgotPasswordService _forgotPasswordService =
-      ForgotPasswordService(); // Service for API call
+  final UserServices userServices = UserServices(); // Service for API call
 
   @override
   void dispose() {
@@ -41,7 +40,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     setState(() => _isLoading = true);
 
     try {
-      final isSuccess = await _forgotPasswordService.resetPassword(
+      final isSuccess = await userServices.resetPassword(
         widget.email,
         widget.otp,
         _passwordController.text.trim(),

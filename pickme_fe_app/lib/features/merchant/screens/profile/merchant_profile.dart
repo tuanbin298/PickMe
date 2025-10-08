@@ -52,7 +52,7 @@ class _MerchantProfileState extends State<MerchantProfile> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit_outlined, color: Colors.orange),
+            icon: const Icon(Icons.edit_outlined, color: Colors.white),
             onPressed: () {},
           ),
         ],

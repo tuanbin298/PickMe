@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/features/merchant/screens/profile/merchant_profile.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant_list/restaurant_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MerchantHomePage extends StatefulWidget {
@@ -44,7 +45,8 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
 
     // Screen list
     final List<Widget> _screens = [
-      const Center(child: Text('Danh sách nhà hàng')),
+      //Restaurant screen
+      RestaurantListPage(token: _token!),
 
       //Profile screen
       MerchantProfile(token: _token!),

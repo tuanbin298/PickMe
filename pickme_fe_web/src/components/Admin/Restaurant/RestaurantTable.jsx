@@ -33,7 +33,7 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
 
   const fetchRestaurants = async () => {
     try {
-      const data = await restaurantService.getPendingRestaurants(token);
+      const data = await restaurantService.getAllRestaurants(token);
       setRestaurantsData(data);
     } catch (error) {
       console.error("Lỗi tải quán ăn:", error);

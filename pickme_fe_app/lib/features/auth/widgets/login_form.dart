@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
 import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
+import 'package:pickme_fe_app/features/auth/services/auth_service.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -49,6 +50,8 @@ class _LoginFormState extends State<LoginForm> {
         if (!mounted) return;
 
         if (user != null) {
+          await AuthService.instance.saveToken(user.token);
+
           // Login successful
           NotificationService.showSuccess(
             context,

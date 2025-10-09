@@ -45,16 +45,21 @@ class CustomBottomNav extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              onItemSelected(index);
-              // Navigate to different pages based on index
+              if (index == selectedIndex) return; // tránh bấm lại tab hiện tại
+
+              // Điều hướng trước
               if (index == 2) {
                 context.goNamed("profile");
               } else if (index == 1) {
                 context.goNamed("orders");
               } else {
-                context.goNamed("home");
+                context.goNamed("home-page");
               }
+
+              // Cập nhật tab sau
+              onItemSelected(index);
             },
+
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

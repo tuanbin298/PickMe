@@ -11,19 +11,13 @@ import {
   Divider,
   Stack,
 } from "@mui/material";
-import {
-  CheckCircle,
-  Close,
-  Info,
-  Block,
-  Visibility,
-  LocationOn,
-} from "@mui/icons-material";
+import { Info, Visibility, LocationOn } from "@mui/icons-material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import restaurantService from "../../../../services/restaurant/restaurantService";
 
 export default function RestaurantTable({ searchKeyword, statusFilter }) {
+  // State
   const [restaurantsData, setRestaurantsData] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -31,18 +25,19 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
 
   const token = localStorage.getItem("sessionToken");
 
-  const fetchRestaurants = async () => {
-    try {
-      const data = await restaurantService.getAllRestaurants(token);
-      setRestaurantsData(data);
-    } catch (error) {
-      console.error("Lỗi tải quán ăn:", error);
-      setRestaurantsData([]);
-      toast.error("Lỗi tải danh sách quán ăn");
-    }
-  };
-
   useEffect(() => {
+    // Fetch restaurant from API
+    const fetchRestaurants = async () => {
+      try {
+        const data = await restaurantService.getAllRestaurants(token);
+        setRestaurantsData(data);
+      } catch (error) {
+        console.error("Lỗi tải quán ăn:", error);
+        setRestaurantsData([]);
+        toast.error("Lỗi tải danh sách quán ăn");
+      }
+    };
+
     fetchRestaurants();
   }, []);
 
@@ -85,6 +80,7 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
     }
   };
 
+  // Filter and search
   const filteredRestaurants = restaurantsData.filter((r) => {
     const matchName = r.name
       .toLowerCase()
@@ -93,6 +89,7 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
     return matchName && matchStatus;
   });
 
+  // Object columns
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Tên quán ăn", flex: 1 },
@@ -132,8 +129,8 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center", // căn giữa ngang
-            alignItems: "center", // căn giữa dọc
+            justifyContent: "center",
+            alignItems: "center",
             width: "100%",
             height: "100%",
           }}
@@ -155,6 +152,8 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
   return (
     <>
       <ToastContainer position="top-right" autoClose={2000} />
+
+      {/* Table */}
       <Box sx={{ height: 520, width: "100%", mt: 2 }}>
         <DataGrid
           rows={filteredRestaurants}
@@ -166,7 +165,7 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
         />
       </Box>
 
-      {/* Modal chi tiết */}
+      {/* Modal details */}
       <Modal open={openModal} onClose={handleCloseModal}>
         <Paper
           elevation={6}
@@ -193,13 +192,14 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
 
               <Box>
                 <Typography variant="subtitle1" fontWeight="bold">
+                  <strong>Tên cửa hàng:</strong>
                   {selectedRestaurant.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {selectedRestaurant.address}
+                  <strong>Địa chỉ:</strong> {selectedRestaurant.address}
                 </Typography>
 
-                {/* 🗺️ Xem vị trí trên Google Maps */}
+                {/* 🗺️ Open Google Maps */}
                 <Stack direction="row" spacing={1} alignItems="center" mt={1}>
                   <LocationOn color="error" />
                   <Button
@@ -274,7 +274,7 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
                 )}
               </Box>
 
-              {/* Lý do từ chối + nút thao tác */}
+              {/* Section approve */}
               {selectedRestaurant.approvalStatus === "PENDING" && (
                 <Box mt={3}>
                   <TextField

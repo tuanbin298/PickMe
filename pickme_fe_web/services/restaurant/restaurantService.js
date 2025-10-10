@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const restaurantService = {
-  // ✅ Lấy danh sách quán đang chờ duyệt
+  // API get pending restaurant
   getPendingRestaurants: async (token) => {
     try {
       const { data } = await axios.get(`${API_URL}/admin/restaurants/pending`, {
@@ -18,7 +18,7 @@ const restaurantService = {
     }
   },
 
-  // ✅ Lấy tất cả quán
+  // API get all restaurants
   getAllRestaurants: async (token) => {
     try {
       const { data } = await axios.get(`${API_URL}/admin/restaurants`, {
@@ -33,7 +33,7 @@ const restaurantService = {
     }
   },
 
-  // ✅ Duyệt quán
+  // API prove restaurant
   approveRestaurant: async (id, token) => {
     try {
       const { data } = await axios.post(
@@ -52,7 +52,7 @@ const restaurantService = {
     }
   },
 
-  // ✅ Từ chối quán
+  // API reject restaurant
   rejectRestaurant: async (id, reason, token) => {
     try {
       const { data } = await axios.post(

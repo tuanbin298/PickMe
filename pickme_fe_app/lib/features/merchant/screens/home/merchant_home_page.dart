@@ -56,6 +56,7 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: _screens[_selectedIndex],
+        // BottomNavigationBar
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
@@ -63,11 +64,11 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
           unselectedItemColor: Colors.grey,
           showUnselectedLabels: false,
           items: const [
-            // Homepage
+            // List restaurant
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Trang chủ',
+              icon: Icon(Icons.list_alt_outlined),
+              activeIcon: Icon(Icons.list),
+              label: 'Danh sách cửa hàng',
             ),
 
             // Profile

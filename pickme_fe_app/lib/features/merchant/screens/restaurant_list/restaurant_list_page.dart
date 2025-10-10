@@ -89,6 +89,34 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             itemBuilder: (context, index) {
               final restaurant = restaurants[index];
 
+              final approvalStatus = restaurant.approvalStatus;
+
+              Color statusColor;
+              IconData statusIcon;
+              String statusText;
+
+              switch (approvalStatus!.toUpperCase()) {
+                case 'PENDING':
+                  statusColor = Colors.orange;
+                  statusIcon = Icons.hourglass_empty;
+                  statusText = 'Đang chờ duyệt';
+                  break;
+                case 'APPROVED':
+                  statusColor = Colors.green;
+                  statusIcon = Icons.check_circle;
+                  statusText = 'Đã duyệt';
+                  break;
+                case 'REJECTED':
+                  statusColor = Colors.red;
+                  statusIcon = Icons.cancel;
+                  statusText = 'Từ chối';
+                  break;
+                default:
+                  statusColor = Colors.grey;
+                  statusIcon = Icons.help_outline;
+                  statusText = 'Không rõ';
+              }
+
               return Card(
                 color: Colors.white,
                 margin: const EdgeInsets.symmetric(vertical: 8),
@@ -119,13 +147,86 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   // Restauant descripttion
-                  subtitle: Text(
-                    restaurant.description ?? 'Không có mô tả',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        restaurant.description ?? 'Không có mô tả',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      // Icon status of restaurant
+                      Row(
+                        children: [
+                          Icon(statusIcon, color: statusColor, size: 16),
+
+                          const SizedBox(width: 4),
+
+                          Text(
+                            statusText,
+                            style: TextStyle(
+                              color: statusColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
+
+                  // Icon navigate
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {},
+                  onTap: () {
+                    Color snackColor;
+                    String message;
+
+                    switch (approvalStatus) {
+                      case 'APPROVED':
+                        snackColor = Colors.green.shade600;
+                        message = "Cửa hàng đã được phê duyệt.";
+                        break;
+                      case 'REJECTED':
+                        snackColor = Colors.red.shade600;
+                        message =
+                            "Cửa hàng đã bị từ chối. Vui lòng liên hệ quản trị viên.";
+                        break;
+                      case 'PENDING':
+                        snackColor = Colors.orange.shade700;
+                        message =
+                            "Cửa hàng đang chờ duyệt, vui lòng quay lại sau.";
+                        break;
+                      default:
+                        snackColor = Colors.grey.shade700;
+                        message = "Trạng thái không xác định.";
+                    }
+
+                    // SnackBar to show message of restaurant status
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          message,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        backgroundColor: snackColor,
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
                 ),
               );
             },

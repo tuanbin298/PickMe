@@ -15,7 +15,6 @@ class LocationPickerField extends StatefulWidget {
 class _LocationPickerFieldState extends State<LocationPickerField> {
   double? _latitude;
   double? _longitude;
-  bool _isLoading = false;
 
   @override
   void initState() {

@@ -132,6 +132,8 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
         // Return true to reload restaurant list page
         if (mounted) Navigator.pop(context, true);
+
+        context.go("/merchant-homepage");
       } else {
         NotificationService.showSuccess(context, "Tạo cửa hàng thất bại!");
       }

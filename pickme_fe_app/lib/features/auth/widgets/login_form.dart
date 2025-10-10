@@ -60,7 +60,7 @@ class _LoginFormState extends State<LoginForm> {
           }
 
           if (user.role == "RESTAURANT_OWNER") {
-            context.go("/merchant-navigate");
+            context.go("/merchant-homepage", extra: user.token);
           }
         } else {
           // Login failed

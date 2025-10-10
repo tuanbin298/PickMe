@@ -20,6 +20,7 @@ class _MerchantProfileState extends State<MerchantProfile> {
   // Variable to contain data from API
   late Future<User?> _futureUser = Future.value(null);
 
+  // Fecth api to get merchant information
   @override
   void initState() {
     super.initState();

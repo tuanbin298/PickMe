@@ -25,33 +25,36 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
 
   const token = localStorage.getItem("sessionToken");
 
-  useEffect(() => {
-    // Fetch restaurant from API
-    const fetchRestaurants = async () => {
-      try {
-        const data = await restaurantService.getAllRestaurants(token);
-        setRestaurantsData(data);
-      } catch (error) {
-        console.error("Lỗi tải quán ăn:", error);
-        setRestaurantsData([]);
-        toast.error("Lỗi tải danh sách quán ăn");
-      }
-    };
+  // Fetch restaurant from API
+  const fetchRestaurants = async () => {
+    try {
+      const data = await restaurantService.getAllRestaurants(token);
+      setRestaurantsData(data);
+    } catch (error) {
+      console.error("Lỗi tải quán ăn:", error);
+      setRestaurantsData([]);
+      toast.error("Lỗi tải danh sách quán ăn");
+    }
+  };
 
+  useEffect(() => {
     fetchRestaurants();
   }, []);
 
+  // Selected and open modal
   const handleView = (restaurant) => {
     setSelectedRestaurant(restaurant);
     setOpenModal(true);
   };
 
+  // Close modal
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedRestaurant(null);
     setRejectReason("");
   };
 
+  // HandleApprove
   const handleApprove = async (id) => {
     try {
       await restaurantService.approveRestaurant(id, token);
@@ -64,11 +67,13 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
     }
   };
 
+  // HandleReject
   const handleReject = async (id) => {
     if (!rejectReason.trim()) {
       toast.warning("Vui lòng nhập lý do từ chối");
       return;
     }
+
     try {
       await restaurantService.rejectRestaurant(id, rejectReason, token);
       toast.success("Từ chối quán thành công");
@@ -151,8 +156,6 @@ export default function RestaurantTable({ searchKeyword, statusFilter }) {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={2000} />
-
       {/* Table */}
       <Box sx={{ height: 520, width: "100%", mt: 2 }}>
         <DataGrid

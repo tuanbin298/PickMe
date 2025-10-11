@@ -6,12 +6,15 @@ const restaurantService = {
   // API get pending restaurant
   getPendingRestaurants: async (token) => {
     try {
-      const { data } = await axios.get(`${API_URL}/admin/restaurants/pending`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const { data } = await axios.get(
+        `${API_URL}  /admin/restaurants/pending`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return data;
     } catch (error) {
       throw error.response?.data || { message: "Lỗi kết nối server" };
@@ -21,7 +24,7 @@ const restaurantService = {
   // API get all restaurants
   getAllRestaurants: async (token) => {
     try {
-      const { data } = await axios.get(`${API_URL}/admin/restaurants`, {
+      const { data } = await axios.get(`${API_URL}/admin/restaurants/`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -59,7 +62,7 @@ const restaurantService = {
         `${API_URL}/admin/restaurants/${id}/reject?reason=${encodeURIComponent(
           reason
         )}`,
-        {}, // không có body
+        {},
         {
           headers: {
             "Content-Type": "application/json",

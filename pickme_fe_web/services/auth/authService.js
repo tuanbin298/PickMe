@@ -3,6 +3,7 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const authService = {
+  // API login
   login: async (email, password) => {
     try {
       const { data } = await axios.post(
@@ -16,7 +17,7 @@ const authService = {
     }
   },
 
-  // Gửi OTP
+  // API send OTP
   sendOtp: async (email, token) => {
     try {
       const { data } = await axios.post(
@@ -35,7 +36,7 @@ const authService = {
     }
   },
 
-  // Xác thực OTP
+  // API verify OTP
   verifyOtp: async (email, otp, token) => {
     try {
       const { data } = await axios.post(
@@ -54,7 +55,7 @@ const authService = {
     }
   },
 
-  // Đặt lại mật khẩu
+  // API reset password
   resetPassword: async (email, otp, newPassword, token) => {
     try {
       const payload = {

@@ -46,9 +46,12 @@ export default function LoginPage() {
     }
 
     setLoading(true);
+
     try {
       const data = await authService.login(input.email, input.password);
+
       window.dispatchEvent(new Event("login-status-changed"));
+
       localStorage.setItem("sessionToken", data.token);
       localStorage.setItem("id", data.id);
       localStorage.setItem("email", data.email);

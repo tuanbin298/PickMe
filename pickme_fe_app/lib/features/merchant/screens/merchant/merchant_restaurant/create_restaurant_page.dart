@@ -6,6 +6,7 @@ import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/merchant/services/restaurant/form_validator_service.dart';
 import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/address_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/categories_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/image_picker_field.dart';
 import 'package:pickme_fe_app/features/merchant/widgets/information_form.dart';
@@ -14,7 +15,8 @@ import 'package:pickme_fe_app/features/merchant/widgets/time_picker_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateRestaurantPage extends StatefulWidget {
-  const CreateRestaurantPage({super.key});
+  final String token;
+  const CreateRestaurantPage({super.key, required this.token});
 
   @override
   State<CreateRestaurantPage> createState() => _CreateRestaurantPageState();
@@ -72,6 +74,9 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
   }
 
   void _onConfirmPressed() async {
+    // Get token
+    final token = widget.token;
+
     setState(() {
       isLoading = true;
     });
@@ -90,11 +95,12 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
       selectedCategories: _selectedCategories,
     );
 
-    if (!isValid) return;
-
-    // Get token
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
+    if (!isValid) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
 
     // Upload image into cloudinary
     String? imageUrl;
@@ -113,7 +119,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
       "longitude": _longitude,
       "openingTime": "${_openingTime!.format(context)}:00",
       "closingTime": "${_closingTime!.format(context)}:00",
-      "selectedCategories": _selectedCategories,
+      "categories": _selectedCategories,
     };
 
     try {
@@ -129,7 +135,8 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
         await Future.delayed(const Duration(seconds: 1));
 
-        context.go("/merchant-homepage");
+        // Return true to reload restaurant list page
+        if (mounted) Navigator.pop(context, true);
       } else {
         NotificationService.showSuccess(context, "Tạo cửa hàng thất bại!");
       }
@@ -284,17 +291,6 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
                     const SizedBox(height: 16),
 
-                    // Information form - restaurant address
-                    InformationForm(
-                      label: "Địa chỉ",
-                      icon: Icons.location_on,
-                      color: Colors.redAccent,
-                      controller: _address,
-                      readOnly: false,
-                    ),
-
-                    const SizedBox(height: 16),
-
                     // Time picker - Open time - close time
                     TimePickerField(
                       label: "Giờ mở cửa",
@@ -326,16 +322,58 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
                     const SizedBox(height: 16),
 
+                    // Information form - restaurant address
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        icon: const Icon(Icons.map),
+                        label: const Text("Chọn địa chỉ"),
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddressPickerField(),
+                            ),
+                          );
+
+                          if (result != null) {
+                            setState(() {
+                              _address.text = result['address'];
+                              _latitude = result['latitude'];
+                              _longitude = result['longitude'];
+                            });
+                          }
+                        },
+                      ),
+                    ),
+
+                    InformationForm(
+                      label: "Địa chỉ",
+                      icon: Icons.location_on,
+                      color: Colors.redAccent,
+                      controller: _address,
+                      readOnly: true,
+                    ),
+
+                    const SizedBox(height: 16),
+
                     // Location
                     LocationPickerField(
                       latitude: _latitude,
                       longitude: _longitude,
-                      onLocationSelected: (object) {
-                        setState(() {
-                          _latitude = object["latitude"];
-                          _longitude = object["longitude"];
-                        });
-                      },
+                      // onLocationSelected: (object) {
+                      //   setState(() {
+                      //     _latitude = object["latitude"];
+                      //     _longitude = object["longitude"];
+                      //   });
+                      // },
                     ),
 
                     const SizedBox(height: 16),

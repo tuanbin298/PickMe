@@ -44,14 +44,6 @@ class FormValidatorService {
       return false;
     }
 
-    // Check if closingMinutes must after openingMinutes
-    final openingMinutes = openingTime.hour * 60 + openingTime.minute;
-    final closingMinutes = closingTime.hour * 60 + closingTime.minute;
-    if (closingMinutes <= openingMinutes) {
-      _showError(context, "Giờ đóng cửa phải sau giờ mở cửa");
-      return false;
-    }
-
     if (latitude == null || longitude == null) {
       _showError(context, "Vui lòng chọn vị trí cửa hàng trên bản đồ");
       return false;

@@ -12,11 +12,16 @@ import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_naviga
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/create_restaurant_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/merchant_restaurant_list.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/profile/merchant_profile.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant/profile/restaurant_profile.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_detail/restaurant_detail_page.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 
 // Router configuration for the application
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  static final _restaurantNavigatorKey = GlobalKey<NavigatorState>();
 
   static final GoRouter router = GoRouter(
     initialLocation: "/login",
@@ -123,13 +128,72 @@ class AppRouter {
               return MerchantProfile(token: token);
             },
           ),
+
+          GoRoute(
+            path: '/merchant-create-resaurant',
+            builder: (context, state) {
+              final token = state.extra as String;
+              return CreateRestaurantPage(token: token);
+            },
+          ),
         ],
       ),
 
-      GoRoute(
-        path: "/merchant-create-resaurant",
-        name: "merchant-create-resaurant",
-        builder: (context, state) => const CreateRestaurantPage(),
+      // =============== RESTAURANT ===============
+      ShellRoute(
+        navigatorKey: _restaurantNavigatorKey,
+        builder: (context, state, child) {
+          // Take token from state.extra
+          final token = state.extra is String ? state.extra as String : null;
+          final restaurantId = state.pathParameters["id"]!;
+
+          // Push token into MerchantNavigateBottom
+          return RestaurantNavigateBottom(
+            token: token,
+            restaurantId: restaurantId,
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: "/merchant/restaurant/:id/detail",
+            name: "merchant-restaurant:id/detail",
+            builder: (context, state) {
+              // Take token from parent widget (MerchantNavigateBottom)
+              final bottomWidget = context
+                  .findAncestorWidgetOfExactType<MerchantNavigateBottom>();
+              final token = bottomWidget?.token ?? '';
+
+              return RestaurantDetailPage();
+            },
+          ),
+
+          GoRoute(
+            path: "/merchant/restaurant/:id/profile",
+            name: "merchant-restaurant:id/profile",
+            builder: (context, state) {
+              // Take token from parent widget (MerchantNavigateBottom)
+              final bottomWidget = context
+                  .findAncestorWidgetOfExactType<MerchantNavigateBottom>();
+              final token = bottomWidget?.token ?? '';
+
+              return RestaurantProfile();
+            },
+          ),
+
+          GoRoute(
+            path: "/merchant/restaurant/:id/orders",
+            name: "merchant-restaurant:id/orders",
+            builder: (context, state) {
+              // Take token from parent widget (MerchantNavigateBottom)
+              final bottomWidget = context
+                  .findAncestorWidgetOfExactType<MerchantNavigateBottom>();
+              final token = bottomWidget?.token ?? '';
+
+              return RestaurantOrder();
+            },
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),

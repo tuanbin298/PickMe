@@ -36,10 +36,10 @@ class _MerchantRestaurantListState extends State<MerchantRestaurantList> {
     String message;
 
     switch (status) {
-      case 'APPROVED':
-        snackColor = Colors.green.shade600;
-        message = "Cửa hàng đã được phê duyệt.";
-        break;
+      // case 'APPROVED':
+      //   snackColor = Colors.green.shade600;
+      //   message = "Cửa hàng đã được phê duyệt.";
+      //   break;
       case 'REJECTED':
         snackColor = Colors.red.shade600;
         message = "Cửa hàng đã bị từ chối. Vui lòng liên hệ quản trị viên.";
@@ -92,7 +92,10 @@ class _MerchantRestaurantListState extends State<MerchantRestaurantList> {
           IconButton(
             icon: const Icon(Icons.add, color: Colors.white),
             onPressed: () async {
-              final result = await context.push("/merchant-create-resaurant");
+              final result = await context.push(
+                "/merchant-create-resaurant",
+                extra: widget.token,
+              );
 
               //If result == true reload screen
               if (result == true) {
@@ -280,7 +283,12 @@ class _MerchantRestaurantListState extends State<MerchantRestaurantList> {
             ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              _showStatusSnackBar(context, approvalStatus);
+              if (approvalStatus.toUpperCase() == 'APPROVED') {
+                // Navigate to restaurant detail
+                context.push('/merchant/restaurant/${restaurant.id}/detail');
+              } else {
+                _showStatusSnackBar(context, approvalStatus);
+              }
             },
           ),
         );

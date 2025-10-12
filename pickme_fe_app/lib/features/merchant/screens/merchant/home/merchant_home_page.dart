@@ -15,8 +15,6 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-
       // Appbar
       appBar: AppBar(
         title: const Text(

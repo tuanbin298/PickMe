@@ -15,7 +15,8 @@ import 'package:pickme_fe_app/features/merchant/widgets/time_picker_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateRestaurantPage extends StatefulWidget {
-  const CreateRestaurantPage({super.key});
+  final String token;
+  const CreateRestaurantPage({super.key, required this.token});
 
   @override
   State<CreateRestaurantPage> createState() => _CreateRestaurantPageState();
@@ -73,6 +74,9 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
   }
 
   void _onConfirmPressed() async {
+    // Get token
+    final token = widget.token;
+
     setState(() {
       isLoading = true;
     });
@@ -91,11 +95,12 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
       selectedCategories: _selectedCategories,
     );
 
-    if (!isValid) return;
-
-    // Get token
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
+    if (!isValid) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
 
     // Upload image into cloudinary
     String? imageUrl;
@@ -114,7 +119,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
       "longitude": _longitude,
       "openingTime": "${_openingTime!.format(context)}:00",
       "closingTime": "${_closingTime!.format(context)}:00",
-      "selectedCategories": _selectedCategories,
+      "categories": _selectedCategories,
     };
 
     try {
@@ -132,8 +137,6 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
         // Return true to reload restaurant list page
         if (mounted) Navigator.pop(context, true);
-
-        context.go("/merchant-homepage");
       } else {
         NotificationService.showSuccess(context, "Tạo cửa hàng thất bại!");
       }

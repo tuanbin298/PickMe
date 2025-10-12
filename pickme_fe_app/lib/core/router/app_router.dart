@@ -159,12 +159,16 @@ class AppRouter {
             path: "/merchant/restaurant/:id/detail",
             name: "merchant-restaurant:id/detail",
             builder: (context, state) {
-              // Take token from parent widget (MerchantNavigateBottom)
+              // Take token from parent widget (RestaurantNavigateBottom)
               final bottomWidget = context
-                  .findAncestorWidgetOfExactType<MerchantNavigateBottom>();
+                  .findAncestorWidgetOfExactType<RestaurantNavigateBottom>();
               final token = bottomWidget?.token ?? '';
+              final restaurantId = state.pathParameters["id"]!;
 
-              return RestaurantDetailPage();
+              return RestaurantDetailPage(
+                restaurantId: restaurantId,
+                token: token,
+              );
             },
           ),
 

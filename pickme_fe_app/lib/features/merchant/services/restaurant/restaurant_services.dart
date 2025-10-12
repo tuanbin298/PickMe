@@ -69,4 +69,31 @@ class RestaurantServices {
       return null;
     }
   }
+
+  // Future - asynchronous get restaurant detail by id
+  Future<Restaurant?> getRestaurantDetails(String token, String id) async {
+    final url = Uri.parse('$baseUrl/restaurants/public/${id}');
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      final restaurantDetails = Restaurant.fromJson(data);
+
+      return restaurantDetails;
+    } else {
+      // Handle error
+      // ignore: avoid_print
+      print('Lỗi tải cửa hàng: ${response.statusCode}');
+      return null;
+    }
+  }
 }

@@ -183,7 +183,7 @@ class AppRouter {
               final token = bottomWidget?.token ?? '';
               final restaurantId = state.pathParameters["id"]!;
 
-              return RestaurantOrder(restaurantId: restaurantId, token: token!);
+              return RestaurantOrder(restaurantId: restaurantId, token: token);
             },
           ),
 

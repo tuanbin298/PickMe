@@ -5,8 +5,8 @@ import 'package:pickme_fe_app/features/auth/screens/otp_verification_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/reset_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/home_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/profile_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/home/merchant_home_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/create_restaurant_page.dart';
@@ -68,18 +68,30 @@ class AppRouter {
         },
       ),
 
-      GoRoute(
-        path: "/home-page",
-        name: "home-page",
-        builder: (context, state) => const Homepage(),
-      ),
+      // ================= CUSTOMER =================
+      ShellRoute(
+        navigatorKey: _rootNavigatorKey,
+        builder: (context, state, child) {
+          // Take token from state.extra
+          final token = state.extra is String ? state.extra as String : null;
 
-      GoRoute(
-        path: "/profile",
-        name: "profile",
-        builder: (context, state) => const ProfilePage(),
-      ),
+          // Push token into MerchantNavigateBottom
+          return MerchantNavigateBottom(token: token, child: child);
+        },
+        routes: [
+          GoRoute(
+            path: "/home-page",
+            name: "home-page",
+            builder: (context, state) => const Homepage(),
+          ),
 
+          GoRoute(
+            path: "/profile",
+            name: "profile",
+            builder: (context, state) => const ProfilePage(),
+          ),
+        ],
+      ),
       // ================= MERCHANT =================
       ShellRoute(
         navigatorKey: _rootNavigatorKey,

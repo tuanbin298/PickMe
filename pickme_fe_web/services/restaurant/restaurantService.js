@@ -24,7 +24,7 @@ const restaurantService = {
   // API get all restaurants
   getAllRestaurants: async (token) => {
     try {
-      const { data } = await axios.get(`${API_URL}/admin/restaurants/`, {
+      const { data } = await axios.get(`${API_URL}/admin/restaurants`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

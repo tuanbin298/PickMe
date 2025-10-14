@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile_header.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile_menu_item.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile_notification_tile.dart';
-import '../widgets/custom_bottom_nav.dart';
+import '../../widgets/custom_bottom_nav.dart';
 
-import 'package:pickme_fe_app/features/customer/screens/account_info_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/change_password_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/payment_methods_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/addresses_page.dart';
-import 'package:pickme_fe_app/features/auth/services/auth_service.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/payment_methods_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
 import 'package:pickme_fe_app/features/customer/models/account_model.dart';
 import 'package:pickme_fe_app/features/customer/services/customer_service.dart';
 import 'package:pickme_fe_app/features/customer/models/notification_pref_model.dart';
+import 'package:pickme_fe_app/features/auth/services/user_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,9 +22,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _customerService = CustomerService(
-    tokenProvider: () async => await AuthService.instance.getToken(),
-  );
+  final _userService = UserServices();
+
+  late final CustomerService _customerService;
 
   AccountModel? _account;
   bool _notifGeneral = true;
@@ -33,22 +34,24 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    _customerService = CustomerService(
+      tokenProvider: () async => await _getTokenFromLocal(),
+    );
     _loadProfile();
   }
 
-  /// 🔹 Gọi API lấy thông tin current user
+  Future<String?> _getTokenFromLocal() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("token");
+  }
+
   Future<void> _loadProfile() async {
     try {
       final acc = await _customerService.getCurrentUser();
       setState(() {
         _account = acc;
-
-        // Nếu API trả về preference, bạn có thể gán thật:
-        // _notifGeneral = acc.notificationEnabled ?? true;
-        // _notifOffers = acc.promoEnabled ?? false;
         _notifGeneral = true;
         _notifOffers = false;
-
         _loading = false;
       });
     } catch (e) {
@@ -57,7 +60,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  /// 🔹 Cập nhật thông báo
   Future<void> _updateNotificationPrefs() async {
     try {
       final prefs = NotificationPrefModel(
@@ -72,6 +74,40 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       debugPrint('⚠️ Lỗi cập nhật thông báo: $e');
+    }
+  }
+
+  Future<void> _logout() async {
+    final confirm =
+        await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Xác nhận'),
+            content: const Text('Bạn có chắc muốn đăng xuất?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Hủy'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Đăng xuất'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!confirm) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    if (mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (r) => false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Đã đăng xuất')));
     }
   }
 
@@ -187,41 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ProfileMenuItem(
                     icon: Icons.logout,
                     title: "Đăng xuất",
-                    onTap: () async {
-                      final confirm =
-                          await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Xác nhận'),
-                              content: const Text(
-                                'Bạn có chắc muốn đăng xuất?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(ctx).pop(false),
-                                  child: const Text('Hủy'),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.of(ctx).pop(true),
-                                  child: const Text('Đăng xuất'),
-                                ),
-                              ],
-                            ),
-                          ) ??
-                          false;
-
-                      if (!confirm) return;
-
-                      await AuthService.instance.logout();
-                      if (context.mounted) {
-                        Navigator.of(
-                          context,
-                        ).pushNamedAndRemoveUntil('/login', (r) => false);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Đã đăng xuất')),
-                        );
-                      }
-                    },
+                    onTap: _logout,
                   ),
                 ],
               ),

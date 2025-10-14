@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_location_app_bar.dart';
-import '../widgets/category_horizontal_list.dart';
-import '../widgets/custom_nav_widget.dart';
-import '../widgets/restaurant_list.dart';
-import '../widgets/custom_bottom_nav.dart';
+import '../../widgets/custom_location_app_bar.dart';
+import '../../widgets/category_horizontal_list.dart';
+import '../../widgets/custom_nav_widget.dart';
+import '../../widgets/restaurant_list.dart';
+import '../../widgets/custom_bottom_nav.dart';
 
 // Homepage with top location bar, categories, tabs, restaurant list, and bottom nav
 class Homepage extends StatefulWidget {

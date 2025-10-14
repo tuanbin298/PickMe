@@ -124,8 +124,10 @@ class _MerchantRestaurantListState extends State<MerchantRestaurantList> {
 
           // If merchant dont have restaurant
           if (restaurants == null || restaurants.isEmpty) {
+            // Empty restaurant
             return _buildEmptyRestaurantView(context);
           } else {
+            // Restaurant list
             return _buildRestaurantListView(context, restaurants);
           }
         },
@@ -194,14 +196,14 @@ class _MerchantRestaurantListState extends State<MerchantRestaurantList> {
       itemCount: restaurants.length,
       itemBuilder: (context, index) {
         final restaurant = restaurants[index];
-        final approvalStatus = restaurant.approvalStatus ?? '';
+        final restaurantStatus = restaurant.approvalStatus ?? '';
 
         Color statusColor;
         IconData statusIcon;
         String statusText;
 
         // Restaurant stauts switch case
-        switch (approvalStatus.toUpperCase()) {
+        switch (restaurantStatus.toUpperCase()) {
           case 'PENDING':
             statusColor = Colors.orange;
             statusIcon = Icons.hourglass_empty;
@@ -243,6 +245,7 @@ class _MerchantRestaurantListState extends State<MerchantRestaurantList> {
                     const Icon(Icons.restaurant, size: 40, color: Colors.grey),
               ),
             ),
+
             // Restaurant name
             title: Text(
               restaurant.name ?? 'Không tên',
@@ -283,11 +286,14 @@ class _MerchantRestaurantListState extends State<MerchantRestaurantList> {
             ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
-              if (approvalStatus.toUpperCase() == 'APPROVED') {
+              if (restaurantStatus.toUpperCase() == 'APPROVED') {
                 // Navigate to restaurant detail
-                context.push('/merchant/restaurant/${restaurant.id}/detail');
+                context.push(
+                  '/merchant/restaurant/${restaurant.id}/detail',
+                  extra: widget.token,
+                );
               } else {
-                _showStatusSnackBar(context, approvalStatus);
+                _showStatusSnackBar(context, restaurantStatus);
               }
             },
           ),

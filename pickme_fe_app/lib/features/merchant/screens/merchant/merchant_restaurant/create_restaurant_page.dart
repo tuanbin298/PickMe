@@ -72,6 +72,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
     });
   }
 
+  // Method create and validate restaurant
   void _onConfirmPressed() async {
     // Get token
     final token = widget.token;
@@ -379,6 +380,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
                     // Categories
                     CategoriesPickerField(
+                      label: "Sản phẩm cửa hàng bán",
                       allCategories: _allCategories,
                       selectedCategories: _selectedCategories,
                       onCategoriesSelected: (cate) {

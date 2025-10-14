@@ -6,6 +6,7 @@ class InformationForm extends StatefulWidget {
   final TextEditingController? controller;
   final Color? color;
   final bool readOnly;
+  final TextInputType? keyboardType;
 
   const InformationForm({
     super.key,
@@ -14,6 +15,7 @@ class InformationForm extends StatefulWidget {
     this.color,
     required this.icon,
     required this.readOnly,
+    this.keyboardType,
   });
 
   @override
@@ -26,6 +28,7 @@ class _InformationFormState extends State<InformationForm> {
     return TextFormField(
       controller: widget.controller,
       readOnly: widget.readOnly,
+      keyboardType: widget.keyboardType,
       decoration: InputDecoration(
         // Label
         label: RichText(

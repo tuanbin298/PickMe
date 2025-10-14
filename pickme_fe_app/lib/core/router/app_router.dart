@@ -12,6 +12,7 @@ import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_naviga
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/create_restaurant_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/merchant_restaurant_list.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/profile/merchant_profile.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant/menu/create_menu_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/profile/restaurant_profile.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_detail/restaurant_detail_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_feedback/restaurant_feedback_page.dart';
@@ -230,6 +231,20 @@ class AppRouter {
                 restaurantId: restaurantId,
                 token: token,
               );
+            },
+          ),
+
+          GoRoute(
+            path: "/merchant/restaurant/:id/create-menu",
+            name: "merchant-restaurant:id/create-menu",
+            builder: (context, state) {
+              // Take token from parent widget (RestaurantNavigateBottom)
+              final bottomWidget = context
+                  .findAncestorWidgetOfExactType<RestaurantNavigateBottom>();
+              final token = bottomWidget?.token ?? '';
+              final restaurantId = state.pathParameters["id"]!;
+
+              return CreateMenuPage(restaurantId: restaurantId, token: token);
             },
           ),
         ],

@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class RestaurantOrder extends StatefulWidget {
-  const RestaurantOrder({super.key});
+  final String restaurantId;
+  final String token;
+
+  const RestaurantOrder({
+    super.key,
+    required this.restaurantId,
+    required this.token,
+  });
 
   @override
   State<RestaurantOrder> createState() => _RestaurantOrderState();

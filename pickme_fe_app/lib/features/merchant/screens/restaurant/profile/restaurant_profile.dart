@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class RestaurantProfile extends StatefulWidget {
-  const RestaurantProfile({super.key});
+  final String restaurantId;
+  final String token;
+
+  const RestaurantProfile({
+    super.key,
+    required this.restaurantId,
+    required this.token,
+  });
 
   @override
   State<RestaurantProfile> createState() => _RestaurantProfileState();

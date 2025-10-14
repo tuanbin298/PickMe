@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/common_services/upload_image_cloudinary.dart';
 import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
@@ -124,7 +123,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
     try {
       final newRestaurant = await restaurantServices.createRestaurantsByOwner(
-        token!,
+        token,
         restaurantData,
       );
 

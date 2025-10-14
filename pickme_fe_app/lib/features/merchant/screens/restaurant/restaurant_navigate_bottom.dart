@@ -30,6 +30,7 @@ class _RestaurantNavigateBottomState extends State<RestaurantNavigateBottom> {
     _routes = [
       '/merchant/restaurant/${widget.restaurantId}/detail',
       '/merchant/restaurant/${widget.restaurantId}/orders',
+      '/merchant/restaurant/${widget.restaurantId}/feedbacks',
       '/merchant/restaurant/${widget.restaurantId}/profile',
     ];
   }
@@ -68,6 +69,13 @@ class _RestaurantNavigateBottomState extends State<RestaurantNavigateBottom> {
             icon: Icon(Icons.receipt_long_outlined),
             activeIcon: Icon(Icons.receipt_long),
             label: 'Đơn hàng',
+          ),
+
+          // Feedback
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            activeIcon: Icon(Icons.chat_bubble),
+            label: 'Đánh giá',
           ),
 
           // Profile

@@ -6,12 +6,14 @@ class CategoriesPickerField extends StatefulWidget {
   final List<String> allCategories;
   final List<String> selectedCategories;
   final ValueChanged<List<String>> onCategoriesSelected;
+  final String label;
 
   const CategoriesPickerField({
     super.key,
     required this.allCategories,
     required this.selectedCategories,
     required this.onCategoriesSelected,
+    required this.label,
   });
 
   @override
@@ -32,7 +34,7 @@ class _CategoriesPickerFieldState extends State<CategoriesPickerField> {
               Icon(Icons.category, color: AppColors.primary),
               const SizedBox(width: 8),
               Text(
-                "Sản phẩm cửa hàng bán",
+                widget.label,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

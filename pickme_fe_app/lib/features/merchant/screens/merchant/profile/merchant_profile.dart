@@ -32,7 +32,19 @@ class _MerchantProfileState extends State<MerchantProfile> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
 
-    context.go("/login");
+    // Message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Đăng xuất thành công!"),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (context.mounted) {
+      context.go("/login");
+    }
   }
 
   @override

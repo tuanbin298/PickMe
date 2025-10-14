@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class FormValidatorService {
+  // Validate restaurant form
   static bool validateRestaurantForm({
     required BuildContext context,
     required File? coverImage,
@@ -51,6 +52,67 @@ class FormValidatorService {
 
     if (selectedCategories.isEmpty) {
       _showError(context, "Vui lòng chọn ít nhất một danh mục món");
+      return false;
+    }
+
+    return true;
+  }
+
+  // Validate menu form
+  static bool validMenuForm({
+    required BuildContext context,
+    required String name,
+    required File? coverImage,
+    required String description,
+    required String category,
+    required String price,
+    required String preparationTime,
+    required List<String> selectedTags,
+  }) {
+    if (coverImage == null) {
+      _showError(context, "Vui lòng chọn ảnh món ăn");
+      return false;
+    }
+
+    if (name.trim().isEmpty) {
+      _showError(context, "Vui lòng nhập tên món ăn");
+      return false;
+    }
+
+    if (description.trim().isEmpty) {
+      _showError(context, "Vui lòng nhập mô tả món ăn");
+      return false;
+    }
+
+    if (category.trim().isEmpty) {
+      _showError(context, "Vui lòng nhập loại món ăn");
+      return false;
+    }
+
+    if (price.trim().isEmpty) {
+      _showError(context, "Vui lòng nhập giá món ăn");
+      return false;
+    }
+
+    final double? parsedPrice = double.tryParse(price);
+    if (parsedPrice == null || parsedPrice <= 0) {
+      _showError(context, "Giá món ăn phải là số lớn hơn 0");
+      return false;
+    }
+
+    if (preparationTime.trim().isEmpty) {
+      _showError(context, "Vui lòng nhập thời gian chuẩn bị");
+      return false;
+    }
+
+    final int? parsedPreparationTime = int.tryParse(preparationTime);
+    if (parsedPreparationTime == null || parsedPreparationTime <= 0) {
+      _showError(context, "Thời gian chuẩn bị phải là số nguyên lớn hơn 0");
+      return false;
+    }
+
+    if (selectedTags.isEmpty) {
+      _showError(context, "Vui lòng chọn ít nhất một tag");
       return false;
     }
 

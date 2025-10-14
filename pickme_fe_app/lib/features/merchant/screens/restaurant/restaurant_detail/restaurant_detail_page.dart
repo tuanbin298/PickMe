@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_detail/restaurant_menu_page.dart';
 import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class RestaurantDetailPage extends StatefulWidget {
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   final RestaurantServices _restaurantServices = RestaurantServices();
+
   Restaurant? _restaurant;
   bool _isLoading = true;
 
@@ -185,6 +187,52 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                 ),
                               ),
                             ),
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Title + Add button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Title
+                              const Text(
+                                "Danh sách món ăn",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              // Button
+                              IconButton(
+                                onPressed: () async {
+                                  final result = await Navigator.pushNamed(
+                                    context,
+                                    "/merchant/restaurant/${widget.restaurantId}/create-menu",
+                                    arguments: widget.token,
+                                  );
+
+                                  if (result == true) {
+                                    setState(() {});
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.add_circle_rounded,
+                                  color: Colors.orange,
+                                  size: 30,
+                                ),
+                                tooltip: "Thêm món ăn",
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // Call to menu ui
+                          RestaurantMenuPage(
+                            restaurantId: widget.restaurantId,
+                            token: widget.token,
                           ),
                         ],
                       ),

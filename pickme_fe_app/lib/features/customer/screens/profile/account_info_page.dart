@@ -1,97 +1,191 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/features/customer/models/customer.dart';
 import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
-import 'package:pickme_fe_app/features/customer/models/account_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountInfoPage extends StatefulWidget {
-  const AccountInfoPage({super.key});
+  final String token;
+
+  const AccountInfoPage({super.key, required this.token});
 
   @override
   State<AccountInfoPage> createState() => _AccountInfoPageState();
 }
 
 class _AccountInfoPageState extends State<AccountInfoPage> {
-  final CustomerService _customerService = CustomerService(
-    tokenProvider: () async {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('token');
-    },
-  );
+  late final CustomerService _customerService = CustomerService();
 
-  AccountModel? _account;
-  bool _isLoading = true;
-  bool _isEditing = false;
+  // Variable to contain data from API
+  late Future<Customer?> _futureCustomer = Future.value(null);
 
   late TextEditingController _nameController;
-  late TextEditingController _emailController;
   late TextEditingController _phoneController;
+
+  bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
-    _loadAccountInfo();
+    _nameController = TextEditingController();
+    _phoneController = TextEditingController();
   }
 
-  Future<void> _loadAccountInfo() async {
-    try {
-      final account = await _customerService.getCurrentUser();
-      if (!mounted) return;
-      setState(() {
-        _account = account;
-        _isLoading = false;
-      });
-
-      if (account != null) {
-        _nameController = TextEditingController(text: account.fullName ?? '');
-        _emailController = TextEditingController(text: account.email ?? '');
-        _phoneController = TextEditingController(
-          text: account.phoneNumber ?? '',
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi tải thông tin tài khoản: $e')),
-      );
-    }
+  // Get current user
+  Future<Customer?> _loadCustomer() async {
+    return await _customerService.getCustomer(widget.token);
   }
 
+  // Update user logic
   Future<void> _updateAccountInfo() async {
-    if (_account == null) return;
+    final currentCustomer = await _customerService.getCustomer(widget.token);
+    final customerData = {
+      "email": currentCustomer!.email,
+      "fullName": _nameController.text.trim(),
+      "phoneNumber": _phoneController.text.trim(),
+      "imageUrl": currentCustomer!.imageUrl,
+      "role": currentCustomer.role,
+      "isActive": currentCustomer.isActive,
+    };
 
-    final updated = AccountModel(
-      id: _account!.id,
-      email: _emailController.text,
-      fullName: _nameController.text,
-      phoneNumber: _phoneController.text,
-      imageUrl: _account!.imageUrl,
-      role: _account!.role,
-      isActive: _account!.isActive,
+    final updatedCustomer = await _customerService.updateCustomer(
+      widget.token,
+      currentCustomer.id.toString(),
+      customerData,
     );
 
-    try {
-      setState(() => _isLoading = true);
-      final result = await _customerService.updateUser(_account!.id!, updated);
-
+    if (updatedCustomer != null) {
       setState(() {
-        _account = result;
         _isEditing = false;
-        _isLoading = false;
+        _futureCustomer = Future.value(updatedCustomer);
       });
 
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Cập nhật thành công!')));
-    } catch (e) {
-      setState(() => _isLoading = false);
+    } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Cập nhật thất bại: $e')));
+      ).showSnackBar(const SnackBar(content: Text('Cập nhật thất bại!')));
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xffF7F8FA),
+      // Appbar
+      appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        title: const Text(
+          'Thông tin tài khoản',
+          style: TextStyle(color: Colors.black),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        actions: [
+          if (!_isEditing)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => setState(() => _isEditing = true),
+            ),
+        ],
+      ),
+
+      body: FutureBuilder<Customer?>(
+        future: _loadCustomer(),
+        builder: (context, snapshot) {
+          // Waiting to data
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Error
+          if (snapshot.hasError) {
+            return Center(child: Text("Lỗi tải dữ liệu: ${snapshot.error}"));
+          }
+
+          final customer = snapshot.data;
+          if (customer == null) {
+            return const Center(child: Text('Không có thông tin tài khoản'));
+          }
+
+          _nameController.text = customer.fullName ?? '';
+          _phoneController.text = customer.phoneNumber ?? '';
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name
+                _buildInfoField(
+                  'Họ và tên',
+                  _nameController,
+                  readOnly: !_isEditing,
+                ),
+
+                // Phone
+                _buildInfoField(
+                  'Số điện thoại',
+                  _phoneController,
+                  readOnly: !_isEditing,
+                ),
+
+                const SizedBox(height: 24),
+
+                // Editing mode
+                if (_isEditing)
+                  Row(
+                    children: [
+                      // Button Save
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _updateAccountInfo,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                          ),
+                          child: const Text(
+                            'Lưu thay đổi',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      // Button cancel
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => setState(() => _isEditing = false),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                          ),
+                          child: const Text('Hủy'),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Widget build information field
   Widget _buildInfoField(
     String label,
     TextEditingController controller, {
@@ -102,8 +196,12 @@ class _AccountInfoPageState extends State<AccountInfoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Label
           Text(label, style: const TextStyle(color: Colors.grey, fontSize: 14)),
+
           const SizedBox(height: 8),
+
+          // Text field
           TextField(
             controller: controller,
             readOnly: readOnly,
@@ -121,105 +219,6 @@ class _AccountInfoPageState extends State<AccountInfoPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffF7F8FA),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Thông tin tài khoản',
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        actions: [
-          if (!_isEditing && !_isLoading)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () => setState(() => _isEditing = true),
-            ),
-        ],
-      ),
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _account == null
-            ? const Center(child: Text('Không có thông tin tài khoản'))
-            : SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInfoField(
-                      'Họ và tên',
-                      _nameController,
-                      readOnly: !_isEditing,
-                    ),
-                    _buildInfoField(
-                      'Địa chỉ email',
-                      _emailController,
-                      readOnly: true,
-                    ),
-                    _buildInfoField(
-                      'Số điện thoại',
-                      _phoneController,
-                      readOnly: !_isEditing,
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    if (_isEditing)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: _updateAccountInfo,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                              ),
-                              child: const Text(
-                                'Lưu thay đổi',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () =>
-                                  setState(() => _isEditing = false),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                              ),
-                              child: const Text('Hủy'),
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
       ),
     );
   }

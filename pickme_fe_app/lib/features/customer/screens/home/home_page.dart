@@ -29,9 +29,13 @@ class _HomepageState extends State<Homepage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const CustomLocationAppBar(),
+
             const SizedBox(height: 10),
+
             const CategoryHorizontalList(),
+
             const SizedBox(height: 10),
+
             CustomNavWidget(
               selectedIndex: selectedIndex,
               onItemSelected: _onItemSelected,

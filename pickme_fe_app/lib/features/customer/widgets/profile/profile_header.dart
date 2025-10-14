@@ -20,6 +20,7 @@ class ProfileHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
+          // Avatar
           CircleAvatar(
             radius: 40,
             backgroundImage: hasNetworkImage
@@ -27,7 +28,10 @@ class ProfileHeader extends StatelessWidget {
                 : const AssetImage('lib/assets/images/default_avatar.jpg')
                       as ImageProvider,
           ),
+
           const SizedBox(height: 8),
+
+          // Customer name
           Text(
             name,
             style: const TextStyle(

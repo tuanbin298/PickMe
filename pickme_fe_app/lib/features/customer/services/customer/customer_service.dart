@@ -1,63 +1,67 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import '../../models/account_model.dart';
-
-typedef TokenProvider = Future<String?> Function();
+import 'package:http/http.dart' as http;
+import 'package:pickme_fe_app/features/customer/models/customer.dart';
 
 class CustomerService {
-  final http.Client client;
-  final String baseUrl;
-  final TokenProvider? tokenProvider;
+  final String baseUrl = dotenv.env['API_URL'] ?? '';
 
-  CustomerService({http.Client? client, String? baseUrl, this.tokenProvider})
-    : client = client ?? http.Client(),
-      baseUrl = baseUrl ?? (dotenv.env['API_URL'] ?? '');
+  // Get current user
+  Future<Customer?> getCustomer(String token) async {
+    final url = Uri.parse('$baseUrl/users/me');
 
-  Future<Map<String, String>> _headers() async {
-    final token = tokenProvider != null ? await tokenProvider!() : null;
-    final headers = {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    };
-    if (token != null && token.isNotEmpty) {
-      headers["Authorization"] = "Bearer $token";
-    }
-    return headers;
-  }
-
-  Uri _url(String path) => Uri.parse('$baseUrl$path');
-
-  // ------------------------------------------------------------
-  // USER APIs
-  // ------------------------------------------------------------
-
-  Future<AccountModel?> getCurrentUser() async {
-    final response = await client.get(
-      _url('/users/me'),
-      headers: await _headers(),
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
     );
+
     if (response.statusCode == 200) {
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
       final data = jsonDecode(utf8.decode(response.bodyBytes));
-      return AccountModel.fromJson(data);
+      final user = Customer.fromJson(data);
+
+      return user;
     } else {
-      print('Lỗi tải thông tin người dùng: ${response.statusCode}');
+      // Handle error
+      // ignore: avoid_print
+      print('Lỗi tải thông tin cá nhân: ${response.statusCode}');
       return null;
     }
   }
 
-  Future<AccountModel> updateUser(int id, AccountModel user) async {
-    final response = await client.put(
-      _url('/users/$id'),
-      headers: await _headers(),
-      body: jsonEncode(user.toJson()),
+  // Get current user
+  Future<Customer?> updateCustomer(
+    String token,
+    String customerId,
+    Map<String, dynamic> customerData,
+  ) async {
+    final url = Uri.parse('$baseUrl/users/${customerId}');
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+
+      body: jsonEncode(customerData),
     );
+
     if (response.statusCode == 200) {
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
       final data = jsonDecode(utf8.decode(response.bodyBytes));
-      return AccountModel.fromJson(data);
+      final user = Customer.fromJson(data);
+
+      return user;
     } else {
-      throw Exception('Cập nhật người dùng thất bại: ${response.statusCode}');
+      // Handle error
+      // ignore: avoid_print
+      print('Lỗi cập nhật thông tin cá nhân: ${response.statusCode}');
+      return null;
     }
   }
 }

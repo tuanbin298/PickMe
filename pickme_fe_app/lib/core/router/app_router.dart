@@ -6,7 +6,9 @@ import 'package:pickme_fe_app/features/auth/screens/reset_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/profile_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/customer_bottom_nav.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/home/merchant_home_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/create_restaurant_page.dart';
@@ -18,7 +20,6 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_de
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_feedback/restaurant_feedback_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
-import 'package:pickme_fe_app/features/customer/widgets/custom_bottom_nav.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 
 // Router configuration for the application
@@ -78,7 +79,7 @@ class AppRouter {
           final token = state.extra is String ? state.extra as String : null;
 
           // Push token into MerchantNavigateBottom
-          return CustomBottomNav(token: token, child: child);
+          return CustomerBottomNav(token: token, child: child);
         },
         routes: [
           GoRoute(
@@ -86,8 +87,9 @@ class AppRouter {
             name: "home-page",
             builder: (context, state) {
               final shellWidget = context
-                  .findAncestorWidgetOfExactType<CustomBottomNav>();
+                  .findAncestorWidgetOfExactType<CustomerBottomNav>();
               final token = shellWidget?.token ?? "";
+
               return Homepage(token: token);
             },
           ),
@@ -97,13 +99,24 @@ class AppRouter {
             name: "profile",
             builder: (context, state) {
               final shellWidget = context
-                  .findAncestorWidgetOfExactType<CustomBottomNav>();
+                  .findAncestorWidgetOfExactType<CustomerBottomNav>();
               final token = shellWidget?.token ?? "";
+
               return ProfilePage(token: token);
             },
           ),
         ],
       ),
+
+      GoRoute(
+        path: "/account-information",
+        name: "account-information",
+        builder: (context, state) {
+          final token = state.extra as String? ?? "";
+          return AccountInfoPage(token: token);
+        },
+      ),
+
       // ================= MERCHANT =================
       ShellRoute(
         navigatorKey: _rootNavigatorKey,

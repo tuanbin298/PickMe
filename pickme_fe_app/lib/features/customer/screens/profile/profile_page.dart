@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/features/customer/models/customer.dart';
+import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile/profile_header.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile/profile_menu_item.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile/profile_notification_tile.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/payment_methods_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
-import 'package:pickme_fe_app/features/customer/models/account_model.dart';
-import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
-import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String token; // ✅ Thêm token để nhận từ ShellRoute
+  final String token;
+
   const ProfilePage({super.key, required this.token});
 
   @override
@@ -20,38 +18,24 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final _userService = UserServices();
-  late final CustomerService _customerService;
+  late final CustomerService _customerService = CustomerService();
 
-  AccountModel? _account;
-  bool _notifGeneral = true;
+  // Variable to contain data from API
+  late Future<Customer?> _futureCustomer = Future.value(null);
+
+  // Variable for toggle
+  bool _notifGeneral = false;
   bool _notifOffers = false;
-  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _customerService = CustomerService(tokenProvider: () async => widget.token);
-    print("🧩 Token khi vào ProfilePage: ${widget.token}");
-    _loadProfile();
+    _futureCustomer = _customerService.getCustomer(widget.token);
   }
 
-  Future<void> _loadProfile() async {
-    try {
-      final acc = await _customerService.getCurrentUser();
-      setState(() {
-        _account = acc;
-        _notifGeneral = true;
-        _notifOffers = false;
-        _loading = false;
-      });
-    } catch (e) {
-      debugPrint('⚠️ Lỗi tải thông tin người dùng: $e');
-      setState(() => _loading = false);
-    }
-  }
-
+  // Method to logout
   Future<void> _logout() async {
+    // Dialog
     final confirm =
         await showDialog<bool>(
           context: context,
@@ -59,10 +43,13 @@ class _ProfilePageState extends State<ProfilePage> {
             title: const Text('Xác nhận'),
             content: const Text('Bạn có chắc muốn đăng xuất?'),
             actions: [
+              // Cancel
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
                 child: const Text('Hủy'),
               ),
+
+              // Accept
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
                 child: const Text('Đăng xuất'),
@@ -89,119 +76,163 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // App bar
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
         surfaceTintColor: Colors.transparent,
         title: const Text("Tài khoản"),
         centerTitle: true,
         elevation: 0,
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  /// Header
-                  ProfileHeader(
-                    name: _account?.fullName ?? "Không rõ",
-                    avatarUrl: _account?.imageUrl,
-                  ),
-                  const SizedBox(height: 16),
 
-                  /// Tổng quan
-                  _buildSection(
-                    title: "Tổng quan",
-                    children: [
-                      ProfileMenuItem(
-                        icon: Icons.person_outline,
-                        title: "Thông tin tài khoản",
-                        subtitle: "Thay đổi thông tin tài khoản",
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const AccountInfoPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.lock_outline,
-                        title: "Mật khẩu",
-                        subtitle: "Thay đổi mật khẩu",
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const ChangePasswordPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.credit_card_outlined,
-                        title: "Phương thức thanh toán",
-                        subtitle: "Thêm thẻ ngân hàng/tín dụng",
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const PaymentMethodsPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.location_on_outlined,
-                        title: "Địa chỉ",
-                        subtitle: "Thay đổi địa chỉ",
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const AddressesPage(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+      body: FutureBuilder<Customer?>(
+        future: _futureCustomer,
+        builder: (context, snapshot) {
+          // Waiting to data
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                  const SizedBox(height: 16),
+          // Error
+          if (snapshot.hasError) {
+            return Center(child: Text("Lỗi tải dữ liệu: ${snapshot.error}"));
+          }
 
-                  /// Thông báo
-                  _buildSection(
-                    title: "Thông báo",
-                    children: [
-                      ProfileNotificationTile(
-                        title: "Thông báo chung",
-                        subtitle: "Bạn sẽ nhận thông báo từ ứng dụng",
-                        value: _notifGeneral,
-                        onChanged: (val) {
-                          setState(() => _notifGeneral = val);
-                        },
-                      ),
-                      ProfileNotificationTile(
-                        title: "Thông báo ưu đãi",
-                        subtitle: "Nhận thông báo khi có ưu đãi mới",
-                        value: _notifOffers,
-                        onChanged: (val) {
-                          setState(() => _notifOffers = val);
-                        },
-                      ),
-                    ],
-                  ),
+          final customer = snapshot.data;
+          if (customer == null) {
+            return const Center(
+              child: Text('Không tìm thấy thông tin người dùng'),
+            );
+          }
 
-                  const SizedBox(height: 16),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                /// Header
+                ProfileHeader(name: customer.fullName, avatarUrl: ''),
 
-                  /// Logout
-                  ProfileMenuItem(
-                    icon: Icons.logout,
-                    title: "Đăng xuất",
-                    onTap: _logout,
-                  ),
-                ],
-              ),
+                const SizedBox(height: 16),
+
+                //  Overview section
+                _buildSection(
+                  title: "Tổng quan",
+                  children: [
+                    // Account information
+                    ProfileMenuItem(
+                      icon: Icons.person_outline,
+                      title: "Thông tin tài khoản",
+                      subtitle: "Thay đổi thông tin tài khoản",
+                      onTap: () {
+                        context.push(
+                          "/account-information",
+                          extra: widget.token,
+                        );
+                      },
+                    ),
+
+                    // Password information
+                    ProfileMenuItem(
+                      icon: Icons.lock_outline,
+                      title: "Mật khẩu",
+                      subtitle: "Thay đổi mật khẩu",
+                      onTap: () {
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (_) => const ChangePasswordPage(),
+                        //   ),
+                        // );
+                      },
+                    ),
+
+                    // Payment method information
+                    ProfileMenuItem(
+                      icon: Icons.credit_card_outlined,
+                      title: "Phương thức thanh toán",
+                      subtitle: "Thêm thẻ ngân hàng/tín dụng",
+                      onTap: () {
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (_) => const PaymentMethodsPage(),
+                        //   ),
+                        // );
+                      },
+                    ),
+
+                    // Address information
+                    ProfileMenuItem(
+                      icon: Icons.location_on_outlined,
+                      title: "Địa chỉ",
+                      subtitle: "Thay đổi địa chỉ",
+                      onTap: () {
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(
+                        //     builder: (_) => const AddressesPage(),
+                        //   ),
+                        // );
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Notofication section
+                _buildSection(
+                  title: "Thông báo",
+                  children: [
+                    // Toggle notification
+                    ProfileNotificationTile(
+                      title: "Thông báo chung",
+                      subtitle: "Bạn sẽ nhận thông báo từ ứng dụng",
+                      value: _notifGeneral,
+                      onChanged: (val) {
+                        setState(() => _notifGeneral = val);
+                      },
+                    ),
+
+                    // Toggle offers
+                    ProfileNotificationTile(
+                      title: "Thông báo ưu đãi",
+                      subtitle: "Nhận thông báo khi có ưu đãi mới",
+                      value: _notifOffers,
+                      onChanged: (val) {
+                        setState(() => _notifOffers = val);
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Logout button
+                ProfileMenuItem(
+                  icon: Icons.logout,
+                  title: "Đăng xuất",
+                  onTap: _logout,
+                ),
+              ],
             ),
+          );
+        },
+      ),
     );
+
+    //               const SizedBox(height: 16),
+
+    //               /// Logout
+    //               ProfileMenuItem(
+    //                 icon: Icons.logout,
+    //                 title: "Đăng xuất",
+    //                 onTap: _logout,
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    // );
   }
 
+  // Widgett to build section
   Widget _buildSection({
     required String title,
     required List<Widget> children,
@@ -213,6 +244,8 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(12.0),
+
+            // Text
             child: Text(
               title,
               style: const TextStyle(
@@ -221,6 +254,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
+
+          // Content
           ...children,
         ],
       ),

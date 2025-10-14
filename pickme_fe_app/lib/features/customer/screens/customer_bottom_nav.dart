@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class CustomBottomNav extends StatefulWidget {
-  final Widget child; // The main content displayed above the bottom navigation
-  final String? token; // Optional token passed between pages
+class CustomerBottomNav extends StatefulWidget {
+  final Widget child;
+  final String? token;
 
-  const CustomBottomNav({super.key, required this.child, this.token});
+  const CustomerBottomNav({super.key, required this.child, this.token});
 
   @override
-  State<CustomBottomNav> createState() => _CustomBottomNavState();
+  State<CustomerBottomNav> createState() => _CustomerBottomNavState();
 }
 
-class _CustomBottomNavState extends State<CustomBottomNav> {
+class _CustomerBottomNavState extends State<CustomerBottomNav> {
   int _currentIndex = 0; // Track the currently selected tab index
 
   // Define routes corresponding to each bottom nav item
@@ -21,7 +21,9 @@ class _CustomBottomNavState extends State<CustomBottomNav> {
   void _onItemTapped(int index) {
     if (index != _currentIndex) {
       setState(() => _currentIndex = index);
-      context.go(_routes[index], extra: widget.token); // Navigate to new route
+
+      // Transmission token
+      context.go(_routes[index], extra: widget.token);
     }
   }
 
@@ -37,16 +39,21 @@ class _CustomBottomNavState extends State<CustomBottomNav> {
         showUnselectedLabels: false, // Hide labels for unselected items
         type: BottomNavigationBarType.fixed, // Prevent shifting animation
         items: const [
+          // Customer homepage
           BottomNavigationBarItem(
             icon: Icon(Icons.apps_outlined),
             activeIcon: Icon(Icons.apps),
             label: 'Trang chủ',
           ),
+
+          // Customer order
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long_outlined),
             activeIcon: Icon(Icons.receipt_long),
             label: 'Đơn hàng',
           ),
+
+          // Customer profile
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),

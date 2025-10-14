@@ -17,7 +17,10 @@ class ProfileNotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
+      // Title
       title: Text(title),
+
+      // Subtitle
       subtitle: subtitle != null ? Text(subtitle!) : null,
       value: value,
       onChanged: onChanged,

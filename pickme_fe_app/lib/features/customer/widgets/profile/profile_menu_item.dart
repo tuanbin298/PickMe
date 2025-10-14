@@ -17,7 +17,7 @@ class ProfileMenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: Colors.grey[700]),
+      leading: Icon(icon, color: Colors.white),
       title: Text(title, style: const TextStyle(fontSize: 14)),
       subtitle: subtitle != null
           ? Text(subtitle!, style: const TextStyle(fontSize: 12))

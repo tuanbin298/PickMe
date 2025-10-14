@@ -83,7 +83,7 @@ class _CategoryHorizontalListState extends State<CategoryHorizontalList> {
     );
   }
 
-  /// Build one category item (circle image + text label)
+  /// Build one category item
   static Widget _buildCategoryItem(String imagePath, String title) {
     return Padding(
       padding: const EdgeInsets.only(right: 20),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_detail/restaurant_menu_page.dart';
 import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
@@ -207,10 +208,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               // Button
                               IconButton(
                                 onPressed: () async {
-                                  final result = await Navigator.pushNamed(
-                                    context,
+                                  final result = await context.push(
                                     "/merchant/restaurant/${widget.restaurantId}/create-menu",
-                                    arguments: widget.token,
+                                    extra: widget.token,
                                   );
 
                                   if (result == true) {

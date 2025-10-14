@@ -41,7 +41,7 @@ class _RestaurantNavigateBottomState extends State<RestaurantNavigateBottom> {
       setState(() => _currentIndex = index);
 
       // Transmission token
-      context.go(_routes[index], extra: widget.token);
+      context.push(_routes[index], extra: widget.token);
     }
   }
 

@@ -56,7 +56,7 @@ class _LoginFormState extends State<LoginForm> {
           );
 
           if (user.role == "CUSTOMER") {
-            context.go("/home-page");
+            context.go("/home-page", extra: user.token);
           }
 
           if (user.role == "RESTAURANT_OWNER") {

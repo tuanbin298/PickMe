@@ -45,7 +45,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     }
 
     setState(() => _loading = true);
-    await Future.delayed(const Duration(milliseconds: 600)); // giả lập
+    await Future.delayed(
+      const Duration(milliseconds: 600),
+    ); // Simulate network call
     setState(() => _loading = false);
 
     if (mounted) {

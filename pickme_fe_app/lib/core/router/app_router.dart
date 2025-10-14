@@ -18,6 +18,7 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_de
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_feedback/restaurant_feedback_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
+import 'package:pickme_fe_app/features/customer/widgets/custom_bottom_nav.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 
 // Router configuration for the application
@@ -77,19 +78,29 @@ class AppRouter {
           final token = state.extra is String ? state.extra as String : null;
 
           // Push token into MerchantNavigateBottom
-          return MerchantNavigateBottom(token: token, child: child);
+          return CustomBottomNav(token: token, child: child);
         },
         routes: [
           GoRoute(
             path: "/home-page",
             name: "home-page",
-            builder: (context, state) => const Homepage(),
+            builder: (context, state) {
+              final shellWidget = context
+                  .findAncestorWidgetOfExactType<CustomBottomNav>();
+              final token = shellWidget?.token ?? "";
+              return Homepage(token: token);
+            },
           ),
 
           GoRoute(
             path: "/profile",
             name: "profile",
-            builder: (context, state) => const ProfilePage(),
+            builder: (context, state) {
+              final shellWidget = context
+                  .findAncestorWidgetOfExactType<CustomBottomNav>();
+              final token = shellWidget?.token ?? "";
+              return ProfilePage(token: token);
+            },
           ),
         ],
       ),

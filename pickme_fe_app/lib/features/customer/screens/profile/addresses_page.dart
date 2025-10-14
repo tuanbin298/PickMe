@@ -48,15 +48,15 @@ class AddressesPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // 🏠 Địa chỉ quán
+                // Address
                 _buildTextField(
-                  label: "Địa chỉ quán *",
+                  label: "Địa chỉ của bạn *",
                   hint: "Nhập địa chỉ của bạn",
                   controller: addressController,
                 ),
                 const SizedBox(height: 12),
 
-                // 🏘 Phường / xã
+                //Phường / xã
                 _buildTextField(
                   label: "Phường/Xã *",
                   hint: "Nhập Phường hoặc Xã của bạn",
@@ -64,7 +64,7 @@ class AddressesPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // 🏙 Quận / huyện
+                // Quận / huyện
                 _buildTextField(
                   label: "Quận/Huyện *",
                   hint: "Nhập Quận hoặc Huyện của bạn",
@@ -72,7 +72,7 @@ class AddressesPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // 🏢 Tỉnh / thành phố
+                // Tỉnh / thành phố
                 _buildTextField(
                   label: "Tỉnh/Thành Phố *",
                   hint: "Nhập Tỉnh hoặc Thành phố của bạn",
@@ -80,7 +80,7 @@ class AddressesPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // 🟧 Nút xác nhận
+                // Confirm button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

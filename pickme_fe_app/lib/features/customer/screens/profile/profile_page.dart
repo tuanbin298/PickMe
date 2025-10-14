@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/features/customer/widgets/profile_header.dart';
-import 'package:pickme_fe_app/features/customer/widgets/profile_menu_item.dart';
-import 'package:pickme_fe_app/features/customer/widgets/profile_notification_tile.dart';
-import '../../widgets/custom_bottom_nav.dart';
-
+import 'package:pickme_fe_app/features/customer/widgets/profile/profile_header.dart';
+import 'package:pickme_fe_app/features/customer/widgets/profile/profile_menu_item.dart';
+import 'package:pickme_fe_app/features/customer/widgets/profile/profile_notification_tile.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/payment_methods_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
 import 'package:pickme_fe_app/features/customer/models/account_model.dart';
-import 'package:pickme_fe_app/features/customer/services/customer_service.dart';
-import 'package:pickme_fe_app/features/customer/models/notification_pref_model.dart';
+import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
 import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String token; // ✅ Thêm token để nhận từ ShellRoute
+  const ProfilePage({super.key, required this.token});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -23,7 +21,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _userService = UserServices();
-
   late final CustomerService _customerService;
 
   AccountModel? _account;
@@ -34,15 +31,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _customerService = CustomerService(
-      tokenProvider: () async => await _getTokenFromLocal(),
-    );
+    _customerService = CustomerService(tokenProvider: () async => widget.token);
+    print("🧩 Token khi vào ProfilePage: ${widget.token}");
     _loadProfile();
-  }
-
-  Future<String?> _getTokenFromLocal() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("token");
   }
 
   Future<void> _loadProfile() async {
@@ -57,23 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
     } catch (e) {
       debugPrint('⚠️ Lỗi tải thông tin người dùng: $e');
       setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _updateNotificationPrefs() async {
-    try {
-      final prefs = NotificationPrefModel(
-        general: _notifGeneral,
-        offers: _notifOffers,
-      );
-      await _customerService.updateNotificationPrefs(prefs);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đã cập nhật cài đặt thông báo')),
-        );
-      }
-    } catch (e) {
-      debugPrint('⚠️ Lỗi cập nhật thông báo: $e');
     }
   }
 
@@ -130,8 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   /// Header
                   ProfileHeader(
                     name: _account?.fullName ?? "Không rõ",
-                    avatarUrl:
-                        _account?.imageUrl ?? "https://i.pravatar.cc/300?img=5",
+                    avatarUrl: _account?.imageUrl,
                   ),
                   const SizedBox(height: 16),
 
@@ -202,7 +175,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         value: _notifGeneral,
                         onChanged: (val) {
                           setState(() => _notifGeneral = val);
-                          _updateNotificationPrefs();
                         },
                       ),
                       ProfileNotificationTile(
@@ -211,7 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         value: _notifOffers,
                         onChanged: (val) {
                           setState(() => _notifOffers = val);
-                          _updateNotificationPrefs();
                         },
                       ),
                     ],
@@ -228,10 +199,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-      bottomNavigationBar: CustomBottomNav(
-        selectedIndex: 2,
-        onItemSelected: (_) {},
-      ),
     );
   }
 

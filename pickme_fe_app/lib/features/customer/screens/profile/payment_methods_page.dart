@@ -27,14 +27,13 @@ class PaymentMethodsPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 🖼 Hình minh họa thẻ
               Image.asset(
                 'lib/assets/images/card_placeholder.png',
                 height: 120,
                 fit: BoxFit.contain,
               ),
               const SizedBox(height: 30),
-              // 📝 Tiêu đề
+              // Title
               const Text(
                 'Bạn chưa có thẻ thanh toán',
                 style: TextStyle(
@@ -45,7 +44,7 @@ class PaymentMethodsPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
-              // 📄 Mô tả
+              // Description
               const Text(
                 'Có vẻ như bạn chưa thêm thẻ tín dụng hoặc thẻ ghi nợ nào. '
                 'Vui lòng thêm thẻ để tiếp tục.',
@@ -53,7 +52,7 @@ class PaymentMethodsPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30),
-              //  Nút thêm thẻ
+              //  Button "Thêm thẻ"
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

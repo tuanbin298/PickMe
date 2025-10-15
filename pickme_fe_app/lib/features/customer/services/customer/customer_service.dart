@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import '../../models/account_model.dart';
+import '../../models/profile/account_model.dart';
 
 typedef TokenProvider = Future<String?> Function();
 

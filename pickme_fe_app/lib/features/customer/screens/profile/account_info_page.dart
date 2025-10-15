@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
-import 'package:pickme_fe_app/features/customer/models/account_model.dart';
+import 'package:pickme_fe_app/features/customer/models/profile/account_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountInfoPage extends StatefulWidget {

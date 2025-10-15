@@ -1,60 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
+import 'package:pickme_fe_app/features/customer/services/restaurant/restaurant_service.dart';
 
-// Restaurant data model
-class Restaurant {
-  final String name;
-  final String image;
-  final String status;
-  final double rating;
-  final String distance;
-  final String tags;
+class PublicRestaurantList extends StatefulWidget {
+  const PublicRestaurantList({super.key});
 
-  Restaurant({
-    required this.name,
-    required this.image,
-    required this.status,
-    required this.rating,
-    required this.distance,
-    required this.tags,
-  });
+  @override
+  State<PublicRestaurantList> createState() => _PublicRestaurantListState();
 }
 
-// Widget that displays a list of restaurants
-class RestaurantList extends StatelessWidget {
-  const RestaurantList({super.key});
+class _PublicRestaurantListState extends State<PublicRestaurantList> {
+  final RestaurantService _restaurantService = RestaurantService();
+  List<Restaurant> _restaurants = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRestaurants();
+  }
+
+  Future<void> _loadRestaurants() async {
+    try {
+      final data = await _restaurantService.getPublicRestaurants();
+      if (!mounted) return;
+      setState(() {
+        _restaurants = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể tải danh sách quán ăn: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Mock restaurant data
-    final restaurants = [
-      Restaurant(
-        name: "Quán cơm chú Cuội",
-        image: "lib/assets/images/category_item.png",
-        status: "Đang mở",
-        rating: 4.8,
-        distance: "2.6 km",
-        tags: "Cơm · Mì · Nước ngọt",
-      ),
-      Restaurant(
-        name: "Bánh canh ghẹ DHL",
-        image: "lib/assets/images/category_item.png",
-        status: "Đang mở",
-        rating: 4.0,
-        distance: "3.0 km",
-        tags: "Bánh canh · Hải sản · Nước ngọt",
-      ),
-    ];
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_restaurants.isEmpty) {
+      return const Center(
+        child: Text(
+          'Chưa có quán ăn nào được hiển thị.',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
 
     return ListView.builder(
-      itemCount: restaurants.length,
+      itemCount: _restaurants.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final item = restaurants[index];
+        final item = _restaurants[index];
+
+        final imageUrl = item.imageUrl?.isNotEmpty == true
+            ? item.imageUrl!
+            : 'https://via.placeholder.com/400x200.png?text=No+Image';
+
+        final name = item.name?.isNotEmpty == true
+            ? item.name!
+            : 'Không có tên';
+        final address = item.address?.isNotEmpty == true
+            ? item.address!
+            : 'Không có địa chỉ';
+        final rating = item.rating ?? 0.0;
+        final isOpen = item.isOpen ?? false;
+        final isApproved = item.isApproved ?? false;
+        final categories =
+            (item.categories != null && item.categories!.isNotEmpty)
+            ? item.categories!.join(' · ')
+            : 'Danh mục chưa cập nhật';
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Container(
-            // Card style (white background + shadow + rounded corners)
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -74,16 +99,24 @@ class RestaurantList extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      item.image,
-                      height: 140, // smaller height
+                    child: Image.network(
+                      imageUrl,
+                      height: 140,
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 140,
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
                   ),
                 ),
 
-                // Restaurant info
+                // Restaurant details
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   child: Column(
@@ -94,7 +127,7 @@ class RestaurantList extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              item.name,
+                              name,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -102,32 +135,31 @@ class RestaurantList extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const Icon(
-                            Icons.verified,
-                            color: Colors.green,
-                            size: 18,
-                          ),
+                          if (isApproved)
+                            const Icon(
+                              Icons.verified,
+                              color: Colors.green,
+                              size: 18,
+                            ),
                         ],
                       ),
                       const SizedBox(height: 6),
 
-                      // Status + Tags
+                      // Status + categories
                       Row(
                         children: [
                           Text(
-                            item.status,
+                            isOpen ? 'Đang mở' : 'Đã đóng',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: item.status == "Đang mở"
-                                  ? Colors.green
-                                  : Colors.red,
+                              color: isOpen ? Colors.green : Colors.red,
                             ),
                           ),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              item.tags,
+                              categories,
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 13,
@@ -139,10 +171,10 @@ class RestaurantList extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // Rating + Distance + Price icon
+                      // ⭐ Đánh giá + địa chỉ
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Rating badge
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -161,7 +193,7 @@ class RestaurantList extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  item.rating.toString(),
+                                  rating.toStringAsFixed(1),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.white,
@@ -170,24 +202,22 @@ class RestaurantList extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          // Distance
+                          const SizedBox(width: 10),
                           const Icon(
                             Icons.location_on,
                             size: 14,
                             color: Colors.grey,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            item.distance,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          const SizedBox(width: 12),
-                          // Price (just an icon for now)
-                          const Icon(
-                            Icons.attach_money,
-                            size: 14,
-                            color: Colors.grey,
+                          Expanded(
+                            child: Text(
+                              address,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.black54,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),

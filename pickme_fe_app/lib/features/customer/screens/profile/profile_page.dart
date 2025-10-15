@@ -6,7 +6,7 @@ import 'package:pickme_fe_app/features/customer/screens/profile/account_info_pag
 import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/payment_methods_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
-import 'package:pickme_fe_app/features/customer/models/account_model.dart';
+import 'package:pickme_fe_app/features/customer/models/profile/account_model.dart';
 import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
 import 'package:pickme_fe_app/features/auth/services/user_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';

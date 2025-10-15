@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 
-// Custom app bar showing current route + search bar
 class CustomLocationAppBar extends StatefulWidget {
-  const CustomLocationAppBar({super.key});
+  final String? destination;
+  const CustomLocationAppBar({super.key, this.destination});
 
   @override
   State<CustomLocationAppBar> createState() => _CustomLocationAppBarState();
@@ -15,75 +16,85 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(20), // round only bottom corners
-        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(
-          left: 30,
-          right: 30,
-          top: 30,
-          bottom: 24,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Title
-            const Text(
-              "Lộ trình của bạn",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff172B4D),
-              ),
+            /// Header row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Lộ trình của bạn",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff172B4D),
+                  ),
+                ),
+
+                // Button to watch MAP
+                IconButton(
+                  icon: const Icon(Icons.map, color: AppColors.primary),
+                  onPressed: () {
+                    context.push('/map');
+                  },
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),
 
-            /// Route section (icons + texts)
+            /// Route display (current location and destination)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left side: route icons
+                // Left side (icons)
                 Column(
                   children: [
-                    // Starting point
-                    Icon(
-                      Icons.radio_button_unchecked,
-                      color: Colors.grey,
+                    // Icon
+                    const Icon(
+                      Icons.my_location,
+                      color: AppColors.primary,
                       size: 20,
                     ),
+                    // If destination is null, then only show current location
+                    if (widget.destination != null) ...[
+                      const SizedBox(height: 4),
 
-                    SizedBox(height: 4),
-
-                    // Dotted line between start and destination
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(
-                        3,
-                        (index) => Container(
-                          margin: EdgeInsets.symmetric(vertical: 2),
-                          width: 3,
-                          height: 3,
-                          decoration: const BoxDecoration(
-                            color: Colors.grey,
-                            shape: BoxShape.circle,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List.generate(
+                          3,
+                          (index) => Container(
+                            margin: const EdgeInsets.symmetric(vertical: 2),
+                            width: 3,
+                            height: 3,
+                            decoration: const BoxDecoration(
+                              color: Colors.grey,
+                              shape: BoxShape.circle,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    SizedBox(height: 4),
+                      const SizedBox(height: 4),
 
-                    // Destination icon
-                    Icon(Icons.location_on, color: AppColors.primary, size: 20),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.red,
+                        size: 20,
+                      ),
+                    ],
                   ],
                 ),
 
                 const SizedBox(width: 8),
 
-                // Right side: texts
+                // Right side (Text)
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,14 +106,19 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                           color: Color(0xff172B4D),
                         ),
                       ),
+
+                      // Divider
                       const Divider(),
-                      Text(
-                        "Đại học FPT HCM",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: AppColors.primary,
+
+                      // show destination if have
+                      if (widget.destination != null)
+                        Text(
+                          widget.destination!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: AppColors.primary,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -111,7 +127,7 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
 
             const SizedBox(height: 16),
 
-            /// Search bar
+            // Search bar
             TextField(
               decoration: InputDecoration(
                 hintText: "Tìm món ăn",
@@ -119,10 +135,6 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 filled: true,
                 fillColor: const Color(0xffF5F6F7),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 0,
-                  horizontal: 16,
-                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,

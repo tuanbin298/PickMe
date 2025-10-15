@@ -6,6 +6,7 @@ import 'package:pickme_fe_app/features/auth/screens/reset_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/profile_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/customer_bottom_nav.dart';
@@ -114,6 +115,14 @@ class AppRouter {
         builder: (context, state) {
           final token = state.extra as String? ?? "";
           return AccountInfoPage(token: token);
+        },
+      ),
+
+      GoRoute(
+        path: "/map",
+        name: "map",
+        builder: (context, state) {
+          return MapPage();
         },
       ),
 

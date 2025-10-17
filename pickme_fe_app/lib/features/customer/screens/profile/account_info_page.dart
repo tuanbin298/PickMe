@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
-import 'package:pickme_fe_app/features/customer/models/customer.dart';
+import 'package:pickme_fe_app/features/customer/models/customer/customer.dart';
 import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
 
 class AccountInfoPage extends StatefulWidget {
@@ -42,7 +42,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> {
       "email": currentCustomer!.email,
       "fullName": _nameController.text.trim(),
       "phoneNumber": _phoneController.text.trim(),
-      "imageUrl": currentCustomer!.imageUrl,
+      "imageUrl": currentCustomer.imageUrl,
       "role": currentCustomer.role,
       "isActive": currentCustomer.isActive,
     };
@@ -110,8 +110,8 @@ class _AccountInfoPageState extends State<AccountInfoPage> {
             return const Center(child: Text('Không có thông tin tài khoản'));
           }
 
-          _nameController.text = customer.fullName ?? '';
-          _phoneController.text = customer.phoneNumber ?? '';
+          _nameController.text = customer.fullName;
+          _phoneController.text = customer.phoneNumber;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),

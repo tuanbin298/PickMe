@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:pickme_fe_app/features/customer/models/customer.dart';
+import 'package:pickme_fe_app/features/customer/models/customer/customer.dart';
 
 class CustomerService {
   final String baseUrl = dotenv.env['API_URL'] ?? '';

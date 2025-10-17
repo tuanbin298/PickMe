@@ -16,6 +16,7 @@ class _AccountInfoPageState extends State<AccountInfoPage> {
   late final CustomerService _customerService = CustomerService();
 
   // Variable to contain data from API
+  // ignore: unused_field
   late Future<Customer?> _futureCustomer = Future.value(null);
 
   late TextEditingController _nameController;

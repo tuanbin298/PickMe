@@ -37,15 +37,4 @@ class User {
           : null,
     );
   }
-
-  // Convert model to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'fullName': fullName,
-      'phoneNumber': phoneNumber,
-      'imageUrl': imageUrl,
-      'role': role,
-    };
-  }
 }

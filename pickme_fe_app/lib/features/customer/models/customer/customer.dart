@@ -37,19 +37,4 @@ class Customer {
           : null,
     );
   }
-
-  // Convert model to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'email': email,
-      'fullName': fullName,
-      'phoneNumber': phoneNumber,
-      'imageUrl': imageUrl,
-      'role': role,
-      'isActive': isActive,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-    };
-  }
 }

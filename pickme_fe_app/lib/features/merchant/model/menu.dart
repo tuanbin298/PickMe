@@ -51,17 +51,4 @@ class Menu {
           : null,
     );
   }
-
-  // Convert model to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'description': description,
-      'price': price,
-      'category': category,
-      'imageUrl': imageUrl,
-      'preparationTimeMinutes': preparationTimeMinutes,
-      'tags': tags,
-    };
-  }
 }

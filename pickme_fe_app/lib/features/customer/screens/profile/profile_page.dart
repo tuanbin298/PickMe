@@ -65,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
     await prefs.clear();
 
     if (mounted) {
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (r) => false);
+      context.go("/login");
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Đã đăng xuất')));

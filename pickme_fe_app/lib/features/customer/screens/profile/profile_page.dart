@@ -217,19 +217,6 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       ),
     );
-
-    //               const SizedBox(height: 16),
-
-    //               /// Logout
-    //               ProfileMenuItem(
-    //                 icon: Icons.logout,
-    //                 title: "Đăng xuất",
-    //                 onTap: _logout,
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    // );
   }
 
   // Widgett to build section

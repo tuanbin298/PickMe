@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
+import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 
 class RestaurantService {
   final String baseUrl = dotenv.env['API_URL'] ?? '';
@@ -20,11 +20,11 @@ class RestaurantService {
         // Decode UTF-8 data to correctly display Vietnamese characters
         final data = jsonDecode(utf8.decode(response.bodyBytes));
 
-        // Verify that returned data is a List
-        if (data is List) {
-          return data.map((e) => Restaurant.fromJson(e)).toList();
+        // Data return is [ {}, {} ] => have restaurant
+        if (data is List && data.isNotEmpty) {
+          final restaurants = data.map((e) => Restaurant.fromJson(e)).toList();
+          return restaurants;
         } else {
-          print('Dữ liệu trả về không hợp lệ: $data');
           return [];
         }
       } else {

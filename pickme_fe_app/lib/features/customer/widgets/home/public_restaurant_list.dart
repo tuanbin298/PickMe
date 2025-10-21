@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
+import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 import 'package:pickme_fe_app/features/customer/services/restaurant/restaurant_service.dart';
 
 class PublicRestaurantList extends StatefulWidget {

@@ -7,10 +7,14 @@ class RestaurantMenuList extends StatelessWidget {
   final Map<String, List<RestaurantMenu>> grouped;
   final Future<void> Function() onRefresh;
 
+  /// Callback when a menu item is tapped
+  final void Function(RestaurantMenu menu)? onTap;
+
   const RestaurantMenuList({
     super.key,
     required this.grouped,
     required this.onRefresh,
+    this.onTap,
   });
 
   @override
@@ -22,6 +26,7 @@ class RestaurantMenuList extends StatelessWidget {
         children: grouped.entries.map((entry) {
           final category = entry.key;
           final items = entry.value;
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -33,6 +38,9 @@ class RestaurantMenuList extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // Display items based on their count
+              // For 4 or more items, use a horizontal list
               items.length >= 4
                   ? SizedBox(
                       height: 150,
@@ -40,15 +48,22 @@ class RestaurantMenuList extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: items.length,
                         separatorBuilder: (_, __) => const SizedBox(width: 10),
-                        itemBuilder: (context, i) =>
-                            RestaurantMenuCard(m: items[i], isHorizontal: true),
+                        itemBuilder: (context, i) => RestaurantMenuCard(
+                          m: items[i],
+                          isHorizontal: true,
+                          onTap: () => onTap?.call(items[i]),
+                        ),
                       ),
                     )
+                  // For less than 4 items, use a vertical list
                   : Column(
                       children: items
                           .map(
-                            (m) =>
-                                RestaurantMenuCard(m: m, isHorizontal: false),
+                            (m) => RestaurantMenuCard(
+                              m: m,
+                              isHorizontal: false,
+                              onTap: () => onTap?.call(m),
+                            ),
                           )
                           .toList(),
                     ),

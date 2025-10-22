@@ -22,6 +22,7 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_de
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_feedback/restaurant_feedback_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
+import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_detail_page.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 
@@ -119,6 +120,20 @@ class AppRouter {
           final restaurant = extraData['restaurant'] as Restaurant;
           final token = extraData['token'] as String;
           return RestaurantMenuPage(restaurant: restaurant);
+        },
+      ),
+
+      GoRoute(
+        path: '/restaurant/:restaurantId/menu-detail',
+        name: 'restaurant-menu-detail',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return RestaurantMenuDetailPage(
+            name: data['name'],
+            description: data['description'],
+            imageUrl: data['imageUrl'],
+            price: data['price'],
+          );
         },
       ),
 

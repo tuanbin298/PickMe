@@ -11,12 +11,16 @@ class RestaurantMenuTabView extends StatelessWidget {
   final TabController tabController;
   final Future<void> Function() onRefresh;
 
+  ///Callback when a menu item is tapped
+  final void Function(RestaurantMenu menu)? onTap;
+
   const RestaurantMenuTabView({
     super.key,
     required this.restaurant,
     required this.menus,
     required this.tabController,
     required this.onRefresh,
+    this.onTap,
   });
 
   @override
@@ -57,7 +61,12 @@ class RestaurantMenuTabView extends StatelessWidget {
           child: TabBarView(
             controller: tabController,
             children: [
-              RestaurantMenuList(grouped: grouped, onRefresh: onRefresh),
+              /// Menu Tab
+              RestaurantMenuList(
+                grouped: grouped,
+                onRefresh: onRefresh,
+                onTap: onTap,
+              ),
               const Center(child: Text("Chưa có đánh giá")),
             ],
           ),

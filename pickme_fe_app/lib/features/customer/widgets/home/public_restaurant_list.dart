@@ -83,10 +83,7 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
           onTap: () {
             context.push(
               '/restaurant/${item.id}',
-              extra: {
-                'restaurant': item,
-                'token': widget.token, // nếu có token
-              },
+              extra: {'restaurant': item, 'token': widget.token},
             );
           },
           child: Padding(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:go_router/go_router.dart';
 import '../../../customer/models/restaurant/restaurant.dart';
 import '../../../customer/models/restaurant/restaurant_menu.dart';
 import '../../../customer/services/restaurant/restaurant_menu_service.dart';
@@ -62,6 +61,19 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
             onRefresh: () async {
               setState(() => _menusFuture = _loadMenu());
               await _menusFuture;
+            },
+            // Handle menu item tap
+            onTap: (menu) {
+              context.pushNamed(
+                'restaurant-menu-detail',
+                pathParameters: {'restaurantId': restaurant.id.toString()},
+                extra: {
+                  'name': menu.name,
+                  'description': menu.description,
+                  'imageUrl': menu.imageUrl ?? '',
+                  'price': menu.price,
+                },
+              );
             },
           );
         },

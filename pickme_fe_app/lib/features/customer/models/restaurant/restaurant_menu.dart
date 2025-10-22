@@ -4,7 +4,7 @@ class RestaurantMenu {
   final int id;
   final String name;
   final String description;
-  final int price;
+  final double price;
   final String category;
   final String imageUrl;
   final bool isAvailable;
@@ -29,7 +29,7 @@ class RestaurantMenu {
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      price: (json['price'] as num).toInt(),
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
       category: json['category'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
       isAvailable: json['isAvailable'] ?? false,
@@ -44,7 +44,7 @@ class RestaurantMenu {
       "id": id,
       "name": name,
       "description": description,
-      "price": price,
+      "price": price, // ✅ double
       "category": category,
       "imageUrl": imageUrl,
       "isAvailable": isAvailable,

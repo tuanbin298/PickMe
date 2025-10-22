@@ -23,6 +23,7 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_fe
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
 import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_detail_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/order/order_page.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 
@@ -95,6 +96,17 @@ class AppRouter {
               final token = shellWidget?.token ?? "";
 
               return Homepage(token: token);
+            },
+          ),
+
+          GoRoute(
+            path: '/orders',
+            builder: (context, state) {
+              final shellWidget = context
+                  .findAncestorWidgetOfExactType<CustomerBottomNav>();
+              final token = shellWidget?.token ?? "";
+
+              return OrdersPage(token: token);
             },
           ),
 

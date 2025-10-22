@@ -6,8 +6,8 @@ import '../../widgets/home/public_restaurant_list.dart';
 
 class Homepage extends StatefulWidget {
   final String token;
-  const Homepage({super.key, required this.token});
 
+  const Homepage({super.key, required this.token});
   @override
   State<Homepage> createState() => _HomepageState();
 }
@@ -24,19 +24,29 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CustomLocationAppBar(),
-          const SizedBox(height: 10),
-          const CategoryHorizontalList(),
-          const SizedBox(height: 10),
-          CustomNavWidget(
-            selectedIndex: selectedIndex,
-            onItemSelected: _onItemSelected,
-          ),
-          Expanded(child: PublicRestaurantList(token: widget.token)),
-        ],
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const CustomLocationAppBar(),
+
+            const SizedBox(height: 10),
+
+            const CategoryHorizontalList(),
+
+            const SizedBox(height: 10),
+
+            CustomNavWidget(
+              selectedIndex: selectedIndex,
+              onItemSelected: _onItemSelected,
+            ),
+            if (selectedIndex == 0)
+              PublicRestaurantList(token: widget.token)
+            else
+              PublicRestaurantList(token: widget.token),
+          ],
+        ),
       ),
     );
   }

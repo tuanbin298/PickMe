@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant_menu.dart';
 import 'restaurant_menu_card.dart';
 
 class RestaurantMenuList extends StatelessWidget {
   final Map<String, List<RestaurantMenu>> grouped;
   final Future<void> Function() onRefresh;
-
-  /// Callback when a menu item is tapped
   final void Function(RestaurantMenu menu)? onTap;
 
   const RestaurantMenuList({
@@ -30,6 +27,7 @@ class RestaurantMenuList extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Category Title
               Text(
                 category,
                 style: const TextStyle(
@@ -39,34 +37,18 @@ class RestaurantMenuList extends StatelessWidget {
               ),
               const SizedBox(height: 10),
 
-              // Display items based on their count
-              // For 4 or more items, use a horizontal list
-              items.length >= 4
-                  ? SizedBox(
-                      height: 150,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: items.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 10),
-                        itemBuilder: (context, i) => RestaurantMenuCard(
-                          m: items[i],
-                          isHorizontal: true,
-                          onTap: () => onTap?.call(items[i]),
-                        ),
+              // Menu Items
+              Column(
+                children: items
+                    .map(
+                      (m) => RestaurantMenuCard(
+                        m: m,
+                        isHorizontal: false,
+                        onTap: () => onTap?.call(m),
                       ),
                     )
-                  // For less than 4 items, use a vertical list
-                  : Column(
-                      children: items
-                          .map(
-                            (m) => RestaurantMenuCard(
-                              m: m,
-                              isHorizontal: false,
-                              onTap: () => onTap?.call(m),
-                            ),
-                          )
-                          .toList(),
-                    ),
+                    .toList(),
+              ),
               const SizedBox(height: 24),
             ],
           );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant_menu.dart';
+import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 
 class RestaurantMenuCard extends StatelessWidget {
   final RestaurantMenu m;
@@ -17,14 +17,12 @@ class RestaurantMenuCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(
-      locale: 'vi_VN',
-      symbol: '₫',
-      decimalDigits: 0,
-    );
-    final priceText = currencyFormat.format(m.price);
+    // Format price text
+    final priceText = UtilsMethod.formatMoney(m.price);
+    // Favorite state
     final isFavorite = ValueNotifier<bool>(false);
 
+    // Card layout
     return GestureDetector(
       onTap: onTap,
       child: ValueListenableBuilder<bool>(
@@ -45,11 +43,13 @@ class RestaurantMenuCard extends StatelessWidget {
                 ),
               ],
             ),
+            // Card content
             child: Stack(
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Image
                     ClipRRect(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
@@ -68,6 +68,7 @@ class RestaurantMenuCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Info
                     if (!isHorizontal)
                       Expanded(
                         child: Padding(
@@ -79,6 +80,7 @@ class RestaurantMenuCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Menu Name
                               Text(
                                 m.name,
                                 maxLines: 1,
@@ -89,6 +91,7 @@ class RestaurantMenuCard extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 4),
+                              // Price
                               Text(
                                 priceText,
                                 style: TextStyle(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 
 class RestaurantMenuDetailPage extends StatefulWidget {
   final String name;
@@ -22,14 +22,12 @@ class RestaurantMenuDetailPage extends StatefulWidget {
 
 class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
   int quantity = 1;
-  final formatCurrency = NumberFormat.currency(
-    locale: 'vi_VN',
-    symbol: '',
-    decimalDigits: 0,
-  );
 
   @override
   Widget build(BuildContext context) {
+    // Calculate total price
+    final double totalPrice = widget.price * quantity;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -40,7 +38,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          //  Food Name & Description
+          // Food Name & Description
           Text(
             widget.name,
             style: const TextStyle(
@@ -68,6 +66,8 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
               height: 220,
               width: double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.broken_image, size: 80, color: Colors.grey),
             ),
           ),
           const SizedBox(height: 24),
@@ -96,7 +96,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
           ),
           const SizedBox(height: 20),
 
-          // Choose quantity
+          // Quantity Selector
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -122,20 +122,23 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
           ),
           const Spacer(),
 
-          // Price & Add to cart button
+          // Price & Add to cart
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             child: Row(
               children: [
-                // Giá
+                // Total price
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Giá", style: TextStyle(color: Colors.grey)),
+                      const Text(
+                        "Tổng giá",
+                        style: TextStyle(color: Colors.grey),
+                      ),
                       const SizedBox(height: 4),
                       Text(
-                        '${formatCurrency.format(widget.price)}đ',
+                        UtilsMethod.formatMoney(totalPrice),
                         style: const TextStyle(
                           color: Colors.orange,
                           fontWeight: FontWeight.bold,
@@ -186,7 +189,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     );
   }
 
-  /// Builds a circular button for adjusting quantity.
+  /// Build a circular button for increment/decrement quantity
   Widget _buildQuantityButton(IconData icon, VoidCallback onPressed) {
     return InkWell(
       onTap: onPressed,

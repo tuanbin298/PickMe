@@ -10,6 +10,7 @@ import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/profile_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/customer_bottom_nav.dart';
+import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/home/merchant_home_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/create_restaurant_page.dart';
@@ -21,7 +22,10 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_de
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_feedback/restaurant_feedback_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
+import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_detail_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/order/order_page.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
+import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 
 // Router configuration for the application
 class AppRouter {
@@ -96,6 +100,17 @@ class AppRouter {
           ),
 
           GoRoute(
+            path: '/orders',
+            builder: (context, state) {
+              final shellWidget = context
+                  .findAncestorWidgetOfExactType<CustomerBottomNav>();
+              final token = shellWidget?.token ?? "";
+
+              return OrdersPage(token: token);
+            },
+          ),
+
+          GoRoute(
             path: "/profile",
             name: "profile",
             builder: (context, state) {
@@ -107,6 +122,31 @@ class AppRouter {
             },
           ),
         ],
+      ),
+
+      GoRoute(
+        path: '/restaurant/:id',
+        name: "restaurant-menu",
+        builder: (context, state) {
+          final extraData = state.extra as Map<String, dynamic>;
+          final restaurant = extraData['restaurant'] as Restaurant;
+          final token = extraData['token'] as String;
+          return RestaurantMenuPage(restaurant: restaurant);
+        },
+      ),
+
+      GoRoute(
+        path: '/restaurant/:restaurantId/menu-detail',
+        name: 'restaurant-menu-detail',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return RestaurantMenuDetailPage(
+            name: data['name'],
+            description: data['description'],
+            imageUrl: data['imageUrl'],
+            price: data['price'],
+          );
+        },
       ),
 
       GoRoute(

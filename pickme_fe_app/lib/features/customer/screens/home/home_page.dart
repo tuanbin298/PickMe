@@ -42,9 +42,9 @@ class _HomepageState extends State<Homepage> {
               onItemSelected: _onItemSelected,
             ),
             if (selectedIndex == 0)
-              const PublicRestaurantList()
+              PublicRestaurantList(token: widget.token)
             else
-              const PublicRestaurantList(),
+              PublicRestaurantList(token: widget.token),
           ],
         ),
       ),

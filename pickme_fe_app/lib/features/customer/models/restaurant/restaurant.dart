@@ -1,5 +1,5 @@
 class Restaurant {
-  final String id;
+  final int id;
   final String name;
   final String imageUrl;
   final String address;
@@ -34,7 +34,7 @@ class Restaurant {
   // Parse data from JSON into model
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
-      id: json['id']?.toString() ?? '',
+      id: (json['id'] ?? 0).toInt(),
       name: json['name'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
       address: json['address'] ?? '',

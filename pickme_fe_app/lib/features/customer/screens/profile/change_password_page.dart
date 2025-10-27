@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({super.key});
+  final String token;
+
+  const ChangePasswordPage({super.key, required this.token});
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -26,6 +28,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     super.dispose();
   }
 
+  // Method new password
   void _save() async {
     final oldP = _oldCtrl.text.trim();
     final newP = _newCtrl.text.trim();
@@ -70,7 +73,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: const TextStyle(color: Colors.grey, fontSize: 14)),
+
           const SizedBox(height: 8),
+
           Container(
             decoration: BoxDecoration(
               color: const Color(0xffF2F3F5),
@@ -104,6 +109,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FA),
+      // Appbar
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
@@ -119,18 +125,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              // Old password
               _buildPasswordField(
                 label: 'Mật khẩu cũ',
                 controller: _oldCtrl,
                 obscureText: _obscureOld,
                 onToggle: () => setState(() => _obscureOld = !_obscureOld),
               ),
+
+              // New password
               _buildPasswordField(
                 label: 'Mật khẩu mới',
                 controller: _newCtrl,
                 obscureText: _obscureNew,
                 onToggle: () => setState(() => _obscureNew = !_obscureNew),
               ),
+
+              // Confirm new password
               _buildPasswordField(
                 label: 'Xác nhận mật khẩu mới',
                 controller: _confirmCtrl,
@@ -139,6 +150,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     setState(() => _obscureConfirm = !_obscureConfirm),
               ),
               const SizedBox(height: 20),
+
+              // Button save
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

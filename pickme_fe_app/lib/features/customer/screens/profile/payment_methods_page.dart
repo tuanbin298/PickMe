@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class PaymentMethodsPage extends StatelessWidget {
-  const PaymentMethodsPage({super.key});
+  final String token;
+
+  const PaymentMethodsPage({super.key, required this.token});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FA),
+      // Appbar
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
@@ -27,12 +30,15 @@ class PaymentMethodsPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Image
               Image.asset(
                 'lib/assets/images/card_placeholder.png',
                 height: 120,
                 fit: BoxFit.contain,
               ),
+
               const SizedBox(height: 30),
+
               // Title
               const Text(
                 'Bạn chưa có thẻ thanh toán',
@@ -43,7 +49,9 @@ class PaymentMethodsPage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
+
               const SizedBox(height: 10),
+
               // Description
               const Text(
                 'Có vẻ như bạn chưa thêm thẻ tín dụng hoặc thẻ ghi nợ nào. '
@@ -51,13 +59,15 @@ class PaymentMethodsPage extends StatelessWidget {
                 style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
                 textAlign: TextAlign.center,
               ),
+
               const SizedBox(height: 30),
+
               //  Button "Thêm thẻ"
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // 👉 TODO: mở trang thêm thẻ
+                    //
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xffF59E0B),

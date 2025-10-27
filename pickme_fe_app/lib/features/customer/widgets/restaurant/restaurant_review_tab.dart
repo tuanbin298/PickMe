@@ -47,7 +47,9 @@ class RestaurantReviewTab extends StatelessWidget {
               backgroundColor: Colors.orange,
               child: Icon(Icons.person, color: Colors.white),
             ),
+
             const SizedBox(width: 12),
+
             // Review Details
             Expanded(
               child: Column(
@@ -65,6 +67,7 @@ class RestaurantReviewTab extends StatelessWidget {
                           fontSize: 15,
                         ),
                       ),
+
                       // Rating
                       Row(
                         children: [
@@ -73,7 +76,9 @@ class RestaurantReviewTab extends StatelessWidget {
                             color: Colors.amber.shade600,
                             size: 18,
                           ),
+
                           const SizedBox(width: 2),
+
                           Text(
                             rating.toStringAsFixed(1),
                             style: const TextStyle(
@@ -85,10 +90,14 @@ class RestaurantReviewTab extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 4),
+
                   // Comment
                   Text(comment, style: const TextStyle(fontSize: 14)),
+
                   const SizedBox(height: 6),
+
                   // Date
                   Text(
                     date,

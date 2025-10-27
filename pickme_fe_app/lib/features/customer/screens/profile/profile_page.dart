@@ -137,11 +137,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       title: "Mật khẩu",
                       subtitle: "Thay đổi mật khẩu",
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (_) => const ChangePasswordPage(),
-                        //   ),
-                        // );
+                        context.push(
+                          "/account-resetpassword",
+                          extra: widget.token,
+                        );
                       },
                     ),
 
@@ -151,11 +150,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       title: "Phương thức thanh toán",
                       subtitle: "Thêm thẻ ngân hàng/tín dụng",
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (_) => const PaymentMethodsPage(),
-                        //   ),
-                        // );
+                        context.push(
+                          "/account-payment-method",
+                          extra: widget.token,
+                        );
                       },
                     ),
 
@@ -165,11 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       title: "Địa chỉ",
                       subtitle: "Thay đổi địa chỉ",
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (_) => const AddressesPage(),
-                        //   ),
-                        // );
+                        context.push("/account-address", extra: widget.token);
                       },
                     ),
                   ],

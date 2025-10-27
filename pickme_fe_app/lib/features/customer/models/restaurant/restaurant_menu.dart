@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class RestaurantMenu {
   final int id;
   final String name;
@@ -36,29 +34,5 @@ class RestaurantMenu {
       preparationTimeMinutes: json['preparationTimeMinutes'] ?? 0,
       tags: json['tags'] != null ? List<String>.from(json['tags']) : <String>[],
     );
-  }
-
-  /// Convert back to JSON (optional, useful if you POST data)
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "name": name,
-      "description": description,
-      "price": price, // ✅ double
-      "category": category,
-      "imageUrl": imageUrl,
-      "isAvailable": isAvailable,
-      "preparationTimeMinutes": preparationTimeMinutes,
-      "tags": tags,
-    };
-  }
-
-  /// Helper to parse from raw string (optional)
-  static List<RestaurantMenu> listFromJsonString(String str) {
-    final jsonData = jsonDecode(utf8.decode(str.codeUnits));
-    if (jsonData is List) {
-      return jsonData.map((e) => RestaurantMenu.fromJson(e)).toList();
-    }
-    return [];
   }
 }

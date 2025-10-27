@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class RestaurantMarkerDialog extends StatelessWidget {
+class RestaurantMarkerDialog extends StatefulWidget {
   final Restaurant restaurant;
   final Function(LatLng destination)? onSelectDestination;
 
@@ -14,7 +16,37 @@ class RestaurantMarkerDialog extends StatelessWidget {
   });
 
   @override
+  State<RestaurantMarkerDialog> createState() => _RestaurantMarkerDialogState();
+}
+
+class _RestaurantMarkerDialogState extends State<RestaurantMarkerDialog> {
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadToken();
+  }
+
+  // Method get token
+  Future<void> _loadToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedToken = prefs.getString('token');
+    setState(() {
+      token = savedToken;
+    });
+
+    if (savedToken != null) {
+      print("Token hiện tại: $savedToken");
+    } else {
+      print("Chưa có token lưu");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final restaurant = widget.restaurant;
+
     return Dialog(
       // Shadow
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -138,20 +170,17 @@ class RestaurantMarkerDialog extends StatelessWidget {
                     ),
                   ),
 
-                  // Button destination
+                  // Button to show detail restaurant
                   ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.pop(context);
-                      onSelectDestination?.call(
-                        LatLng(
-                          restaurant.latitude ?? 0,
-                          restaurant.longitude ?? 0,
-                        ),
+                      context.push(
+                        '/restaurant/${restaurant.id}',
+                        extra: {'restaurant': restaurant, 'token': token},
                       );
                     },
                     icon: const Icon(Icons.flag, size: 18, color: Colors.white),
                     label: const Text(
-                      "Chọn điểm đến",
+                      "Xem quán",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,

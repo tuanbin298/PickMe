@@ -71,7 +71,7 @@ class _MapPageState extends State<MapPage> {
     // Get current location
     final position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.bestForNavigation,
-      timeLimit: const Duration(seconds: 10),
+      // timeLimit: const Duration(seconds: 10),
     );
     setState(() {
       _currentLocation = LatLng(position.latitude, position.longitude);

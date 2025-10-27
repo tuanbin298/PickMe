@@ -39,6 +39,7 @@ class CustomerService {
     String customerId,
     Map<String, dynamic> customerData,
   ) async {
+    // ignore: unnecessary_brace_in_string_interps
     final url = Uri.parse('$baseUrl/users/${customerId}');
 
     final response = await http.put(

@@ -30,15 +30,18 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // Appbar
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Food Name & Description
+          // Restaurant name
           Text(
             widget.name,
             style: const TextStyle(
@@ -48,12 +51,16 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
             ),
             textAlign: TextAlign.center,
           ),
+
           const SizedBox(height: 6),
+
+          // Restaurant description
           Text(
             widget.description,
             style: const TextStyle(color: Colors.grey, fontSize: 14),
             textAlign: TextAlign.center,
           ),
+
           const SizedBox(height: 12),
 
           // Food Image
@@ -70,6 +77,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                   const Icon(Icons.broken_image, size: 80, color: Colors.grey),
             ),
           ),
+
           const SizedBox(height: 24),
 
           // Choose size
@@ -115,11 +123,13 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                   ),
                 ),
               ),
+
               _buildQuantityButton(Icons.add, () {
                 setState(() => quantity++);
               }),
             ],
           ),
+
           const Spacer(),
 
           // Price & Add to cart
@@ -136,7 +146,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                         "Tổng giá",
                         style: TextStyle(color: Colors.grey),
                       ),
+
                       const SizedBox(height: 4),
+
                       Text(
                         UtilsMethod.formatMoney(totalPrice),
                         style: const TextStyle(

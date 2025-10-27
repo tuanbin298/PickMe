@@ -10,7 +10,9 @@ class OrderCurrentTab extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.hourglass_empty, size: 60, color: Colors.orange),
+
           SizedBox(height: 16),
+
           Text(
             "Tính năng sẽ ra mắt sớm!",
             style: TextStyle(
@@ -19,7 +21,9 @@ class OrderCurrentTab extends StatelessWidget {
               color: Colors.orange,
             ),
           ),
+
           SizedBox(height: 8),
+
           Text(
             "Hiện chưa có đơn hàng nào đang xử lý",
             style: TextStyle(color: Colors.grey, fontSize: 14),

@@ -15,10 +15,11 @@ class RestaurantInfoCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Restaurant Name and Verification icon
+        // Information
         Row(
           children: [
             Expanded(
+              // Restaurant name
               child: Text(
                 restaurant.name,
                 style: const TextStyle(
@@ -27,16 +28,24 @@ class RestaurantInfoCard extends StatelessWidget {
                 ),
               ),
             ),
+
+            // Restaurant approved
             if (restaurant.isApproved == true)
               const Icon(Icons.verified, color: Colors.green),
           ],
         ),
+
         const SizedBox(height: 6),
+
         // Rating and Operating Hours
         Row(
           children: [
+            // Icons rating
             const Icon(Icons.star, color: Colors.amber, size: 18),
+
             const SizedBox(width: 4),
+
+            // Text
             Text(
               restaurant.rating == 0.0
                   ? 'Chưa có đánh giá'
@@ -46,26 +55,37 @@ class RestaurantInfoCard extends StatelessWidget {
                 color: restaurant.rating == 0.0 ? Colors.grey : Colors.black,
               ),
             ),
+
             const SizedBox(width: 10),
+
+            // Iconstime
             const Icon(Icons.schedule, size: 16, color: Colors.grey),
+
             const SizedBox(width: 4),
+
+            // Open & Close time
             Text(
               '$opening - $closing',
               style: const TextStyle(color: Colors.grey),
             ),
           ],
         ),
+
         const SizedBox(height: 6),
+
         // Address
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Icon address
             const Icon(
               Icons.location_on_outlined,
               size: 16,
               color: Colors.grey,
             ),
+
             const SizedBox(width: 4),
+
             Expanded(
               child: Text(
                 restaurant.address,
@@ -74,7 +94,9 @@ class RestaurantInfoCard extends StatelessWidget {
             ),
           ],
         ),
+
         const SizedBox(height: 8),
+
         // Promotion Banner
         Container(
           padding: const EdgeInsets.all(8),
@@ -84,8 +106,12 @@ class RestaurantInfoCard extends StatelessWidget {
           ),
           child: Row(
             children: const [
+              // Icon
               Icon(Icons.local_offer, color: Colors.orange, size: 18),
+
               SizedBox(width: 6),
+
+              // Text
               Expanded(
                 child: Text(
                   'Giảm 32.000đ cho đơn từ 200.000đ',

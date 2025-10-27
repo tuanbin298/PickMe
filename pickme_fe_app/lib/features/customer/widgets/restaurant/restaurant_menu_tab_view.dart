@@ -28,6 +28,7 @@ class RestaurantMenuTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Group menus by category
     final Map<String, List<RestaurantMenu>> grouped = {};
+
     for (var m in menus) {
       final cat = (m.category.isNotEmpty) ? m.category : 'Khác';
       grouped.putIfAbsent(cat, () => []);
@@ -35,8 +36,10 @@ class RestaurantMenuTabView extends StatelessWidget {
     }
 
     // Main layout
+    // NestedScrollView: show appbar when scroll
     return NestedScrollView(
       headerSliverBuilder: (context, _) => [
+        // Restaurant image
         SliverAppBar(
           pinned: true,
           expandedHeight: 200,
@@ -50,17 +53,22 @@ class RestaurantMenuTabView extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
+
+            // Restaurant info card
             child: RestaurantInfoCard(restaurant: restaurant),
           ),
+
           // Tab Bar
           TabBar(
             controller: tabController,
             labelColor: Colors.black,
             tabs: const [
               Tab(text: 'Thực đơn'),
+
               Tab(text: 'Đánh giá'),
             ],
           ),
+
           Expanded(
             child: TabBarView(
               controller: tabController,
@@ -72,6 +80,7 @@ class RestaurantMenuTabView extends StatelessWidget {
                     opacity: unavailable ? 0.5 : 1.0,
                     child: RefreshIndicator(
                       onRefresh: onRefresh,
+
                       child: RestaurantMenuList(
                         grouped: grouped,
                         onRefresh: onRefresh,

@@ -29,10 +29,12 @@ class _HomepageState extends State<Homepage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Homepage header
             const CustomLocationAppBar(),
 
             const SizedBox(height: 10),
 
+            // Homepage category
             const CategoryHorizontalList(),
 
             const SizedBox(height: 10),
@@ -41,10 +43,9 @@ class _HomepageState extends State<Homepage> {
               selectedIndex: selectedIndex,
               onItemSelected: _onItemSelected,
             ),
-            if (selectedIndex == 0)
-              PublicRestaurantList(token: widget.token)
-            else
-              PublicRestaurantList(token: widget.token),
+
+            // Homepage restaurant
+            PublicRestaurantList(token: widget.token),
           ],
         ),
       ),

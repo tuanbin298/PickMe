@@ -36,7 +36,7 @@ class OrderCard extends StatelessWidget {
               // Status and date
               Row(
                 children: [
-                  // Status
+                  //Order Status
                   Text(
                     order.status,
                     style: const TextStyle(
@@ -45,8 +45,10 @@ class OrderCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+
                   const SizedBox(width: 6),
-                  // Date
+
+                  //Order Date
                   Text(
                     order.date,
                     style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
@@ -55,16 +57,21 @@ class OrderCard extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 10),
+
           // Order Details
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Order image
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(order.image, width: 70, height: 70),
               ),
+
               const SizedBox(width: 12),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +79,7 @@ class OrderCard extends StatelessWidget {
                     // Title with verified icon
                     Row(
                       children: [
-                        // Title
+                        //Order Title
                         Flexible(
                           child: Text(
                             order.title,
@@ -83,7 +90,9 @@ class OrderCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+
                         const SizedBox(width: 4),
+
                         // Verified Icon
                         const Icon(
                           Icons.verified,
@@ -92,8 +101,10 @@ class OrderCard extends StatelessWidget {
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 2),
-                    // Address
+
+                    //Order Address
                     Text(
                       order.address,
                       style: const TextStyle(
@@ -104,11 +115,13 @@ class OrderCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+
                     const SizedBox(height: 6),
+
                     // Price and quantity
                     Row(
                       children: [
-                        // Price
+                        //Order Price
                         Text(
                           "${order.price.toStringAsFixed(0)}đ",
                           style: const TextStyle(
@@ -117,7 +130,7 @@ class OrderCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        // Quantity
+                        //Order Quantity
                         Text(
                           "• ${order.quantity} phần",
                           style: const TextStyle(
@@ -132,7 +145,9 @@ class OrderCard extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 12),
+
           // Action Buttons: Review & Reorder
           Row(
             children: [
@@ -158,7 +173,9 @@ class OrderCard extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(width: 10),
+
               // Reorder Button
               Expanded(
                 child: ElevatedButton(

@@ -43,6 +43,7 @@ class RestaurantMenuCard extends StatelessWidget {
                 ),
               ],
             ),
+
             // Card content
             child: Stack(
               children: [
@@ -68,6 +69,7 @@ class RestaurantMenuCard extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     // Info
                     if (!isHorizontal)
                       Expanded(
@@ -90,7 +92,9 @@ class RestaurantMenuCard extends StatelessWidget {
                                   fontSize: 15,
                                 ),
                               ),
+
                               const SizedBox(height: 4),
+
                               // Price
                               Text(
                                 priceText,
@@ -106,6 +110,7 @@ class RestaurantMenuCard extends StatelessWidget {
                       ),
                   ],
                 ),
+
                 // Button favorite
                 Positioned(
                   top: 6,
@@ -126,6 +131,7 @@ class RestaurantMenuCard extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 // Button add to cart
                 Positioned(
                   bottom: 6,
@@ -153,6 +159,7 @@ class RestaurantMenuCard extends StatelessWidget {
                           ),
                         ],
                       ),
+
                       child: const Icon(
                         Icons.add,
                         color: Colors.white,

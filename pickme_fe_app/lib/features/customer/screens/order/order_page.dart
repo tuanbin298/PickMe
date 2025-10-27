@@ -31,9 +31,12 @@ class _OrdersPageState extends State<OrdersPage> {
           elevation: 0,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
+          // Search bar
           title: _buildSearchBar(),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
+
+            // Tab bar
             child: _buildTabs(),
           ),
         ),
@@ -47,7 +50,7 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  // Thanh tìm kiếm
+  // Search bar
   Widget _buildSearchBar() => Container(
     height: 40,
     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -58,7 +61,9 @@ class _OrdersPageState extends State<OrdersPage> {
     child: const Row(
       children: [
         Icon(Icons.location_on_outlined, color: Colors.grey, size: 18),
+
         SizedBox(width: 6),
+
         Text(
           "Tìm địa điểm",
           style: TextStyle(color: Colors.grey, fontSize: 14),

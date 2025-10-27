@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AddressesPage extends StatelessWidget {
-  const AddressesPage({super.key});
+  final String token;
+
+  const AddressesPage({super.key, required this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +14,7 @@ class AddressesPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FA),
+      // Appbar
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text(
@@ -26,6 +29,7 @@ class AddressesPage extends StatelessWidget {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -38,6 +42,7 @@ class AddressesPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Text
                 const Text(
                   "Địa chỉ",
                   style: TextStyle(
@@ -46,6 +51,7 @@ class AddressesPage extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
+
                 const SizedBox(height: 16),
 
                 // Address
@@ -56,7 +62,7 @@ class AddressesPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                //Phường / xã
+                //Ward
                 _buildTextField(
                   label: "Phường/Xã *",
                   hint: "Nhập Phường hoặc Xã của bạn",
@@ -64,7 +70,7 @@ class AddressesPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Quận / huyện
+                // Districy
                 _buildTextField(
                   label: "Quận/Huyện *",
                   hint: "Nhập Quận hoặc Huyện của bạn",
@@ -72,7 +78,7 @@ class AddressesPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Tỉnh / thành phố
+                // City
                 _buildTextField(
                   label: "Tỉnh/Thành Phố *",
                   hint: "Nhập Tỉnh hoặc Thành phố của bạn",
@@ -85,7 +91,7 @@ class AddressesPage extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // 👉 TODO: xử lý lưu địa chỉ
+                      //
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffF59E0B),

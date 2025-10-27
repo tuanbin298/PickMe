@@ -8,6 +8,9 @@ import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/profile/payment_methods_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/profile_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/customer_bottom_nav.dart';
 import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_page.dart';
@@ -130,7 +133,7 @@ class AppRouter {
         builder: (context, state) {
           final extraData = state.extra as Map<String, dynamic>;
           final restaurant = extraData['restaurant'] as Restaurant;
-          final token = extraData['token'] as String;
+
           return RestaurantMenuPage(restaurant: restaurant);
         },
       ),
@@ -155,6 +158,33 @@ class AppRouter {
         builder: (context, state) {
           final token = state.extra as String? ?? "";
           return AccountInfoPage(token: token);
+        },
+      ),
+
+      GoRoute(
+        path: "/account-resetpassword",
+        name: "account-resetpassword",
+        builder: (context, state) {
+          final token = state.extra as String? ?? "";
+          return ChangePasswordPage(token: token);
+        },
+      ),
+
+      GoRoute(
+        path: "/account-payment-method",
+        name: "account-payment-method",
+        builder: (context, state) {
+          final token = state.extra as String? ?? "";
+          return PaymentMethodsPage(token: token);
+        },
+      ),
+
+      GoRoute(
+        path: "/account-address",
+        name: "account-address",
+        builder: (context, state) {
+          final token = state.extra as String? ?? "";
+          return AddressesPage(token: token);
         },
       ),
 

@@ -20,12 +20,15 @@ class OrderHistoryTab extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(child: Text('Lỗi tải đơn hàng: ${snapshot.error}'));
         }
+
         // Display orders
         final orders = snapshot.data ?? [];
+
         // No orders message
         if (orders.isEmpty) {
           return const Center(child: Text('Chưa có đơn hàng nào'));
         }
+
         // Orders list
         return ListView.builder(
           padding: const EdgeInsets.all(12),

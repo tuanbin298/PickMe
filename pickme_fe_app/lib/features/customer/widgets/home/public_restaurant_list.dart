@@ -22,17 +22,22 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
     _loadRestaurants();
   }
 
+  // Method load restaurant
   Future<void> _loadRestaurants() async {
     try {
       final data = await _restaurantService.getPublicRestaurants();
+
       if (!mounted) return;
+
       setState(() {
         _restaurants = data;
         _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
+
       setState(() => _isLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không thể tải danh sách quán ăn: $e')),
       );
@@ -41,6 +46,7 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
 
   @override
   Widget build(BuildContext context) {
+    // Loading
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -61,31 +67,30 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
       itemBuilder: (context, index) {
         final item = _restaurants[index];
 
-        final imageUrl = item.imageUrl?.isNotEmpty == true
-            ? item.imageUrl!
+        final imageUrl = item.imageUrl.isNotEmpty == true
+            ? item.imageUrl
             : 'https://via.placeholder.com/400x200.png?text=No+Image';
 
-        final name = item.name?.isNotEmpty == true
-            ? item.name!
-            : 'Không có tên';
-        final address = item.address?.isNotEmpty == true
-            ? item.address!
+        final name = item.name.isNotEmpty == true ? item.name : 'Không có tên';
+        final address = item.address.isNotEmpty == true
+            ? item.address
             : 'Không có địa chỉ';
-        final rating = item.rating ?? 0.0;
-        final isOpen = item.isOpen ?? false;
+        final rating = item.rating;
+        final isOpen = item.isOpen;
         final isApproved = item.isApproved ?? false;
-        final categories =
-            (item.categories != null && item.categories!.isNotEmpty)
-            ? item.categories!.join(' · ')
+        final categories = (item.categories.isNotEmpty)
+            ? item.categories.join(' · ')
             : 'Danh mục chưa cập nhật';
 
         return GestureDetector(
+          // Navigate to restaurant detail
           onTap: () {
             context.push(
               '/restaurant/${item.id}',
               extra: {'restaurant': item, 'token': widget.token},
             );
           },
+
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(
@@ -100,6 +105,7 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                   ),
                 ],
               ),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -125,7 +131,7 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                     ),
                   ),
 
-                  // Restaurant details
+                  // Restaurant information
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                     child: Column(
@@ -135,6 +141,7 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                         Row(
                           children: [
                             Expanded(
+                              // Restaurant name
                               child: Text(
                                 name,
                                 style: const TextStyle(
@@ -144,6 +151,7 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                                 ),
                               ),
                             ),
+
                             if (isApproved)
                               const Icon(
                                 Icons.verified,
@@ -165,7 +173,9 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                                 color: isOpen ? Colors.green : Colors.red,
                               ),
                             ),
+
                             const SizedBox(width: 6),
+
                             Expanded(
                               child: Text(
                                 categories,
@@ -178,6 +188,7 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                             ),
                           ],
                         ),
+
                         const SizedBox(height: 10),
 
                         // Rating + address
@@ -195,12 +206,16 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                               ),
                               child: Row(
                                 children: [
+                                  // Rating
                                   const Icon(
                                     Icons.star,
                                     size: 14,
                                     color: Colors.white,
                                   ),
+
                                   const SizedBox(width: 4),
+
+                                  // Rating
                                   Text(
                                     rating.toStringAsFixed(1),
                                     style: const TextStyle(
@@ -211,13 +226,17 @@ class _PublicRestaurantListState extends State<PublicRestaurantList> {
                                 ],
                               ),
                             ),
+
                             const SizedBox(width: 10),
+
                             const Icon(
                               Icons.location_on,
                               size: 14,
                               color: Colors.grey,
                             ),
+
                             const SizedBox(width: 4),
+
                             Expanded(
                               child: Text(
                                 address,

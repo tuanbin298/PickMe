@@ -364,17 +364,18 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
 
                     const SizedBox(height: 16),
 
-                    // Location
-                    LocationPickerField(
-                      latitude: _latitude,
-                      longitude: _longitude,
-                      // onLocationSelected: (object) {
-                      //   setState(() {
-                      //     _latitude = object["latitude"];
-                      //     _longitude = object["longitude"];
-                      //   });
-                      // },
-                    ),
+                    if (_latitude != null && _longitude != null)
+                      // Location
+                      LocationPickerField(
+                        latitude: _latitude,
+                        longitude: _longitude,
+                        // onLocationSelected: (object) {
+                        //   setState(() {
+                        //     _latitude = object["latitude"];
+                        //     _longitude = object["longitude"];
+                        //   });
+                        // },
+                      ),
 
                     const SizedBox(height: 16),
 

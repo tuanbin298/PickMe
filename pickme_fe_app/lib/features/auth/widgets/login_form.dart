@@ -64,6 +64,7 @@ class _LoginFormState extends State<LoginForm> {
           }
 
           Future.delayed(const Duration(milliseconds: 300), () {
+            // ignore: use_build_context_synchronously
             NotificationService.showSuccess(context, "Đăng nhập thành công");
           });
         } else {

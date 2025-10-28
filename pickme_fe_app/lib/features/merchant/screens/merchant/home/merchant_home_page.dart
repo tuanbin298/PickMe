@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
-import 'package:pickme_fe_app/features/merchant/widgets/merchant_home_page/build_welcome_banner.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/merchant_home/merchant_overview_section.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/merchant_home/build_welcome_banner.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/merchant_home_chart/merchant_order_chart.dart';
+import 'package:pickme_fe_app/features/merchant/widgets/merchant_home_chart/merchant_revenue_chart.dart';
 
 class MerchantHomePage extends StatefulWidget {
   final String token;
@@ -35,6 +38,19 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
             Buildwelcomebanner(),
 
             const SizedBox(height: 20),
+
+            // Overview
+            MerchantOverviewSection(token: widget.token),
+
+            const SizedBox(height: 20),
+
+            // Revenue chart
+            MerchantRevenueChart(),
+
+            const SizedBox(height: 20),
+
+            // Order chart
+            MerchantOrderChart(),
           ],
         ),
       ),

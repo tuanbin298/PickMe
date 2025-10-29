@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [isForgotOpen, setIsForgotOpen] = useState(false); // modal state
 
+  // Hanlde change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
@@ -38,6 +39,7 @@ export default function LoginPage() {
     setErrors(newErrors);
   };
 
+  // Hanlde submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (Object.values(errors).some((error) => error)) {
@@ -62,7 +64,7 @@ export default function LoginPage() {
 
       if (data.role === "ADMIN") {
         toast.success("Đăng nhập thành công");
-        navigate("/dashboard");
+        navigate("/dashboard/overview");
       } else {
         toast.error("Tài khoản không có quyền truy cập");
       }
@@ -170,7 +172,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal forgot password */}
       <ForgotPasswordModal
         isOpen={isForgotOpen}
         onClose={() => setIsForgotOpen(false)}

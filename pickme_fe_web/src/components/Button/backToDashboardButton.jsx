@@ -6,7 +6,7 @@ const BackToDashboardButton = () => {
   const navigate = useNavigate();
 
   const handleBackDashboard = () => {
-    navigate("/dashboard");
+    navigate("/dashboard/overview");
   };
 
   return (

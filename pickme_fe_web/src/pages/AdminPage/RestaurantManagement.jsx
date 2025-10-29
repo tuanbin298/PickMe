@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Search } from "@mui/icons-material";
-import {
-  Box,
-  InputAdornment,
-  TextField,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Box, InputAdornment, TextField, Typography } from "@mui/material";
 import BackToDashboardButton from "../../components/Button/backToDashboardButton";
 import RestaurantTable from "../../components/Admin/Restaurant/RestaurantTable";
 

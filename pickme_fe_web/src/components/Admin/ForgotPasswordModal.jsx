@@ -4,23 +4,27 @@ import { toast } from "react-toastify";
 import authService from "../../../services/auth/authService";
 
 export default function ForgotPasswordModal({ isOpen, onClose }) {
-  const [step, setStep] = useState(1); // 1: email, 2: otp, 3: reset password
+  // State
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // input xác nhận mật khẩu
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
   const token = localStorage.getItem("sessionToken") || "";
 
+  // Send OTP
   const handleSendOtp = async () => {
     if (!email) {
       toast.error("Vui lòng nhập email!");
       return;
     }
+
     setLoading(true);
+
     try {
       await authService.sendOtp(email, token);
       toast.success("OTP đã được gửi đến email của bạn!");
@@ -32,12 +36,15 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
     }
   };
 
+  // Verify OTP
   const handleVerifyOtp = async () => {
     if (!otp) {
       toast.error("Vui lòng nhập OTP!");
       return;
     }
+
     setLoading(true);
+
     try {
       await authService.verifyOtp(email, otp, token);
       toast.success("Xác thực OTP thành công!");
@@ -49,6 +56,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
     }
   };
 
+  // Submit new password
   const handleResetPassword = async () => {
     if (!newPassword || newPassword.length < 6) {
       toast.error("Mật khẩu mới phải ít nhất 6 ký tự!");
@@ -62,7 +70,9 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
       toast.error("Mật khẩu xác nhận không khớp!");
       return;
     }
+
     setLoading(true);
+
     try {
       await authService.resetPassword(email, otp, newPassword, token);
       toast.success("Đặt lại mật khẩu thành công!");
@@ -79,8 +89,10 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
     }
   };
 
+  // Every step in process to reset password
   const renderStepContent = () => {
     switch (step) {
+      // Submit email
       case 1:
         return (
           <>
@@ -95,6 +107,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
               InputProps={{ className: "rounded-xl" }}
               required
             />
+
             <Button
               fullWidth
               variant="contained"
@@ -116,6 +129,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
             </Button>
           </>
         );
+      // Submit OTP
       case 2:
         return (
           <>
@@ -129,6 +143,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
               InputProps={{ className: "rounded-xl" }}
               required
             />
+
             <Button
               fullWidth
               variant="contained"
@@ -150,6 +165,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
             </Button>
           </>
         );
+      // Submit new password
       case 3:
         return (
           <>
@@ -164,6 +180,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
               InputProps={{ className: "rounded-xl" }}
               required
             />
+
             <TextField
               fullWidth
               label="Xác nhận mật khẩu"
@@ -175,6 +192,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }) {
               InputProps={{ className: "rounded-xl" }}
               required
             />
+
             <Button
               fullWidth
               variant="contained"

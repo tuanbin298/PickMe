@@ -46,6 +46,27 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Appbar
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        title: Text(
+          "Menu",
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            context.go("/merchant-restaurant-list", extra: widget.token);
+          },
+        ),
+      ),
+
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _restaurant == null

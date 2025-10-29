@@ -23,11 +23,11 @@ class CartService {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
         return Cart.fromJson(data);
       } else {
-        print('❌ Lỗi tải giỏ hàng: ${response.statusCode}');
+        print('Lỗi tải giỏ hàng: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi tải giỏ hàng: $e');
+      print('Lỗi kết nối khi tải giỏ hàng: $e');
       return null;
     }
   }
@@ -49,11 +49,11 @@ class CartService {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
         return Cart.fromJson(data);
       } else {
-        print('❌ Lỗi lấy chi tiết giỏ hàng: ${response.statusCode}');
+        print('Lỗi lấy chi tiết giỏ hàng: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi lấy chi tiết giỏ hàng: $e');
+      print('Lỗi kết nối khi lấy chi tiết giỏ hàng: $e');
       return null;
     }
   }
@@ -82,11 +82,11 @@ class CartService {
         print('✅ Thêm món nhanh vào giỏ hàng thành công');
         return true;
       } else {
-        print('❌ Lỗi thêm món nhanh: ${response.statusCode}');
+        print('Lỗi thêm món nhanh: ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi thêm món nhanh: $e');
+      print('Lỗi kết nối khi thêm món nhanh: $e');
       return false;
     }
   }
@@ -125,12 +125,12 @@ class CartService {
         print('✅ Thêm món vào giỏ hàng thành công');
         return true;
       } else {
-        print('❌ Lỗi thêm món chi tiết: ${response.statusCode}');
+        print('Lỗi thêm món chi tiết: ${response.statusCode}');
         print('Body: ${response.body}');
         return false;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi thêm món chi tiết: $e');
+      print('Lỗi kết nối khi thêm món chi tiết: $e');
       return false;
     }
   }
@@ -152,11 +152,11 @@ class CartService {
         print('✅ Đã xóa toàn bộ giỏ hàng');
         return true;
       } else {
-        print('❌ Lỗi khi xóa giỏ hàng: ${response.statusCode}');
+        print('Lỗi khi xóa giỏ hàng: ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi xóa giỏ hàng: $e');
+      print('Lỗi kết nối khi xóa giỏ hàng: $e');
       return false;
     }
   }
@@ -178,11 +178,11 @@ class CartService {
         print('✅ Đã xóa món khỏi giỏ hàng');
         return true;
       } else {
-        print('❌ Lỗi xóa món khỏi giỏ: ${response.statusCode}');
+        print('Lỗi xóa món khỏi giỏ: ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi xóa món khỏi giỏ: $e');
+      print('Lỗi kết nối khi xóa món khỏi giỏ: $e');
       return false;
     }
   }
@@ -208,11 +208,11 @@ class CartService {
         // Trả về danh sách AddOn dưới dạng List<Map>
         return data.map((e) => e as Map<String, dynamic>).toList();
       } else {
-        print('❌ Lỗi tải AddOns: ${response.statusCode}');
+        print('Lỗi tải AddOns: ${response.statusCode}');
         return [];
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi tải AddOns: $e');
+      print('Lỗi kết nối khi tải AddOns: $e');
       return [];
     }
   }
@@ -245,11 +245,11 @@ class CartService {
 
         return 0;
       } else {
-        print('❌ Lỗi lấy tổng số món: ${response.statusCode}');
+        print('Lỗi lấy tổng số món: ${response.statusCode}');
         return 0;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi lấy tổng số món: $e');
+      print('Lỗi kết nối khi lấy tổng số món: $e');
       return 0;
     }
   }
@@ -283,11 +283,11 @@ class CartService {
 
         return 0;
       } else {
-        print('❌ Lỗi lấy số lượng món trong giỏ: ${response.statusCode}');
+        print('Lỗi lấy số lượng món trong giỏ: ${response.statusCode}');
         return 0;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi lấy số lượng món trong giỏ: $e');
+      print('Lỗi kết nối khi lấy số lượng món trong giỏ: $e');
       return 0;
     }
   }

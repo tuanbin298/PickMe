@@ -61,11 +61,11 @@ class RestaurantService {
         if (data is Map<String, dynamic>) {
           return Restaurant.fromJson(data);
         } else {
-          print('❌ Dữ liệu trả về không đúng định dạng JSON object.');
+          print('Dữ liệu trả về không đúng định dạng JSON object.');
           return null;
         }
       } else {
-        print('❌ Lỗi tải chi tiết nhà hàng (status ${response.statusCode})');
+        print('Lỗi tải chi tiết nhà hàng (status ${response.statusCode})');
         return null;
       }
     } catch (e) {

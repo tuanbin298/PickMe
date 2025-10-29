@@ -61,17 +61,17 @@ class RestaurantMenuService {
       );
 
       if (response.statusCode == 200) {
-        // Decode UTF-8 để hiển thị tiếng Việt chính xác
+        // Decode UTF-8 properly for Vietnamese text
         final data = jsonDecode(utf8.decode(response.bodyBytes));
 
         if (data is Map<String, dynamic>) {
           return RestaurantMenu.fromJson(data);
         } else {
-          print('❌ Dữ liệu trả về không đúng định dạng JSON object.');
+          print('Dữ liệu trả về không đúng định dạng JSON object.');
           return null;
         }
       } else {
-        print('❌ Lỗi tải chi tiết món ăn (status ${response.statusCode})');
+        print('Lỗi tải chi tiết món ăn (status ${response.statusCode})');
         return null;
       }
     } catch (e) {

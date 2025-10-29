@@ -154,7 +154,7 @@ class AppRouter {
 
           if (token == null || token.isEmpty) {
             return const Scaffold(
-              body: Center(child: Text("Thiếu token xác thực ❌")),
+              body: Center(child: Text("Thiếu token xác thực")),
             );
           }
 

@@ -90,7 +90,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
       await _loadAddOnData();
       return (restaurant, menu);
     } catch (e) {
-      debugPrint('❌ Lỗi tải dữ liệu chi tiết món ăn: $e');
+      debugPrint('Lỗi tải dữ liệu chi tiết món ăn: $e');
       throw Exception('Không thể tải thông tin món ăn');
     }
   }
@@ -119,7 +119,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
         _loading = false;
       });
     } catch (e) {
-      debugPrint('❌ Lỗi load AddOn: $e');
+      debugPrint('Lỗi load AddOn: $e');
       setState(() {
         _error = 'Không thể tải AddOn';
         _loading = false;

@@ -90,7 +90,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
           _cartItemCount = 0;
           _cartTotal = 0.0;
         });
-        debugPrint("❌ Lỗi tải dữ liệu giỏ hàng: $e");
+        debugPrint("Lỗi tải dữ liệu giỏ hàng: $e");
       }
     }
   }

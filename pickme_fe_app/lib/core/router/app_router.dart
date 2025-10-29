@@ -29,6 +29,8 @@ import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_me
 import 'package:pickme_fe_app/features/customer/screens/order/order_page.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
+import 'package:pickme_fe_app/features/customer/screens/cart/cart_confirm_page.dart';
+import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 
 // Router configuration for the application
 class AppRouter {
@@ -133,21 +135,48 @@ class AppRouter {
         builder: (context, state) {
           final extraData = state.extra as Map<String, dynamic>;
           final restaurant = extraData['restaurant'] as Restaurant;
-
-          return RestaurantMenuPage(restaurant: restaurant);
+          final token = extraData['token'] as String? ?? '';
+          return RestaurantMenuPage(restaurant: restaurant, token: token);
         },
       ),
 
       GoRoute(
-        path: '/restaurant/:restaurantId/menu-detail',
+        path: '/restaurant/:restaurantId/menu/:menuItemId',
         name: 'restaurant-menu-detail',
         builder: (context, state) {
-          final data = state.extra as Map<String, dynamic>;
+          final restaurantId =
+              int.tryParse(state.pathParameters['restaurantId'] ?? '') ?? 0;
+          final menuItemId =
+              int.tryParse(state.pathParameters['menuItemId'] ?? '') ?? 0;
+
+          final extra = state.extra as Map<String, dynamic>?;
+          final token = extra?['token'] as String?;
+
+          if (token == null || token.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text("Thiếu token xác thực ❌")),
+            );
+          }
+
           return RestaurantMenuDetailPage(
-            name: data['name'],
-            description: data['description'],
-            imageUrl: data['imageUrl'],
-            price: data['price'],
+            token: token,
+            restaurantId: restaurantId,
+            menuItemId: menuItemId,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: "/cart",
+        name: "cart",
+        builder: (context, state) {
+          final extraData = state.extra as Map<String, dynamic>;
+
+          return CartConfirmPage(
+            token: extraData["token"] as String,
+            restaurant: extraData["restaurant"] as Restaurant,
+            cartItems: extraData["cartItems"] as List<CartItem>,
+            total: (extraData["total"] as num).toDouble(),
           );
         },
       ),

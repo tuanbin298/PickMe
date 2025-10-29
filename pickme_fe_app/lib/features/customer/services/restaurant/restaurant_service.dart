@@ -36,4 +36,41 @@ class RestaurantService {
       return [];
     }
   }
+
+  /// Fetch detail of a specific restaurant by ID
+  Future<Restaurant?> getRestaurantById({
+    required int restaurantId,
+    required String token,
+  }) async {
+    final url = Uri.parse('$baseUrl/restaurants/public/$restaurantId');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Decode UTF-8 để hiển thị tiếng Việt chính xác
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        // API trả về 1 object { id, name, ... }
+        if (data is Map<String, dynamic>) {
+          return Restaurant.fromJson(data);
+        } else {
+          print('❌ Dữ liệu trả về không đúng định dạng JSON object.');
+          return null;
+        }
+      } else {
+        print('❌ Lỗi tải chi tiết nhà hàng (status ${response.statusCode})');
+        return null;
+      }
+    } catch (e) {
+      print('⚠️ Lỗi kết nối khi tải chi tiết nhà hàng: $e');
+      return null;
+    }
+  }
 }

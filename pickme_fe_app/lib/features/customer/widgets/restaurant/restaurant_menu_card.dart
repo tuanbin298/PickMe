@@ -2,33 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant_menu.dart';
 import 'package:pickme_fe_app/core/common_services/utils_method.dart';
+import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
+import 'package:go_router/go_router.dart';
 
 class RestaurantMenuCard extends StatelessWidget {
   final RestaurantMenu m;
   final bool isHorizontal;
+  final String token;
+  final Restaurant restaurant;
   final VoidCallback? onTap;
 
   const RestaurantMenuCard({
     super.key,
     required this.m,
     required this.isHorizontal,
+    required this.token,
+    required this.restaurant,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Format price text
     final priceText = UtilsMethod.formatMoney(m.price);
-    // Favorite state
     final isFavorite = ValueNotifier<bool>(false);
 
-    // Card layout
-    return GestureDetector(
-      onTap: onTap,
-      child: ValueListenableBuilder<bool>(
-        valueListenable: isFavorite,
-        builder: (context, fav, _) {
-          return Container(
+    void navigateToDetail() {
+      context.pushNamed(
+        'restaurant-menu-detail',
+        pathParameters: {
+          'restaurantId': restaurant.id.toString(),
+          'menuItemId': m.id.toString(),
+        },
+        extra: {'token': token},
+      );
+    }
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: isFavorite,
+      builder: (context, fav, _) {
+        // Main card container
+        return GestureDetector(
+          onTap: navigateToDetail, // Entire card is tappable
+          child: Container(
             width: isHorizontal ? 140 : double.infinity,
             margin: EdgeInsets.only(bottom: isHorizontal ? 0 : 12),
             decoration: BoxDecoration(
@@ -43,14 +58,12 @@ class RestaurantMenuCard extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Card content
             child: Stack(
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image
+                    // food image
                     ClipRRect(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
@@ -70,7 +83,7 @@ class RestaurantMenuCard extends StatelessWidget {
                       ),
                     ),
 
-                    // Info
+                    // food details
                     if (!isHorizontal)
                       Expanded(
                         child: Padding(
@@ -82,7 +95,6 @@ class RestaurantMenuCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Menu Name
                               Text(
                                 m.name,
                                 maxLines: 1,
@@ -92,10 +104,7 @@ class RestaurantMenuCard extends StatelessWidget {
                                   fontSize: 15,
                                 ),
                               ),
-
                               const SizedBox(height: 4),
-
-                              // Price
                               Text(
                                 priceText,
                                 style: TextStyle(
@@ -111,12 +120,16 @@ class RestaurantMenuCard extends StatelessWidget {
                   ],
                 ),
 
-                // Button favorite
+                //  Favorite icon
                 Positioned(
                   top: 6,
                   right: 6,
                   child: GestureDetector(
-                    onTap: () => isFavorite.value = !isFavorite.value,
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      print('❤️ Favorite tapped!');
+                      isFavorite.value = !isFavorite.value;
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.8),
@@ -132,19 +145,13 @@ class RestaurantMenuCard extends StatelessWidget {
                   ),
                 ),
 
-                // Button add to cart
+                // Add to cart button
                 Positioned(
                   bottom: 6,
                   right: 6,
                   child: GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${m.name} đã được thêm vào giỏ hàng!'),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    },
+                    behavior: HitTestBehavior.opaque,
+                    onTap: navigateToDetail,
                     child: Container(
                       width: 28,
                       height: 28,
@@ -159,7 +166,6 @@ class RestaurantMenuCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
                       child: const Icon(
                         Icons.add,
                         color: Colors.white,
@@ -170,9 +176,9 @@ class RestaurantMenuCard extends StatelessWidget {
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

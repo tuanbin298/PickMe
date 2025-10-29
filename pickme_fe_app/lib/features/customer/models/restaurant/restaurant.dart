@@ -50,4 +50,24 @@ class Restaurant {
       isApproved: json['isApproved'],
     );
   }
+
+  // Convert model to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'imageUrl': imageUrl,
+      'address': address,
+      'description': description,
+      'latitude': latitude,
+      'longitude': longitude,
+      'phoneNumber': phoneNumber,
+      'openingTime': openingTime,
+      'closingTime': closingTime,
+      'rating': rating,
+      'isOpen': isOpen,
+      'categories': categories,
+      'isApproved': isApproved,
+    };
+  }
 }

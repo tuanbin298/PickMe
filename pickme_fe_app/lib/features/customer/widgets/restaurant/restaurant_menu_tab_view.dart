@@ -13,6 +13,7 @@ class RestaurantMenuTabView extends StatelessWidget {
   final Future<void> Function() onRefresh;
   final void Function(RestaurantMenu menu) onTap;
   final bool unavailable;
+  final String token;
 
   const RestaurantMenuTabView({
     super.key,
@@ -21,6 +22,7 @@ class RestaurantMenuTabView extends StatelessWidget {
     required this.tabController,
     required this.onRefresh,
     required this.onTap,
+    required this.token,
     this.unavailable = false,
   });
 
@@ -34,7 +36,6 @@ class RestaurantMenuTabView extends StatelessWidget {
       grouped.putIfAbsent(cat, () => []);
       grouped[cat]!.add(m);
     }
-
     // Main layout
     // NestedScrollView: show appbar when scroll
     return NestedScrollView(
@@ -85,6 +86,8 @@ class RestaurantMenuTabView extends StatelessWidget {
                         grouped: grouped,
                         onRefresh: onRefresh,
                         onTap: unavailable ? null : onTap,
+                        token: token,
+                        restaurant: restaurant,
                       ),
                     ),
                   ),

@@ -299,8 +299,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                                 'cart',
                                 extra: {
                                   'token': widget.token,
-                                  'restaurant': cart
-                                      .restaurant, // TRUYỀN TOÀN BỘ RESTAURANT OBJECT
+                                  'restaurant': cart.restaurant,
                                   'cartItems': cart.cartItems,
                                   'total': cart.totalAmount,
                                 },

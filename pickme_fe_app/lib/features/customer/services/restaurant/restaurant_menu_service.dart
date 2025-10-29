@@ -40,4 +40,43 @@ class RestaurantMenuService {
       return [];
     }
   }
+
+  /// Fetch detail of a specific menu item by restaurantId + menuItemId
+  Future<RestaurantMenu?> getMenuDetail({
+    required int restaurantId,
+    required int menuItemId,
+    required String token,
+  }) async {
+    final url = Uri.parse(
+      '$baseUrl/restaurants/$restaurantId/menu/$menuItemId',
+    );
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Decode UTF-8 để hiển thị tiếng Việt chính xác
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        if (data is Map<String, dynamic>) {
+          return RestaurantMenu.fromJson(data);
+        } else {
+          print('❌ Dữ liệu trả về không đúng định dạng JSON object.');
+          return null;
+        }
+      } else {
+        print('❌ Lỗi tải chi tiết món ăn (status ${response.statusCode})');
+        return null;
+      }
+    } catch (e) {
+      print('⚠️ Lỗi kết nối khi tải chi tiết món ăn: $e');
+      return null;
+    }
+  }
 }

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant_menu.dart';
 import 'restaurant_menu_card.dart';
+import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 
 class RestaurantMenuList extends StatelessWidget {
   final Map<String, List<RestaurantMenu>> grouped;
   final Future<void> Function() onRefresh;
   final void Function(RestaurantMenu menu)? onTap;
+  final Restaurant restaurant;
+  final String token;
 
   const RestaurantMenuList({
     super.key,
     required this.grouped,
     required this.onRefresh,
+    required this.token,
+    required this.restaurant,
     this.onTap,
   });
 
@@ -23,7 +28,6 @@ class RestaurantMenuList extends StatelessWidget {
         children: grouped.entries.map((entry) {
           final category = entry.key;
           final items = entry.value;
-
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -45,6 +49,8 @@ class RestaurantMenuList extends StatelessWidget {
                         m: m,
                         isHorizontal: false,
                         onTap: () => onTap?.call(m),
+                        token: token,
+                        restaurant: restaurant,
                       ),
                     )
                     .toList(),

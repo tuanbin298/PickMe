@@ -573,6 +573,29 @@ class _MapPageState extends State<MapPage> {
                       ),
                     ),
 
+                // Confirm destination button
+                if (_destination != null)
+                  Positioned(
+                    bottom: 160,
+                    right: 16,
+                    child: FloatingActionButton.extended(
+                      heroTag: "confirmDestination",
+                      backgroundColor: AppColors.primary,
+                      icon: const Icon(Icons.check, color: Colors.white),
+                      label: const Text(
+                        "Xác nhận vị trí",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onPressed: () {
+                        // Navigate to homepage
+                        Navigator.pop(context, _locationController.text);
+                      },
+                    ),
+                  ),
+
                 // Cancel destination button
                 if (_destination != null)
                   Positioned(

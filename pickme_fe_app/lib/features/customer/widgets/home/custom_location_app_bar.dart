@@ -11,6 +11,14 @@ class CustomLocationAppBar extends StatefulWidget {
 }
 
 class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
+  String? _destination;
+
+  @override
+  void initState() {
+    super.initState();
+    _destination = widget.destination;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,8 +47,14 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                 // Button to watch MAP
                 IconButton(
                   icon: const Icon(Icons.map, color: AppColors.primary),
-                  onPressed: () {
-                    context.push('/map');
+                  onPressed: () async {
+                    final result = await context.push('/map');
+
+                    if (result != null && mounted) {
+                      setState(() {
+                        _destination = "${result}";
+                      });
+                    }
                   },
                 ),
               ],
@@ -61,8 +75,9 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                       color: AppColors.primary,
                       size: 20,
                     ),
+
                     // If destination is null, then only show current location
-                    if (widget.destination != null) ...[
+                    if (_destination != null) ...[
                       const SizedBox(height: 4),
 
                       Column(
@@ -111,9 +126,9 @@ class _CustomLocationAppBarState extends State<CustomLocationAppBar> {
                       const Divider(),
 
                       // show destination if have
-                      if (widget.destination != null)
+                      if (_destination != null)
                         Text(
-                          widget.destination!,
+                          _destination!,
                           style: const TextStyle(
                             fontSize: 16,
                             color: AppColors.primary,

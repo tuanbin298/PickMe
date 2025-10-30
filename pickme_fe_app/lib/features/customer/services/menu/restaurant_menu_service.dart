@@ -75,7 +75,7 @@ class RestaurantMenuService {
         return null;
       }
     } catch (e) {
-      print('⚠️ Lỗi kết nối khi tải chi tiết món ăn: $e');
+      print('Lỗi kết nối khi tải chi tiết món ăn: $e');
       return null;
     }
   }

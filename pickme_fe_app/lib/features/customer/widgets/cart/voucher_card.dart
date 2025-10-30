@@ -10,10 +10,13 @@ class VoucherCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // title
           const Text(
             "Mã giảm giá",
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
+
+          // button
           TextButton(onPressed: onAdd, child: const Text("Thêm")),
         ],
       ),

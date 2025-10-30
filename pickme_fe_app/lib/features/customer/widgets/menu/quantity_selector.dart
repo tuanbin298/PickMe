@@ -17,6 +17,7 @@ class QuantitySelector extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // Button decrease
         InkWell(
           onTap: quantity > 1 ? onDecrease : null,
           borderRadius: BorderRadius.circular(30),
@@ -38,12 +39,18 @@ class QuantitySelector extends StatelessWidget {
             child: const Icon(Icons.remove, color: Colors.orange, size: 28),
           ),
         ),
+
         const SizedBox(width: 20),
+
+        // Display quanity
         Text(
           '$quantity',
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+
         const SizedBox(width: 20),
+
+        // Button increase
         InkWell(
           onTap: onIncrease,
           borderRadius: BorderRadius.circular(30),

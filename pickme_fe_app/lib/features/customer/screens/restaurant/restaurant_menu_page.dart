@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../customer/models/restaurant/restaurant.dart';
 import '../../../customer/models/restaurant/restaurant_menu.dart';
-import '../../../customer/services/restaurant/restaurant_menu_service.dart';
+import '../../services/menu/restaurant_menu_service.dart';
 import 'package:pickme_fe_app/features/customer/widgets/restaurant/restaurant_menu_tab_view.dart';
 import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
@@ -25,14 +25,14 @@ class RestaurantMenuPage extends StatefulWidget {
 class _RestaurantMenuPageState extends State<RestaurantMenuPage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => true; // ✅ Giữ lại trạng thái khi quay lại
+  bool get wantKeepAlive => true; // Keep state when return to cart
 
   late Future<List<RestaurantMenu>> _menusFuture;
   late TabController _tabController;
 
   final CartService _cartService = CartService();
   int _cartItemCount = 0;
-  double _cartTotal = 0.0;
+  double _cartTotalPrice = 0.0;
   bool _isCartLoading = true;
 
   @override
@@ -53,7 +53,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
     );
   }
 
-  // ✅ Method get cart total and item count
+  // Method get cart total and item count
   Future<void> _loadCartData() async {
     if (!mounted) return;
 
@@ -63,23 +63,26 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
 
     try {
       final results = await Future.wait([
+        // Item count
         _cartService.getCartItemCount(
           token: widget.token,
           restaurantId: widget.restaurant.id,
         ),
-        _cartService.getCartTotal(
+
+        // Cart total
+        _cartService.getCartTotalPrice(
           token: widget.token,
           restaurantId: widget.restaurant.id,
         ),
       ]);
 
-      final count = results[0] ?? 0;
-      final total = results[1] ?? 0.0;
+      final count = results[0];
+      final totalPrice = results[1];
 
       if (mounted) {
         setState(() {
           _cartItemCount = count.toInt();
-          _cartTotal = total.toDouble();
+          _cartTotalPrice = totalPrice.toDouble();
           _isCartLoading = false;
         });
       }
@@ -88,28 +91,10 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
         setState(() {
           _isCartLoading = false;
           _cartItemCount = 0;
-          _cartTotal = 0.0;
+          _cartTotalPrice = 0.0;
         });
         debugPrint("Lỗi tải dữ liệu giỏ hàng: $e");
       }
-    }
-  }
-
-  // Trong RestaurantMenuPage
-  Future<List<CartItem>> _getCartItems() async {
-    try {
-      final cartData = await _cartService.getCartByRestaurantId(
-        token: widget.token,
-        restaurantId: widget.restaurant.id,
-      );
-
-      if (cartData == null) return [];
-
-      final cart = Cart.fromJson(cartData);
-      return cart.cartItems;
-    } catch (e) {
-      debugPrint("Lỗi: $e");
-      return [];
     }
   }
 
@@ -151,7 +136,8 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                     // Refresh when user scroll down
                     onRefresh: () async {
                       final newMenusFuture = _loadMenu();
-                      await _loadCartData(); // Refresh cart data as well
+                      // Refresh cart data as well
+                      await _loadCartData();
 
                       setState(() {
                         _menusFuture = newMenusFuture;
@@ -224,12 +210,15 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                               size: 22,
                             ),
                           ),
+
                           const SizedBox(width: 12),
+
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                // Text
                                 Text(
                                   'Cửa hàng tạm ngưng nhận đơn',
                                   style: TextStyle(
@@ -238,7 +227,9 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+
                                 const SizedBox(height: 4),
+
                                 Text(
                                   'Sẽ mở lại vào ${UtilsMethod.formatTime(restaurant.openingTime)}.',
                                   style: TextStyle(
@@ -295,6 +286,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
 
                               final cart = Cart.fromJson(cartData);
 
+                              // Navigate to cart screen
                               context.pushNamed(
                                 'cart',
                                 extra: {
@@ -305,6 +297,8 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                                 },
                               );
                             },
+
+                      // Cart UI
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
@@ -331,7 +325,9 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                                   color: Colors.white,
                                   size: 22,
                                 ),
+
                                 const SizedBox(width: 10),
+
                                 // Item Count
                                 Text(
                                   'Giỏ hàng ($_cartItemCount)',
@@ -345,7 +341,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                             ),
                             // Total Price
                             Text(
-                              UtilsMethod.formatMoney(_cartTotal),
+                              UtilsMethod.formatMoney(_cartTotalPrice),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

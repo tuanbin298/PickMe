@@ -16,16 +16,22 @@ class AddressCard extends StatelessWidget {
             color: Colors.orange,
             size: 28,
           ),
+
           const SizedBox(width: 10),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title
                 const Text(
                   "Địa chỉ quán",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
+
                 const SizedBox(height: 4),
+
+                // display address
                 Text(
                   restaurant.address,
                   style: const TextStyle(fontSize: 13, color: Colors.black54),

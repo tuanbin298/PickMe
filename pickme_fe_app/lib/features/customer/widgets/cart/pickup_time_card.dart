@@ -19,15 +19,22 @@ class PickupTimeCard extends StatelessWidget {
         children: [
           Row(
             children: [
+              // Title
               const Text(
                 "Thời gian lấy",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
+
               const Spacer(),
+
+              // Button adjust time
               TextButton(onPressed: onAdjust, child: const Text("Điều chỉnh")),
             ],
           ),
+
           const SizedBox(height: 6),
+
+          // Display time
           Text(
             DateFormat('h:mm a').format(pickupTime),
             style: const TextStyle(
@@ -36,7 +43,10 @@ class PickupTimeCard extends StatelessWidget {
               color: Colors.orange,
             ),
           ),
+
           const SizedBox(height: 6),
+
+          // Text to remind the customer
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(10),

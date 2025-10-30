@@ -33,10 +33,13 @@ class BottomPriceBar extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Text
               const Text(
                 'Giá',
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
+
+              // Display price
               Text(
                 UtilsMethod.formatMoney(totalPrice),
                 style: const TextStyle(
@@ -47,8 +50,9 @@ class BottomPriceBar extends StatelessWidget {
               ),
             ],
           ),
+
           SizedBox(
-            width: 200,
+            width: 220,
             height: 48,
             child: ElevatedButton(
               onPressed: loadingAddToCart ? null : onAddToCart,

@@ -49,6 +49,7 @@ class AddonCategoryCard extends StatelessWidget {
                   ),
                 ),
               ),
+
               // Requirement badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -67,9 +68,10 @@ class AddonCategoryCard extends StatelessWidget {
               ),
             ],
           ),
+
           Divider(color: Colors.grey.shade300, thickness: 1, height: 20),
           ...addons.map((addon) {
-            final selected = selections[category]?[addon.id] != null ?? false;
+            final selected = selections[category]?[addon.id] != null;
             return InkWell(
               onTap: () => onToggle(category, addon.id),
               borderRadius: BorderRadius.circular(8),
@@ -81,6 +83,7 @@ class AddonCategoryCard extends StatelessWidget {
                       value: selected,
                       onChanged: (_) => onToggle(category, addon.id),
                     ),
+
                     Expanded(
                       child: Text(
                         '${addon.name} (${UtilsMethod.formatMoney(addon.price)})',

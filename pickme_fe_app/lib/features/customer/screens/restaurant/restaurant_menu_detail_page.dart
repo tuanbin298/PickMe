@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant_menu.dart';
 import 'package:pickme_fe_app/features/customer/services/cart/cart_service.dart';
-import 'package:pickme_fe_app/features/customer/services/restaurant/restaurant_menu_service.dart';
+import 'package:pickme_fe_app/features/customer/services/menu/restaurant_menu_service.dart';
 import 'package:pickme_fe_app/features/customer/services/restaurant/restaurant_service.dart';
 import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/features/customer/widgets/menu/addon_category_card.dart';
@@ -67,6 +68,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     }
   }
 
+  // Data detail of menu
   Future<(Restaurant, RestaurantMenu)> _loadMenuDetail() async {
     try {
       final restaurant = await RestaurantService().getRestaurantById(
@@ -91,7 +93,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     }
   }
 
-  // Load AddOn data for the menu item
+  // Load AddOn data for the menu item (Topping for menu)
   Future<void> _loadAddOnData() async {
     try {
       final service = CartService();
@@ -100,20 +102,18 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
         menuItemId: widget.menuItemId,
       );
 
-      if (response == null) throw Exception('Không có dữ liệu AddOn');
-
       final allAddons = (response as List)
           .map((json) => AddOn.fromJson(json))
           .toList();
 
       _addonsByCategory.clear();
+
       for (final addon in allAddons) {
         _addonsByCategory.putIfAbsent(addon.category, () => []).add(addon);
       }
 
       setState(() => _loading = false);
     } catch (e) {
-      debugPrint('Lỗi load AddOn: $e');
       setState(() {
         _error = 'Không thể tải AddOn';
         _loading = false;
@@ -181,10 +181,13 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     return FutureBuilder<(Restaurant, RestaurantMenu)>(
       future: _menuDataFuture,
       builder: (context, snapshot) {
+        // Loading
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
+
+          // Error
         } else if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(title: const Text('Chi tiết món ăn')),
@@ -197,10 +200,21 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
 
         return Scaffold(
           backgroundColor: Colors.white,
+          // Appbar
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            centerTitle: true,
+            title: const Text(
+              'Chi tiết món ăn',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+            backgroundColor: AppColors.primary,
             iconTheme: const IconThemeData(color: Colors.black),
           ),
+
           body: _loading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
@@ -214,6 +228,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const SizedBox(height: 20),
+
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -221,7 +236,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                               ),
                               child: Column(
                                 children: [
-                                  // Menu name and description
+                                  // Menu name
                                   Text(
                                     menu.name,
                                     textAlign: TextAlign.center,
@@ -230,7 +245,10 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
+
                                   const SizedBox(height: 6),
+
+                                  // Menu description
                                   Text(
                                     menu.description,
                                     textAlign: TextAlign.center,
@@ -242,6 +260,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 ],
                               ),
                             ),
+
                             // Menu image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
@@ -254,7 +273,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
+
                             const SizedBox(height: 16),
+
                             // Addon categories
                             Padding(
                               padding: const EdgeInsets.symmetric(
@@ -273,6 +294,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                     .toList(),
                               ),
                             ),
+
                             // Special note
                             Padding(
                               padding: const EdgeInsets.symmetric(
@@ -282,6 +304,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // Title
                                   const Text(
                                     'Ghi chú cho cửa hàng',
                                     style: TextStyle(
@@ -289,7 +312,10 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+
                                   const SizedBox(height: 6),
+
+                                  // Input field for note
                                   TextField(
                                     decoration: InputDecoration(
                                       hintText:
@@ -304,7 +330,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                     maxLines: 3,
                                     onChanged: (v) => _specialNote = v,
                                   ),
+
                                   const SizedBox(height: 20),
+
                                   // Quantity selector
                                   QuantitySelector(
                                     quantity: quantity,
@@ -319,11 +347,13 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 ],
                               ),
                             ),
+
                             const SizedBox(height: 40),
                           ],
                         ),
                       ),
                     ),
+
                     // Bottom price bar
                     BottomPriceBar(
                       totalPrice: totalPrice,

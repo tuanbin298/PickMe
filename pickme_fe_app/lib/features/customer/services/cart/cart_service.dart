@@ -217,8 +217,8 @@ class CartService {
     }
   }
 
-  /// get cart total for a specific restaurant
-  Future<double> getCartTotal({
+  // Get cart total price for a specific restaurant
+  Future<double> getCartTotalPrice({
     required String token,
     required int restaurantId,
   }) async {
@@ -235,21 +235,13 @@ class CartService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
-        // Nếu backend trả kiểu số thuần (vd: 3), thì data là int
-        if (data is double) return data;
-
-        // Nếu backend trả object (vd: {"total": 3})
-        if (data is Map && data.containsKey('total')) {
-          return data['total'] ?? 0;
-        }
-
-        return 0;
+        return data;
       } else {
-        print('Lỗi lấy tổng số món: ${response.statusCode}');
+        print('Lỗi lấy tổng số tiền trong giỏ hàng: ${response.statusCode}');
         return 0;
       }
     } catch (e) {
-      print('Lỗi kết nối khi lấy tổng số món: $e');
+      print('Lỗi lấy tổng số tiền trong giỏ hàng: $e');
       return 0;
     }
   }
@@ -273,13 +265,8 @@ class CartService {
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
 
-        // Nếu API trả số trực tiếp
+        // API return int
         if (data is int) return data;
-
-        // Nếu API trả JSON object dạng {"count": 5}
-        if (data is Map && data.containsKey('count')) {
-          return data['count'] ?? 0;
-        }
 
         return 0;
       } else {

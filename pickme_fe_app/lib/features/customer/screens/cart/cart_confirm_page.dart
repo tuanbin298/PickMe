@@ -47,6 +47,7 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      // Appbar
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -60,25 +61,36 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
           onPressed: () => context.pop(),
         ),
       ),
+
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Address
           AddressCard(restaurant: widget.restaurant),
+
           const SizedBox(height: 12),
+
+          // TimePicker
           PickupTimeCard(
             pickupTime: pickupTime,
             onAdjust: () => _selectTime(context),
           ),
 
           const SizedBox(height: 12),
+
+          // List of food
           MenuListCard(
             restaurant: widget.restaurant,
             cartItems: widget.cartItems,
             subtotal: subtotal,
             total: widget.total,
           ),
+
           const SizedBox(height: 12),
+
+          // Voucher
           VoucherCard(onAdd: () {}),
+
           const SizedBox(height: 100),
         ],
       ),
@@ -94,7 +106,7 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
     );
   }
 
-  // --- Chọn thời gian lấy ---
+  // --- Picker time to select food ---
   Future<void> _selectTime(BuildContext context) async {
     TimeOfDay selectedTime = TimeOfDay.fromDateTime(pickupTime);
 
@@ -113,16 +125,22 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Title
                   const Text(
                     "Thời gian lấy",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
+
                   const SizedBox(height: 4),
+
                   Text(
-                    "Hôm nay, ${DateFormat('d tháng M').format(DateTime.now())}",
+                    "Hôm nay, ${DateFormat("d 'tháng' M").format(DateTime.now())}",
                     style: const TextStyle(color: Colors.black54),
                   ),
+
                   const SizedBox(height: 20),
+
+                  // Picker time
                   SizedBox(
                     height: 150,
                     child: CupertinoTimerPicker(
@@ -142,7 +160,10 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
                       },
                     ),
                   ),
+
                   const SizedBox(height: 20),
+
+                  // Confirm btn
                   SizedBox(
                     width: double.infinity,
                     height: 48,

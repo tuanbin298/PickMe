@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 
@@ -17,11 +18,6 @@ class MenuListCard extends StatelessWidget {
     required this.total,
   });
 
-  String _formatCurrency(double value) {
-    final f = NumberFormat("#,##0", "vi_VN");
-    return "${f.format(value)} đ";
-  }
-
   @override
   Widget build(BuildContext context) {
     return _buildCard(
@@ -32,11 +28,17 @@ class MenuListCard extends StatelessWidget {
             restaurant.name,
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
+
           const SizedBox(height: 4),
+
           Row(
             children: [
+              // Icon address
               const Icon(Icons.location_on, size: 14, color: Colors.grey),
+
               const SizedBox(width: 4),
+
+              // Address
               Expanded(
                 child: Text(
                   restaurant.address,
@@ -47,9 +49,10 @@ class MenuListCard extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 12),
 
-          // Danh sách món
+          // List of food
           if (cartItems.isEmpty)
             const Center(
               child: Text(
@@ -67,11 +70,17 @@ class MenuListCard extends StatelessWidget {
               ),
             ),
 
+          // Price
           const SizedBox(height: 8),
+
           _buildAmountRow("Tổng tạm tính", subtotal),
+
           const SizedBox(height: 8),
+
           _buildAmountRow("Voucher", 0),
+
           const Divider(height: 24, color: Colors.black12),
+
           _buildAmountRow(
             "Tổng cộng",
             total,
@@ -116,7 +125,7 @@ class MenuListCard extends StatelessWidget {
           ),
         ),
         Text(
-          _formatCurrency(value),
+          UtilsMethod.formatMoney(value),
           style: TextStyle(
             color: color ?? Colors.black,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
@@ -131,11 +140,6 @@ class _MenuItemTile extends StatelessWidget {
   final CartItem item;
   const _MenuItemTile({required this.item});
 
-  String _formatCurrency(double value) {
-    final f = NumberFormat("#,##0", "vi_VN");
-    return "${f.format(value)} đ";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -149,7 +153,9 @@ class _MenuItemTile extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
+
         const SizedBox(width: 12),
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,8 +172,9 @@ class _MenuItemTile extends StatelessWidget {
             ],
           ),
         ),
+
         Text(
-          _formatCurrency(item.unitPrice * item.quantity),
+          UtilsMethod.formatMoney(item.unitPrice * item.quantity),
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,

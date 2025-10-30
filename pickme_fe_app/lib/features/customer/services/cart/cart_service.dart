@@ -1,97 +1,11 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 
 class CartService {
   final String baseUrl = dotenv.env['API_URL'] ?? '';
 
-  /// 👉 Lấy toàn bộ giỏ hàng của người dùng (mặc định lấy theo user từ token)
-  Future<Cart?> getCart(String token) async {
-    final url = Uri.parse('$baseUrl/cart');
-
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes));
-        return Cart.fromJson(data);
-      } else {
-        print('Lỗi tải giỏ hàng: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Lỗi kết nối khi tải giỏ hàng: $e');
-      return null;
-    }
-  }
-
-  /// 👉 Lấy chi tiết giỏ hàng theo ID
-  Future<Cart?> getCartById(String token, int cartId) async {
-    final url = Uri.parse('$baseUrl/cart/$cartId');
-
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes));
-        return Cart.fromJson(data);
-      } else {
-        print('Lỗi lấy chi tiết giỏ hàng: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Lỗi kết nối khi lấy chi tiết giỏ hàng: $e');
-      return null;
-    }
-  }
-
-  /// 🛒 Thêm món nhanh vào giỏ (quick-add)
-  Future<bool> quickAddToCart({
-    required String token,
-    required int restaurantId,
-    required int menuItemId,
-    required int quantity,
-  }) async {
-    final url = Uri.parse(
-      '$baseUrl/cart/quick-add?restaurantId=$restaurantId&menuItemId=$menuItemId&quantity=$quantity',
-    );
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print('✅ Thêm món nhanh vào giỏ hàng thành công');
-        return true;
-      } else {
-        print('Lỗi thêm món nhanh: ${response.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      print('Lỗi kết nối khi thêm món nhanh: $e');
-      return false;
-    }
-  }
-
-  /// 🧾 Thêm món chi tiết vào giỏ (có add-ons, note,...)
+  //Add food into cart
   Future<bool> addToCart({
     required String token,
     required int restaurantId,
@@ -122,7 +36,7 @@ class CartService {
       );
 
       if (response.statusCode == 200) {
-        print('✅ Thêm món vào giỏ hàng thành công');
+        print('Thêm món vào giỏ hàng thành công');
         return true;
       } else {
         print('Lỗi thêm món chi tiết: ${response.statusCode}');
@@ -135,7 +49,7 @@ class CartService {
     }
   }
 
-  /// 🧹 Xóa toàn bộ giỏ hàng
+  // Delete all items in cart
   Future<bool> clearCart(String token, int cartId) async {
     final url = Uri.parse('$baseUrl/cart/$cartId/clear');
 
@@ -149,7 +63,7 @@ class CartService {
       );
 
       if (response.statusCode == 200) {
-        print('✅ Đã xóa toàn bộ giỏ hàng');
+        print('Đã xóa toàn bộ giỏ hàng');
         return true;
       } else {
         print('Lỗi khi xóa giỏ hàng: ${response.statusCode}');
@@ -161,7 +75,7 @@ class CartService {
     }
   }
 
-  /// 🗑️ Xóa một item cụ thể trong giỏ
+  //Delete specific item in cart
   Future<bool> removeCartItem(String token, int cartId, int itemId) async {
     final url = Uri.parse('$baseUrl/cart/$cartId/items/$itemId');
 
@@ -175,7 +89,7 @@ class CartService {
       );
 
       if (response.statusCode == 200) {
-        print('✅ Đã xóa món khỏi giỏ hàng');
+        print('Đã xóa món khỏi giỏ hàng');
         return true;
       } else {
         print('Lỗi xóa món khỏi giỏ: ${response.statusCode}');
@@ -205,7 +119,7 @@ class CartService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-        // Trả về danh sách AddOn dưới dạng List<Map>
+        // Return List<Map>
         return data.map((e) => e as Map<String, dynamic>).toList();
       } else {
         print('Lỗi tải AddOns: ${response.statusCode}');
@@ -279,8 +193,7 @@ class CartService {
     }
   }
 
-  /// Lấy danh sách món ăn trong giỏ hàng theo nhà hàng
-  // Trong CartService
+  // Take items in cart of each restaurant
   Future<Map<String, dynamic>?> getCartByRestaurantId({
     required String token,
     required int restaurantId,

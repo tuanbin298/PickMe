@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';

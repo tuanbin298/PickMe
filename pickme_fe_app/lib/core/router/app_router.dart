@@ -9,10 +9,10 @@ import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_confirm_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_detail_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
-import 'package:pickme_fe_app/features/customer/screens/profile/payment_methods_page.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/account_info_page.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/addresses_page.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/change_password_page.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/payment_methods_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/profile_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/customer_bottom_nav.dart';
 import 'package:pickme_fe_app/features/customer/screens/qr_code/payment_qr_page.dart';
@@ -23,7 +23,6 @@ import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restau
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_restaurant/merchant_restaurant_list.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/profile/merchant_profile.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/menu/create_menu_page.dart';
-import 'package:pickme_fe_app/features/merchant/screens/restaurant/profile/restaurant_profile.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_detail/restaurant_detail_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_feedback/restaurant_feedback_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
@@ -365,7 +364,7 @@ class AppRouter {
               final bottomWidget = context
                   .findAncestorWidgetOfExactType<RestaurantNavigateBottom>();
               final token = bottomWidget?.token ?? '';
-              final restaurantId = state.pathParameters["id"]!;
+              final restaurantId = int.parse(state.pathParameters["id"]!);
 
               return RestaurantOrder(restaurantId: restaurantId, token: token);
             },
@@ -382,23 +381,6 @@ class AppRouter {
               final restaurantId = state.pathParameters["id"]!;
 
               return RestaurantFeedbackPage(
-                restaurantId: restaurantId,
-                token: token,
-              );
-            },
-          ),
-
-          GoRoute(
-            path: "/merchant/restaurant/:id/profile",
-            name: "merchant-restaurant:id/profile",
-            builder: (context, state) {
-              // Take token from parent widget (RestaurantNavigateBottom)
-              final bottomWidget = context
-                  .findAncestorWidgetOfExactType<RestaurantNavigateBottom>();
-              final token = bottomWidget?.token ?? '';
-              final restaurantId = state.pathParameters["id"]!;
-
-              return RestaurantProfile(
                 restaurantId: restaurantId,
                 token: token,
               );

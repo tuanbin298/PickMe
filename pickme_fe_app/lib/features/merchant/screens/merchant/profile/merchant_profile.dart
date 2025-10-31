@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/profile_header.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/profile_notification_tile.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/auth/model/user.dart';
+import 'package:pickme_fe_app/features/customer/widgets/profile/profile_menu_item.dart';
 import 'package:pickme_fe_app/features/merchant/services/merchant/merchant.service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,6 +23,10 @@ class _MerchantProfileState extends State<MerchantProfile> {
   // Variable to contain data from API
   late Future<User?> _futureUser = Future.value(null);
 
+  // Variable for toggle
+  bool _notifGeneral = false;
+  bool _notifOffers = false;
+
   // Fecth api to get merchant information
   @override
   void initState() {
@@ -28,47 +35,56 @@ class _MerchantProfileState extends State<MerchantProfile> {
   }
 
   // Method logout
-  Future<void> logout() async {
+  Future<void> _logout() async {
+    // Dialog
+    final confirm =
+        await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Xác nhận'),
+            content: const Text('Bạn có chắc muốn đăng xuất?'),
+            actions: [
+              // Cancel
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Hủy'),
+              ),
+
+              // Accept
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Đăng xuất'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+
+    if (!confirm) return;
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
 
-    // Message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Đăng xuất thành công!"),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
-      ),
-    );
-
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (context.mounted) {
+    if (mounted) {
       context.go("/login");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Đã đăng xuất')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+
       // App bar
       appBar: AppBar(
-        title: const Text(
-          'Tài khoản',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
         backgroundColor: AppColors.primary,
+        surfaceTintColor: Colors.transparent,
+        title: const Text("Tài khoản"),
+        centerTitle: true,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
       ),
 
       body: FutureBuilder<User?>(
@@ -96,99 +112,101 @@ class _MerchantProfileState extends State<MerchantProfile> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Avatar
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: const AssetImage(
-                      'lib/assets/images/default_avatar.jpg',
-                    ),
-                  ),
+                  /// Header
+                  ProfileHeader(name: user.fullName ?? "", avatarUrl: ''),
 
                   const SizedBox(height: 12),
 
-                  // Name
-                  Text(
-                    user.fullName ?? "Không rõ tên",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  //  Overview section
+                  _buildSection(
+                    title: "Tổng quan",
+                    children: [
+                      // Account information
+                      ProfileMenuItem(
+                        icon: Icons.person_outline,
+                        title: "Thông tin tài khoản",
+                        subtitle: "Thay đổi thông tin tài khoản",
+                        onTap: () {
+                          context.push(
+                            "/account-information",
+                            extra: widget.token,
+                          );
+                        },
+                      ),
+
+                      // Password information
+                      ProfileMenuItem(
+                        icon: Icons.lock_outline,
+                        title: "Mật khẩu",
+                        subtitle: "Thay đổi mật khẩu",
+                        onTap: () {
+                          context.push(
+                            "/account-resetpassword",
+                            extra: widget.token,
+                          );
+                        },
+                      ),
+
+                      // Payment method information
+                      ProfileMenuItem(
+                        icon: Icons.credit_card_outlined,
+                        title: "Phương thức thanh toán",
+                        subtitle: "Thêm thẻ ngân hàng/tín dụng",
+                        onTap: () {
+                          context.push(
+                            "/account-payment-method",
+                            extra: widget.token,
+                          );
+                        },
+                      ),
+
+                      // Address information
+                      ProfileMenuItem(
+                        icon: Icons.location_on_outlined,
+                        title: "Địa chỉ",
+                        subtitle: "Thay đổi địa chỉ",
+                        onTap: () {
+                          context.push("/account-address", extra: widget.token);
+                        },
+                      ),
+                    ],
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 16),
 
-                  // Card: Merchant information
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Thông tin cá nhân",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          _buildInfoCard(
-                            title: "Số điện thoại",
-                            value: user.phoneNumber ?? "Chưa có thông tin",
-                            icon: Icons.phone_outlined,
-                          ),
-
-                          const SizedBox(height: 4),
-
-                          _buildInfoCard(
-                            title: "Email",
-                            value: user.email ?? "Chưa có thông tin",
-                            icon: Icons.email_outlined,
-                          ),
-                        ],
+                  // Notofication section
+                  _buildSection(
+                    title: "Thông báo",
+                    children: [
+                      // Toggle notification
+                      ProfileNotificationTile(
+                        title: "Thông báo chung",
+                        subtitle: "Bạn sẽ nhận thông báo từ ứng dụng",
+                        value: _notifGeneral,
+                        onChanged: (val) {
+                          setState(() => _notifGeneral = val);
+                        },
                       ),
-                    ),
+
+                      // Toggle offers
+                      ProfileNotificationTile(
+                        title: "Thông báo ưu đãi",
+                        subtitle: "Nhận thông báo khi có ưu đãi mới",
+                        value: _notifOffers,
+                        onChanged: (val) {
+                          setState(() => _notifOffers = val);
+                        },
+                      ),
+                    ],
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 16),
 
-                  // Button logout
-                  Card(
-                    color: Colors.white,
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: ElevatedButton.icon(
-                        onPressed: logout,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        icon: const Icon(Icons.logout, color: Colors.white),
-                        label: const Text(
-                          "Đăng xuất",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
+                  // Logout button
+                  ProfileMenuItem(
+                    icon: Icons.logout,
+                    title: "Đăng xuất",
+                    onTap: _logout,
                   ),
                 ],
               ),
@@ -198,51 +216,34 @@ class _MerchantProfileState extends State<MerchantProfile> {
       ),
     );
   }
-}
 
-// Widget buildInfoCar
-Widget _buildInfoCard({
-  required String title,
-  required String value,
-  required IconData icon,
-}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    decoration: BoxDecoration(
-      color: Colors.transparent,
-      border: const Border(bottom: BorderSide(color: Colors.grey, width: 0.3)),
-    ),
-    child: Row(
-      children: [
-        // Icon
-        Icon(icon, color: Colors.orange),
+  // Widgett to build section
+  Widget _buildSection({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
 
-        const SizedBox(width: 10),
-
-        // Expanded contain information
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              Text(
-                title,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+            // Text
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
               ),
-
-              // Data
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+
+          // Content
+          ...children,
+        ],
+      ),
+    );
+  }
 }

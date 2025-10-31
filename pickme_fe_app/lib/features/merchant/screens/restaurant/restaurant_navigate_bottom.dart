@@ -31,7 +31,6 @@ class _RestaurantNavigateBottomState extends State<RestaurantNavigateBottom> {
       '/merchant/restaurant/${widget.restaurantId}/detail',
       '/merchant/restaurant/${widget.restaurantId}/orders',
       '/merchant/restaurant/${widget.restaurantId}/feedbacks',
-      '/merchant/restaurant/${widget.restaurantId}/profile',
     ];
   }
 
@@ -76,13 +75,6 @@ class _RestaurantNavigateBottomState extends State<RestaurantNavigateBottom> {
             icon: Icon(Icons.chat_bubble_outline),
             activeIcon: Icon(Icons.chat_bubble),
             label: 'Đánh giá',
-          ),
-
-          // Profile
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Hồ sơ',
           ),
         ],
       ),

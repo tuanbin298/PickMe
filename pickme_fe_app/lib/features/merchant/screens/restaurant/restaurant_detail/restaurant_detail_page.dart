@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_detail/restaurant_menu_page.dart';
 import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
@@ -48,7 +49,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     return Scaffold(
       // Appbar
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: AppColors.primary,
         title: Text(
           "Menu",
           style: const TextStyle(

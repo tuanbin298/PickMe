@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/customer/customer.dart';
 import 'package:pickme_fe_app/features/customer/services/customer/customer_service.dart';
-import 'package:pickme_fe_app/features/customer/widgets/profile/profile_header.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/profile_header.dart';
 import 'package:pickme_fe_app/features/customer/widgets/profile/profile_menu_item.dart';
-import 'package:pickme_fe_app/features/customer/widgets/profile/profile_notification_tile.dart';
+import 'package:pickme_fe_app/core/common_widgets/profile/profile_notification_tile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {

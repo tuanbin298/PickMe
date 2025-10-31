@@ -26,15 +26,20 @@ class RestaurantMenuCard extends StatelessWidget {
     final priceText = UtilsMethod.formatMoney(m.price);
     final isFavorite = ValueNotifier<bool>(false);
 
-    void navigateToDetail() {
-      context.pushNamed(
+    void navigateToDetail() async {
+      final result = await context.pushNamed<bool>(
         'restaurant-menu-detail',
         pathParameters: {
-          'restaurantId': restaurant.id.toString(),
-          'menuItemId': m.id.toString(),
+          'id': restaurant.id.toString(),
+          'menuId': m.id.toString(),
         },
         extra: {'token': token},
       );
+
+      if (result == true && context.mounted) {
+        debugPrint('🛒 Đã thêm món, cập nhật giỏ hàng...');
+        onTap?.call(); // Gọi hàm reload cart
+      }
     }
 
     return ValueListenableBuilder<bool>(

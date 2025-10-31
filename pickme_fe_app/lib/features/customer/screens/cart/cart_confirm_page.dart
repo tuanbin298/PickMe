@@ -6,11 +6,13 @@ import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
+import 'package:pickme_fe_app/features/customer/services/cart/cart_service.dart';
 import 'package:pickme_fe_app/features/customer/services/order/order_service.dart';
 import 'package:pickme_fe_app/features/customer/widgets/cart/address_card.dart';
 import 'package:pickme_fe_app/features/customer/widgets/cart/menu_list_card.dart';
 import 'package:pickme_fe_app/features/customer/widgets/cart/voucher_card.dart';
 import 'package:pickme_fe_app/features/customer/widgets/cart/pickup_time_card.dart';
+
 import 'package:intl/intl.dart';
 
 class CartConfirmPage extends StatefulWidget {
@@ -37,18 +39,78 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
   DateTime _pickupTime = DateTime.now().add(const Duration(hours: 1));
   bool payWithVisa = true;
   late double subtotal;
+  late List<CartItem> cartItems;
   bool isLoading = false;
 
+  final CartService _cartService = CartService();
   final OrderService _orderService = OrderService();
 
   @override
   void initState() {
     super.initState();
 
-    subtotal = widget.cartItems.fold(
+    // ✅ Copy danh sách từ widget sang biến local trong State
+    cartItems = List<CartItem>.from(widget.cartItems);
+
+    // ✅ Tính subtotal ban đầu
+    subtotal = cartItems.fold(
       0.0,
       (sum, item) => sum + item.unitPrice * item.quantity,
     );
+  }
+
+  Future<void> _updateQuantity(CartItem item, int newQty) async {
+    if (newQty <= 0) return;
+
+    final success = await _cartService.addToCart(
+      token: widget.token,
+      restaurantId: widget.restaurant.id,
+      menuItemId: item.menuItemId,
+      quantity: newQty - item.quantity, // chỉ gửi phần chênh lệch
+    );
+
+    if (!mounted) return; // ✅ đảm bảo widget chưa bị dispose
+
+    if (success) {
+      setState(() {
+        final index = cartItems.indexWhere((i) => i.id == item.id);
+        if (index != -1) {
+          final updatedItem = item.copyWith(quantity: newQty);
+          cartItems[index] = updatedItem;
+        }
+
+        subtotal = cartItems.fold(
+          0.0,
+          (sum, i) => sum + i.unitPrice * i.quantity,
+        );
+      });
+    } else {
+      NotificationService.showError(context, "Không thể cập nhật số lượng");
+    }
+  }
+
+  // Remove item from cart
+  Future<void> _removeItem(CartItem item) async {
+    final success = await _cartService.removeCartItem(
+      widget.token,
+      widget.cartId,
+      item.id,
+    );
+
+    if (!mounted) return; // ✅ kiểm tra widget có còn tồn tại không
+
+    if (success) {
+      if (!mounted) return;
+      setState(() {
+        cartItems.remove(item);
+        subtotal = cartItems.fold(
+          0.0,
+          (sum, i) => sum + i.unitPrice * i.quantity,
+        );
+      });
+    } else {
+      NotificationService.showError(context, "Xóa món thất bại");
+    }
   }
 
   // Method get current location
@@ -220,9 +282,11 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
           // List of food
           MenuListCard(
             restaurant: widget.restaurant,
-            cartItems: widget.cartItems,
+            cartItems: cartItems,
             subtotal: subtotal,
             total: widget.total,
+            onUpdateQuantity: _updateQuantity,
+            onRemove: _removeItem,
           ),
 
           const SizedBox(height: 12),

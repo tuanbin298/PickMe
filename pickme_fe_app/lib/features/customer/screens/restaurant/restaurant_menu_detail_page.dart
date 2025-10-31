@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant_menu.dart';
 import 'package:pickme_fe_app/features/customer/services/cart/cart_service.dart';
 import 'package:pickme_fe_app/features/customer/services/menu/restaurant_menu_service.dart';
 import 'package:pickme_fe_app/features/customer/services/restaurant/restaurant_service.dart';
-import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/features/customer/widgets/menu/addon_category_card.dart';
 import 'package:pickme_fe_app/features/customer/widgets/menu/quantity_selector.dart';
 import 'package:pickme_fe_app/features/customer/widgets/menu/bottom_price_bar.dart';
@@ -45,6 +46,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
   void initState() {
     super.initState();
     _menuDataFuture = _loadMenuDetail();
+    print(
+      "🧭 Nhận params: id=${widget.restaurantId}, menuId=${widget.menuItemId}, token=${widget.token}",
+    );
   }
 
   double get _addOnsTotal {
@@ -68,13 +72,14 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     }
   }
 
-  // Data detail of menu
   Future<(Restaurant, RestaurantMenu)> _loadMenuDetail() async {
     try {
+      print("🛰️ Gửi request chi tiết món ăn...");
       final restaurant = await RestaurantService().getRestaurantById(
         restaurantId: widget.restaurantId,
         token: widget.token,
       );
+
       final menu = await RestaurantMenuService().getMenuDetail(
         restaurantId: widget.restaurantId,
         menuItemId: widget.menuItemId,
@@ -88,12 +93,11 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
       await _loadAddOnData();
       return (restaurant, menu);
     } catch (e) {
-      debugPrint('Lỗi tải dữ liệu chi tiết món ăn: $e');
+      debugPrint('❌ Lỗi tải dữ liệu chi tiết món ăn: $e');
       throw Exception('Không thể tải thông tin món ăn');
     }
   }
 
-  // Load AddOn data for the menu item (Topping for menu)
   Future<void> _loadAddOnData() async {
     try {
       final service = CartService();
@@ -107,7 +111,6 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
           .toList();
 
       _addonsByCategory.clear();
-
       for (final addon in allAddons) {
         _addonsByCategory.putIfAbsent(addon.category, () => []).add(addon);
       }
@@ -121,8 +124,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     }
   }
 
-  // Handle adding the menu item to cart
+  /// ✅ Handle add to cart and return to menu page
   Future<void> _handleAddToCart(RestaurantMenu menu) async {
+    if (_loadingAddToCart) return;
     setState(() => _loadingAddToCart = true);
 
     final List<Map<String, dynamic>> addOnsPayload = [];
@@ -131,6 +135,8 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
         addOnsPayload.add({'menuItemAddOnId': addonId, 'quantity': qty});
       });
     });
+
+    print("🛒 Gửi request thêm giỏ hàng: menuId=${menu.id}, qty=$quantity");
 
     try {
       final success = await CartService().addToCart(
@@ -147,9 +153,14 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
           context,
           '${menu.name} x$quantity đã được thêm vào giỏ hàng!',
         );
-        Future.delayed(const Duration(milliseconds: 800), () {
-          if (mounted) Navigator.pop(context, true);
-        });
+
+        // 🕐 Chờ một nhịp nhỏ để đảm bảo dữ liệu cập nhật xong
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        if (mounted) {
+          print("✅ Thêm giỏ hàng thành công — pop về menu");
+          context.pop(true); // gửi signal reload menu
+        }
       } else {
         NotificationService.showError(
           context,
@@ -157,14 +168,13 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
         );
       }
     } catch (e) {
-      debugPrint('Add to cart error: $e');
+      debugPrint('❌ Add to cart error: $e');
       NotificationService.showError(context, 'Lỗi khi thêm vào giỏ hàng.');
     } finally {
-      setState(() => _loadingAddToCart = false);
+      if (mounted) setState(() => _loadingAddToCart = false);
     }
   }
 
-  // Toggle addon selection
   void _toggleAddon(String category, int addonId) {
     setState(() {
       _selections[category] ??= {};
@@ -181,13 +191,10 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     return FutureBuilder<(Restaurant, RestaurantMenu)>(
       future: _menuDataFuture,
       builder: (context, snapshot) {
-        // Loading
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
-
-          // Error
         } else if (snapshot.hasError) {
           return Scaffold(
             appBar: AppBar(title: const Text('Chi tiết món ăn')),
@@ -200,7 +207,6 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
 
         return Scaffold(
           backgroundColor: Colors.white,
-          // Appbar
           appBar: AppBar(
             centerTitle: true,
             title: const Text(
@@ -212,23 +218,20 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
               ),
             ),
             backgroundColor: AppColors.primary,
-            iconTheme: const IconThemeData(color: Colors.black),
           ),
-
           body: _loading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
               ? Center(child: Text(_error!))
               : Column(
                   children: [
-                    // Detail content
+                    // Nội dung chính
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const SizedBox(height: 20),
-
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -236,7 +239,6 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                               ),
                               child: Column(
                                 children: [
-                                  // Menu name
                                   Text(
                                     menu.name,
                                     textAlign: TextAlign.center,
@@ -245,10 +247,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
-
                                   const SizedBox(height: 6),
-
-                                  // Menu description
                                   Text(
                                     menu.description,
                                     textAlign: TextAlign.center,
@@ -260,8 +259,6 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 ],
                               ),
                             ),
-
-                            // Menu image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
@@ -273,10 +270,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-
                             const SizedBox(height: 16),
-
-                            // Addon categories
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -294,8 +288,6 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                     .toList(),
                               ),
                             ),
-
-                            // Special note
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
@@ -304,7 +296,6 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Title
                                   const Text(
                                     'Ghi chú cho cửa hàng',
                                     style: TextStyle(
@@ -312,10 +303,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-
                                   const SizedBox(height: 6),
-
-                                  // Input field for note
                                   TextField(
                                     decoration: InputDecoration(
                                       hintText:
@@ -330,10 +318,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                     maxLines: 3,
                                     onChanged: (v) => _specialNote = v,
                                   ),
-
                                   const SizedBox(height: 20),
-
-                                  // Quantity selector
                                   QuantitySelector(
                                     quantity: quantity,
                                     onDecrease: () {
@@ -347,14 +332,11 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 ],
                               ),
                             ),
-
                             const SizedBox(height: 40),
                           ],
                         ),
                       ),
                     ),
-
-                    // Bottom price bar
                     BottomPriceBar(
                       totalPrice: totalPrice,
                       loadingAddToCart: _loadingAddToCart,

@@ -28,6 +28,7 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_fe
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_navigate_bottom.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
 import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_detail_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/cart/cart_overview_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_page.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
@@ -143,22 +144,16 @@ class AppRouter {
       ),
 
       GoRoute(
-        path: '/restaurant/:restaurantId/menu/:menuItemId',
+        path: '/restaurant/:id/menu-detail/:menuId',
         name: 'restaurant-menu-detail',
         builder: (context, state) {
           final restaurantId =
-              int.tryParse(state.pathParameters['restaurantId'] ?? '') ?? 0;
+              int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
           final menuItemId =
-              int.tryParse(state.pathParameters['menuItemId'] ?? '') ?? 0;
+              int.tryParse(state.pathParameters['menuId'] ?? '') ?? 0;
 
-          final extra = state.extra as Map<String, dynamic>?;
-          final token = extra?['token'] as String?;
-
-          if (token == null || token.isEmpty) {
-            return const Scaffold(
-              body: Center(child: Text("Thiếu token xác thực")),
-            );
-          }
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final token = extra['token'] as String? ?? '';
 
           return RestaurantMenuDetailPage(
             token: token,
@@ -181,6 +176,15 @@ class AppRouter {
             cartId: extraData["cartId"] as int,
             total: (extraData["total"] as num).toDouble(),
           );
+        },
+      ),
+
+      GoRoute(
+        path: "/cart-overview",
+        name: "cart-overview",
+        builder: (context, state) {
+          final token = state.extra as String? ?? '';
+          return CartOverviewPage(token: token);
         },
       ),
 

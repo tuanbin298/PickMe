@@ -47,6 +47,11 @@ class RestaurantMenuService {
     required int menuItemId,
     required String token,
   }) async {
+    // 🛰️ Log để debug request
+    print(
+      "🛰️ Gửi request detail: restaurantId=$restaurantId, menuId=$menuItemId, token=$token",
+    );
+
     final url = Uri.parse(
       '$baseUrl/restaurants/$restaurantId/menu/$menuItemId',
     );
@@ -60,6 +65,10 @@ class RestaurantMenuService {
         },
       );
 
+      print("📡 URL gọi API: $url");
+      print("📬 Status code: ${response.statusCode}");
+      print("📦 Response body: ${response.body}");
+
       if (response.statusCode == 200) {
         // Decode UTF-8 properly for Vietnamese text
         final data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -71,11 +80,11 @@ class RestaurantMenuService {
           return null;
         }
       } else {
-        print('Lỗi tải chi tiết món ăn (status ${response.statusCode})');
+        print('❌ Lỗi tải chi tiết món ăn (status ${response.statusCode})');
         return null;
       }
     } catch (e) {
-      print('Lỗi kết nối khi tải chi tiết món ăn: $e');
+      print('⚠️ Lỗi kết nối khi tải chi tiết món ăn: $e');
       return null;
     }
   }

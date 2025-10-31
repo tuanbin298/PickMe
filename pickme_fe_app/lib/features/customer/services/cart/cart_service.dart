@@ -101,7 +101,7 @@ class CartService {
     }
   }
 
-  /// 🧩 Lấy danh sách AddOns theo MenuItemId
+  /// Get AddOns by MenuItemId
   Future<List<Map<String, dynamic>>> getAddOnsByMenuItem({
     required String token,
     required int menuItemId,
@@ -215,5 +215,34 @@ class CartService {
       print("Lỗi API cart: $e");
     }
     return null;
+  }
+
+  /// Get all carts
+  Future<List<Map<String, dynamic>>> getAllCarts({
+    required String token,
+  }) async {
+    final url = Uri.parse('$baseUrl/cart');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+        // Mỗi phần tử trong data là giỏ hàng của 1 nhà hàng
+        return data.map((e) => e as Map<String, dynamic>).toList();
+      } else {
+        print('❌ Lỗi lấy danh sách giỏ hàng: ${response.statusCode}');
+        print('Body: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('⚠️ Lỗi kết nối khi lấy danh sách giỏ hàng: $e');
+      return [];
+    }
   }
 }

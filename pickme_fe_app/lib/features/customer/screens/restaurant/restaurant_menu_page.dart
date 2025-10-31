@@ -186,10 +186,16 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                     onTap: (menu) async {
                       if (isClosed) return;
 
+                      if (!mounted) return;
+
                       final result = await context.pushNamed(
                         'restaurant-menu-detail',
-                        pathParameters: {'menuItemId': menu.id.toString()},
+                        pathParameters: {
+                          'id': widget.restaurant.id.toString(),
+                          'menuId': menu.id.toString(),
+                        },
                         extra: {
+                          'token': widget.token,
                           'name': menu.name,
                           'description': menu.description,
                           'imageUrl': menu.imageUrl,

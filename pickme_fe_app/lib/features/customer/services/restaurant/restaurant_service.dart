@@ -69,7 +69,7 @@ class RestaurantService {
         return null;
       }
     } catch (e) {
-      print('⚠️ Lỗi kết nối khi tải chi tiết nhà hàng: $e');
+      print(' Lỗi kết nối khi tải chi tiết nhà hàng: $e');
       return null;
     }
   }

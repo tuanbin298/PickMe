@@ -1,6 +1,64 @@
-import '../../models/order/order.dart';
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'package:pickme_fe_app/features/customer/models/order/order.dart';
+import '../../models/order/orderModel.dart';
 
 class OrderService {
+  final String baseUrl = dotenv.env['API_URL'] ?? '';
+
+  // Future - asynchronous createOrder
+  Future<Order?> createOrder(
+    String token,
+    int cartId,
+    Map<String, dynamic> checkoutData,
+  ) async {
+    final url = Uri.parse('$baseUrl/cart/$cartId/checkout');
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+
+      body: jsonEncode(checkoutData),
+    );
+
+    if (response.statusCode == 200) {
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      return Order.fromJson(data);
+    } else {
+      print("Không thể tạo đơn hàng");
+      return null;
+    }
+  }
+
+  // Get Order and order items by ID
+  Future<Order?> getOrderById(String token, int orderId) async {
+    final url = Uri.parse('$baseUrl/orders/$orderId');
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      return Order.fromJson(data);
+    } else {
+      print("Không thể lấy thông tin đơn hàng");
+      return null;
+    }
+  }
+
   // Simulated fetch order history
   Future<List<OrderModel>> getOrderHistory() async {
     await Future.delayed(const Duration(milliseconds: 300));

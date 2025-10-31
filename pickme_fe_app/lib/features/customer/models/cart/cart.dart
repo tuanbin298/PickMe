@@ -1,5 +1,6 @@
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 
+// Cart model
 class Cart {
   final int id;
   final Restaurant restaurant;
@@ -23,6 +24,7 @@ class Cart {
     required this.updatedAt,
   });
 
+  // Parse data from JSON into model
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
       id: (json['id'] ?? 0).toInt(),
@@ -38,22 +40,9 @@ class Cart {
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'restaurant': restaurant.toJson(),
-      'cartItems': cartItems.map((e) => e.toJson()).toList(),
-      'subtotal': subtotal,
-      'totalAmount': totalAmount,
-      'totalItems': totalItems,
-      'status': status,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-    };
-  }
 }
 
+// Cart item model
 class CartItem {
   final int id;
   final int menuItemId;
@@ -85,6 +74,7 @@ class CartItem {
     required this.createdAt,
   });
 
+  // Parse data from JSON into model
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
       id: (json['id'] ?? 0).toInt(),
@@ -104,26 +94,9 @@ class CartItem {
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'menuItemId': menuItemId,
-      'menuItemName': menuItemName,
-      'menuItemDescription': menuItemDescription,
-      'menuItemCategory': menuItemCategory,
-      'menuItemImageUrl': menuItemImageUrl,
-      'quantity': quantity,
-      'unitPrice': unitPrice,
-      'subtotal': subtotal,
-      'totalPrice': totalPrice,
-      'specialInstructions': specialInstructions,
-      'addOns': addOns.map((e) => e.toJson()).toList(),
-      'createdAt': createdAt.toIso8601String(),
-    };
-  }
 }
 
+// Model add topping
 class AddOn {
   final int id;
   final String name;
@@ -147,6 +120,7 @@ class AddOn {
     required this.isRequired,
   });
 
+  // Parse data from JSON into model
   factory AddOn.fromJson(Map<String, dynamic> json) {
     return AddOn(
       id: json['id'] ?? 0,
@@ -159,19 +133,5 @@ class AddOn {
       maxQuantity: json['maxQuantity'],
       isRequired: json['isRequired'] ?? false,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'price': price,
-      'category': category,
-      'isAvailable': isAvailable,
-      'displayOrder': displayOrder,
-      'maxQuantity': maxQuantity,
-      'isRequired': isRequired,
-    };
   }
 }

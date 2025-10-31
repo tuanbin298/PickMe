@@ -53,6 +53,7 @@ class _CreateRestaurantPageState extends State<CreateRestaurantPage> {
     "Bánh ngọt",
     "Đồ ăn chay",
     "Đồ ăn sáng",
+    "Đồ ăn khuya",
   ];
 
   @override

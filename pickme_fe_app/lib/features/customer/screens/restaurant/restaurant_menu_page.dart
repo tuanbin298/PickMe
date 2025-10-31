@@ -122,6 +122,43 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
 
             final menus = snapshot.data ?? [];
 
+            // If dont have menu
+            if (menus.isEmpty) {
+              return Scaffold(
+                appBar: AppBar(
+                  backgroundColor: AppColors.primary,
+                  title: const Text(
+                    'Thực đơn',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  centerTitle: true,
+                ),
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.restaurant_menu,
+                        size: 80,
+                        color: Colors.grey.shade400,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      Text(
+                        'Quán hiện chưa có món ăn nào',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
             return Stack(
               children: [
                 // Main content
@@ -142,6 +179,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                       setState(() {
                         _menusFuture = newMenusFuture;
                       });
+
                       await newMenusFuture;
                     },
 
@@ -293,6 +331,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
                                   'token': widget.token,
                                   'restaurant': cart.restaurant,
                                   'cartItems': cart.cartItems,
+                                  'cartId': cart.id,
                                   'total': cart.totalAmount,
                                 },
                               );

@@ -7,12 +7,14 @@ import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/order/order_confirm_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/payment_methods_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/profile_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/customer_bottom_nav.dart';
+import 'package:pickme_fe_app/features/customer/screens/qr_code/payment_qr_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/home/merchant_home_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/merchant/merchant_navigate_bottom.dart';
@@ -176,8 +178,32 @@ class AppRouter {
             token: extraData["token"] as String,
             restaurant: extraData["restaurant"] as Restaurant,
             cartItems: extraData["cartItems"] as List<CartItem>,
+            cartId: extraData["cartId"] as int,
             total: (extraData["total"] as num).toDouble(),
           );
+        },
+      ),
+
+      GoRoute(
+        path: "/order-confirm",
+        name: "order-confirm",
+        builder: (context, state) {
+          final extraData = state.extra as Map<String, dynamic>;
+
+          return OrderConfirmPage(
+            token: extraData["token"] as String,
+            id: extraData["id"] as int,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: "/payment-qr",
+        name: "payment-qr",
+        builder: (context, state) {
+          final extraData = state.extra as Map<String, dynamic>;
+
+          return PaymentQrPage(qrCodeUrl: extraData["qrCodeUrl"] as String);
         },
       ),
 

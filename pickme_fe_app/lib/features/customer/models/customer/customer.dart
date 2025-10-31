@@ -3,8 +3,8 @@ class Customer {
   final String email;
   final String fullName;
   final String phoneNumber;
-  final String imageUrl;
-  final String role;
+  final String? imageUrl;
+  final String? role;
   final bool isActive;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -14,8 +14,8 @@ class Customer {
     required this.email,
     required this.fullName,
     required this.phoneNumber,
-    required this.imageUrl,
-    required this.role,
+    this.imageUrl,
+    this.role,
     required this.isActive,
     required this.createdAt,
     this.updatedAt,
@@ -28,10 +28,12 @@ class Customer {
       email: json['email'] ?? '',
       fullName: json['fullName'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
-      role: json['role'] ?? '',
+      imageUrl: json['imageUrl'],
+      role: json['role'],
       isActive: json['isActive'] ?? false,
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+          : DateTime.now(),
       updatedAt: json['updatedAt'] != null
           ? DateTime.tryParse(json['updatedAt'])
           : null,

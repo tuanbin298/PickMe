@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/order/order.dart';
+import '../../models/order/orderModel.dart';
 import 'order_card.dart';
 
 class OrderHistoryTab extends StatelessWidget {

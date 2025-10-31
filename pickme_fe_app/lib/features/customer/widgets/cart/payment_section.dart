@@ -26,17 +26,19 @@ class PaymentSection extends StatelessWidget {
           Row(
             children: [
               _buildPaymentOption(
-                "VISA",
-                "https://i.imgur.com/8nGk3Wv.png",
+                "Chuyển khoản",
+                "lib/assets/images/bank_transfer.png",
                 payWithVisa,
                 () {
                   onChanged(true);
                 },
               ),
+
               const SizedBox(width: 10),
+
               _buildPaymentOption(
                 "Tiền mặt",
-                "https://i.imgur.com/QxqvN0x.png",
+                "lib/assets/images/cash.jpg",
                 !payWithVisa,
                 () {
                   onChanged(false);
@@ -44,7 +46,10 @@ class PaymentSection extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 12),
+
+          // Button order
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -91,8 +96,12 @@ class PaymentSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.network(iconUrl, width: 28, height: 28),
+              // Image off payment method
+              Image.asset(iconUrl, width: 28, height: 28, fit: BoxFit.contain),
+
               const SizedBox(width: 6),
+
+              // Text
               Text(
                 label,
                 style: TextStyle(

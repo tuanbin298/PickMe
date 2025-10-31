@@ -21,7 +21,7 @@ class RestaurantMenu {
     required this.tags,
   });
 
-  /// Factory constructor to parse from JSON
+  // Parse model into json
   factory RestaurantMenu.fromJson(Map<String, dynamic> json) {
     return RestaurantMenu(
       id: json['id'] ?? 0,

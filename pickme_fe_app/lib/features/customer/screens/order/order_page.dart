@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/order/order.dart';
+import '../../models/order/orderModel.dart';
 import '../../services/order/order_service.dart';
 import '../../widgets/order/order_current_tab.dart';
 import '../../widgets/order/order_history_tab.dart';

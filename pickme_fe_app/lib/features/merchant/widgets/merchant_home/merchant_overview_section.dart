@@ -45,9 +45,11 @@ class _MerchantOverviewSectionState extends State<MerchantOverviewSection> {
 
           totalOrder += count;
 
-          setState(() {
-            _orderCount = totalOrder;
-          });
+          if (mounted) {
+            setState(() {
+              _orderCount = totalOrder;
+            });
+          }
         }
       }
     });
@@ -105,7 +107,7 @@ class _MerchantOverviewSectionState extends State<MerchantOverviewSection> {
                     // Total order
                     _buildInfoCard(
                       title: "Tổng số đơn hàng",
-                      value: _orderCount.toString(),
+                      value: (_orderCount ?? 0).toString(),
                       icon: Icons.receipt_long,
                       color: Colors.orange,
                     ),

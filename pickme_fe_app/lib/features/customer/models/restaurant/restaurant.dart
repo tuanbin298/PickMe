@@ -46,28 +46,10 @@ class Restaurant {
       closingTime: json['closingTime'] ?? '',
       rating: (json['rating'] ?? 0).toDouble(),
       isOpen: json['isOpen'] ?? false,
-      categories: List<String>.from(json['categories'] ?? []),
+      categories: json['categories'] != null
+          ? List<String>.from(json['categories'])
+          : [],
       isApproved: json['isApproved'],
     );
-  }
-
-  // Convert model to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'imageUrl': imageUrl,
-      'address': address,
-      'description': description,
-      'latitude': latitude,
-      'longitude': longitude,
-      'phoneNumber': phoneNumber,
-      'openingTime': openingTime,
-      'closingTime': closingTime,
-      'rating': rating,
-      'isOpen': isOpen,
-      'categories': categories,
-      'isApproved': isApproved,
-    };
   }
 }

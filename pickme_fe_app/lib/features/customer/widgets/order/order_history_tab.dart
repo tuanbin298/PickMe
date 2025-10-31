@@ -1,41 +1,216 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pickme_fe_app/core/common_services/utils_method.dart';
+import 'package:pickme_fe_app/core/common_widgets/status.dart';
 import 'package:pickme_fe_app/features/customer/models/order/order.dart';
+import 'package:pickme_fe_app/features/customer/services/order/order_service.dart';
 
-class OrderHistoryTab extends StatelessWidget {
-  final Future<List<Order>> ordersFuture;
-  const OrderHistoryTab({super.key, required this.ordersFuture});
+class OrderHistoryTab extends StatefulWidget {
+  final String token;
+
+  const OrderHistoryTab({super.key, required this.token});
+
+  @override
+  State<OrderHistoryTab> createState() => _OrderHistoryTabState();
+}
+
+class _OrderHistoryTabState extends State<OrderHistoryTab> {
+  final OrderService _orderService = OrderService();
+  late Future<List<Order>> _historyOrder;
+
+  @override
+  void initState() {
+    super.initState();
+    // Get history order
+    _historyOrder = _orderService.getHistoryOrder(widget.token);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Build order history list
     return FutureBuilder<List<Order>>(
-      future: ordersFuture,
+      future: _historyOrder,
       builder: (context, snapshot) {
-        // Loading indicator
+        // Loading
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        // Error handling
+
+        // Error
         if (snapshot.hasError) {
-          return Center(child: Text('Lỗi tải đơn hàng: ${snapshot.error}'));
+          return Center(child: Text("Lỗi tải dữ liệu: ${snapshot.error}"));
         }
 
-        // Display orders
-        final orders = snapshot.data ?? [];
+        final ordersHistory = snapshot.data;
 
-        // No orders message
-        if (orders.isEmpty) {
-          return const Center(child: Text('Chưa có đơn hàng nào'));
+        // Dont have order
+        if (ordersHistory == null || ordersHistory.isEmpty) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.hourglass_empty, size: 60, color: Colors.orange),
+                SizedBox(height: 16),
+                Text(
+                  "Bạn chưa có đơn hàng nào",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+          );
         }
 
-        return Scaffold(body: Text("data"));
+        // Have order
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: ordersHistory.length,
+          itemBuilder: (context, index) {
+            final order = ordersHistory[index];
+            final restaurant = order.restaurant;
 
-        // Orders list
-        // return ListView.builder(
-        //   padding: const EdgeInsets.all(12),
-        //   itemCount: orders.length,
-        //   // itemBuilder: (context, i) => OrderCard(order: orders[i]),
-        // );
+            // Formatter status
+            final (orderText, orderIcon, orderColor) = mapOrderStatus(
+              order.status ?? "",
+            );
+            final (paymentText, paymentIcon, paymentColor) = mapPaymentStatus(
+              order.paymentStatus ?? "",
+            );
+
+            return GestureDetector(
+              onTap: () {
+                context.push(
+                  "/orders/${order.id}",
+                  extra: {"orderId": order.id, "token": widget.token},
+                );
+              },
+              child: Card(
+                color: Colors.white,
+                margin: const EdgeInsets.only(bottom: 16),
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Orderitem image
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.network(
+                          restaurant?.imageUrl ?? "",
+                          width: 160,
+                          height: 170,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+
+                      const SizedBox(width: 14),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Order id
+                            Text(
+                              "Mã đơn: ${order.id}",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            // Order item name
+                            Text(
+                              restaurant?.name ?? "Không rõ tên quán",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            // Order status
+                            Row(
+                              children: [
+                                Icon(orderIcon, size: 18, color: orderColor),
+
+                                const SizedBox(width: 6),
+
+                                Text(
+                                  orderText,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: orderColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 4),
+
+                            // Payment status
+                            Row(
+                              children: [
+                                Icon(
+                                  paymentIcon,
+                                  size: 18,
+                                  color: paymentColor,
+                                ),
+
+                                const SizedBox(width: 6),
+
+                                Text(
+                                  paymentText,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: paymentColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            // Total price
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.attach_money,
+                                  size: 18,
+                                  color: Colors.black54,
+                                ),
+
+                                const SizedBox(width: 6),
+
+                                Text(
+                                  UtilsMethod.formatMoney(
+                                    order.totalAmount ?? 0,
+                                  ),
+
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
       },
     );
   }

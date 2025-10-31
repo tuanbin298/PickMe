@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../widgets/home/custom_location_app_bar.dart';
-import '../../widgets/home/custom_nav_widget.dart';
 import '../../widgets/home/public_restaurant_list.dart';
 
 class Homepage extends StatefulWidget {
@@ -12,14 +11,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  int selectedIndex = 0;
-
-  void _onItemSelected(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,11 +23,6 @@ class _HomepageState extends State<Homepage> {
             const CustomLocationAppBar(),
 
             const SizedBox(height: 10),
-
-            CustomNavWidget(
-              selectedIndex: selectedIndex,
-              onItemSelected: _onItemSelected,
-            ),
 
             // Homepage restaurant
             PublicRestaurantList(token: widget.token),

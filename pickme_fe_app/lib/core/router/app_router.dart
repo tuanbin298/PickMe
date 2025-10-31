@@ -8,6 +8,7 @@ import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_confirm_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/order/order_detail_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/account_info_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/addresses_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/profile/change_password_page.dart';
@@ -129,6 +130,18 @@ class AppRouter {
             },
           ),
         ],
+      ),
+
+      GoRoute(
+        path: '/orders/:id',
+        name: "orders-detail",
+        builder: (context, state) {
+          final extraData = state.extra as Map<String, dynamic>;
+          final orderId = extraData['orderId'] as int;
+          final token = extraData['token'] as String;
+
+          return OrderDetailPage(orderId: orderId, token: token);
+        },
       ),
 
       GoRoute(

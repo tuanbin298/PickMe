@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pickme_fe_app/features/customer/widgets/order/order_history_tab.dart';
 import '../../widgets/order/order_current_tab.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -11,17 +12,13 @@ class OrdersPage extends StatefulWidget {
 
 class _OrdersPageState extends State<OrdersPage> {
   @override
-  void initState() {
-    super.initState();
-    // _ordersFuture = OrderService().getOrderHistory();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 1, // number of tabs
+      length: 2, // number of tabs
       child: Scaffold(
         backgroundColor: const Color(0xFFF7F7F7),
+
+        // Appbar
         appBar: AppBar(
           title: const Text(
             "Đơn hàng",
@@ -44,7 +41,7 @@ class _OrdersPageState extends State<OrdersPage> {
             OrderCurrentTab(token: widget.token),
 
             // Order history
-            // OrderHistoryTab(ordersFuture: _ordersFuture),
+            OrderHistoryTab(token: widget.token),
           ],
         ),
       ),
@@ -62,7 +59,7 @@ class _OrdersPageState extends State<OrdersPage> {
       labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
       tabs: [
         Tab(text: "Đơn hiện tại"),
-        // Tab(text: "Lịch sử"),
+        Tab(text: "Lịch sử"),
       ],
     ),
   );

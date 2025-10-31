@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../models/order/orderModel.dart';
 
 class OrderCard extends StatelessWidget {
-  final OrderModel order;
-  const OrderCard({super.key, required this.order});
+  const OrderCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,7 @@ class OrderCard extends StatelessWidget {
                 children: [
                   //Order Status
                   Text(
-                    order.status,
+                    "status",
                     style: const TextStyle(
                       color: Colors.green,
                       fontSize: 13,
@@ -50,7 +48,7 @@ class OrderCard extends StatelessWidget {
 
                   //Order Date
                   Text(
-                    order.date,
+                    "ngay",
                     style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
                   ),
                 ],
@@ -65,11 +63,10 @@ class OrderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Order image
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(order.image, width: 70, height: 70),
-              ),
-
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(8),
+              //   child: Image.network(order.image, width: 70, height: 70),
+              // ),
               const SizedBox(width: 12),
 
               Expanded(
@@ -82,7 +79,7 @@ class OrderCard extends StatelessWidget {
                         //Order Title
                         Flexible(
                           child: Text(
-                            order.title,
+                            "title",
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -106,7 +103,7 @@ class OrderCard extends StatelessWidget {
 
                     //Order Address
                     Text(
-                      order.address,
+                      "ddija chi",
                       style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 13,
@@ -123,7 +120,7 @@ class OrderCard extends StatelessWidget {
                       children: [
                         //Order Price
                         Text(
-                          "${order.price.toStringAsFixed(0)}đ",
+                          "giaađ",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.orange,
@@ -132,7 +129,7 @@ class OrderCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         //Order Quantity
                         Text(
-                          "• ${order.quantity} phần",
+                          "• soos luong phần",
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 13,

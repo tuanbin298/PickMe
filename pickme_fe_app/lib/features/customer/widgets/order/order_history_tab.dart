@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../models/order/orderModel.dart';
-import 'order_card.dart';
+import 'package:pickme_fe_app/features/customer/models/order/order.dart';
 
 class OrderHistoryTab extends StatelessWidget {
-  final Future<List<OrderModel>> ordersFuture;
+  final Future<List<Order>> ordersFuture;
   const OrderHistoryTab({super.key, required this.ordersFuture});
 
   @override
   Widget build(BuildContext context) {
     // Build order history list
-    return FutureBuilder<List<OrderModel>>(
+    return FutureBuilder<List<Order>>(
       future: ordersFuture,
       builder: (context, snapshot) {
         // Loading indicator
@@ -29,12 +28,14 @@ class OrderHistoryTab extends StatelessWidget {
           return const Center(child: Text('Chưa có đơn hàng nào'));
         }
 
+        return Scaffold(body: Text("data"));
+
         // Orders list
-        return ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: orders.length,
-          itemBuilder: (context, i) => OrderCard(order: orders[i]),
-        );
+        // return ListView.builder(
+        //   padding: const EdgeInsets.all(12),
+        //   itemCount: orders.length,
+        //   // itemBuilder: (context, i) => OrderCard(order: orders[i]),
+        // );
       },
     );
   }

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/order/order.dart';
-import 'package:pickme_fe_app/features/customer/screens/qr_code/payment_qr_page.dart';
 import 'package:pickme_fe_app/features/customer/services/order/order_service.dart';
 import 'package:pickme_fe_app/features/customer/services/payment/payment_service.dart';
 import 'package:pickme_fe_app/features/customer/widgets/cart/payment_section.dart';

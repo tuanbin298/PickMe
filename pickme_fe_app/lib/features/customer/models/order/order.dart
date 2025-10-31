@@ -15,6 +15,7 @@ class Order {
   final DateTime? preferredPickupTime;
   final double? discountAmount;
   final double? totalAmount;
+  final String? status;
   final String? paymentStatus;
   final List<OrderItem>? orderItems;
 
@@ -31,6 +32,7 @@ class Order {
     this.preferredPickupTime,
     this.discountAmount,
     this.totalAmount,
+    this.status,
     this.paymentStatus,
     this.orderItems,
   });
@@ -57,6 +59,7 @@ class Order {
       discountAmount: (json['discountAmount'] ?? 0).toDouble(),
       totalAmount: (json['totalAmount'] ?? 0).toDouble(),
       paymentStatus: json['paymentStatus'] ?? '',
+      status: json['status'] ?? '',
       orderItems: json['orderItems'] != null
           ? (json['orderItems'] as List)
                 .map((item) => OrderItem.fromJson(item))

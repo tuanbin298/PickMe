@@ -244,4 +244,35 @@ class CartService {
       return [];
     }
   }
+
+  /// Update quantity of a specific item in a cart
+  Future<bool> updateItemQuantity({
+    required String token,
+    required int cartId,
+    required int itemId,
+    required int quantity,
+  }) async {
+    final url = Uri.parse(
+      '$baseUrl/cart/$cartId/items/$itemId/quantity?quantity=$quantity',
+    );
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {"Accept": "*/*", "Authorization": "Bearer $token"},
+      );
+
+      if (response.statusCode == 200) {
+        print(' Cập nhật số lượng món thành công');
+        return true;
+      } else {
+        print('Lỗi cập nhật số lượng: ${response.statusCode}');
+        print('Body: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print(' Lỗi kết nối khi cập nhật số lượng: $e');
+      return false;
+    }
+  }
 }

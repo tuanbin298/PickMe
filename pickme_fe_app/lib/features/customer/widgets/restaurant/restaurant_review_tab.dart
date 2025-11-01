@@ -1,112 +1,153 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:pickme_fe_app/features/customer/models/review/review.dart';
+import 'package:pickme_fe_app/features/customer/services/review/review_service.dart';
 
-class RestaurantReviewTab extends StatelessWidget {
-  const RestaurantReviewTab({super.key});
+class RestaurantReviewTab extends StatefulWidget {
+  final String token;
+  final int restaurantId;
+
+  const RestaurantReviewTab({
+    super.key,
+    required this.token,
+    required this.restaurantId,
+  });
+
+  @override
+  State<RestaurantReviewTab> createState() => _RestaurantReviewTabState();
+}
+
+class _RestaurantReviewTabState extends State<RestaurantReviewTab> {
+  late Future<List<Review>> _reviewsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _reviewsFuture = ReviewService().getRestaurantReviewsByRestaurantId(
+      token: widget.token,
+      restaurantId: widget.restaurantId,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Sample reviews data
-    final List<Map<String, dynamic>> reviews = [
-      {
-        'name': 'Nguyễn Văn A',
-        'rating': 5.0,
-        'comment': 'Món ăn rất ngon, giao hàng nhanh và nóng hổi!',
-        'date': '20/10/2025',
-      },
-      {
-        'name': 'Trần Thị B',
-        'rating': 4.0,
-        'comment': 'Phục vụ thân thiện, giá cả hợp lý. Sẽ ủng hộ lần sau!',
-        'date': '18/10/2025',
-      },
-      {
-        'name': 'Lê Minh C',
-        'rating': 3.5,
-        'comment': 'Đồ ăn ổn nhưng giao hơi chậm một chút.',
-        'date': '15/10/2025',
-      },
-    ];
+    return FutureBuilder<List<Review>>(
+      future: _reviewsFuture,
+      builder: (context, snapshot) {
+        // Loading state
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: reviews.length,
-      separatorBuilder: (_, __) => const Divider(height: 24),
-      itemBuilder: (context, index) {
-        final review = reviews[index];
-        final String name = review['name'] as String;
-        final double rating = review['rating'] as double;
-        final String comment = review['comment'] as String;
-        final String date = review['date'] as String;
-
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User Avatar
-            const CircleAvatar(
-              radius: 22,
-              backgroundColor: Colors.orange,
-              child: Icon(Icons.person, color: Colors.white),
+        // Error state
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              'Lỗi khi tải đánh giá: ${snapshot.error}',
+              style: const TextStyle(color: Colors.red),
             ),
+          );
+        }
 
-            const SizedBox(width: 12),
+        final reviews = snapshot.data ?? [];
 
-            // Review Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Name + Rating
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // Empty state
+        if (reviews.isEmpty) {
+          return const Center(
+            child: Text(
+              'Chưa có đánh giá nào cho nhà hàng này.',
+              style: TextStyle(color: Colors.grey, fontSize: 15),
+            ),
+          );
+        }
+
+        // List of reviews
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: reviews.length,
+          separatorBuilder: (_, __) => const Divider(height: 24),
+          itemBuilder: (context, index) {
+            final review = reviews[index];
+            final String name = review.id != null
+                ? 'Người dùng #${review.id}'
+                : 'Người dùng ẩn danh';
+            final double rating = review.overallRating.toDouble();
+            final String comment = review.comment;
+            final String date = review.createdAt != null
+                ? DateFormat('dd/MM/yyyy').format(review.createdAt!)
+                : 'Không rõ ngày';
+
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User Avatar
+                const CircleAvatar(
+                  radius: 22,
+                  backgroundColor: Colors.orange,
+                  child: Icon(Icons.person, color: Colors.white),
+                ),
+                const SizedBox(width: 12),
+
+                // Review Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Name
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-
-                      // Rating
+                      // Name + Rating
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(
-                            Icons.star,
-                            color: Colors.amber.shade600,
-                            size: 18,
+                          // Name
+                          Text(
+                            name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
                           ),
 
-                          const SizedBox(width: 2),
-
-                          Text(
-                            rating.toStringAsFixed(1),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                            ),
+                          // Rating
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: Colors.amber.shade600,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                rating.toStringAsFixed(1),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
+
+                      const SizedBox(height: 4),
+
+                      // Comment
+                      Text(comment, style: const TextStyle(fontSize: 14)),
+
+                      const SizedBox(height: 6),
+
+                      // Date
+                      Text(
+                        date,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
                   ),
-
-                  const SizedBox(height: 4),
-
-                  // Comment
-                  Text(comment, style: const TextStyle(fontSize: 14)),
-
-                  const SizedBox(height: 6),
-
-                  // Date
-                  Text(
-                    date,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         );
       },
     );

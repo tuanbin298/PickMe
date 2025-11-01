@@ -95,7 +95,7 @@ export default function UserTable({ searchKeyword, roleFilter }) {
   }, [searchKeyword, roleFilter]);
 
   // Filter and search
-  const filteredUsers = usersData.filter((user) => {
+  const filteredUsers = usersData?.filter((user) => {
     // Match name
     const matchName = user.fullName
       .toLowerCase()

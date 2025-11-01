@@ -29,6 +29,7 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_na
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order.dart';
 import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_detail_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_page.dart';
+import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order_detail.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 import 'package:pickme_fe_app/features/customer/screens/cart/cart_confirm_page.dart';
@@ -401,6 +402,18 @@ class AppRouter {
             },
           ),
         ],
+      ),
+
+      GoRoute(
+        path: '/restaurant/:restaurantId/orders/:orderId',
+        name: "restaurant-orders-detail",
+        builder: (context, state) {
+          final extraData = state.extra as Map<String, dynamic>;
+          final orderId = extraData['orderId'] as int;
+          final token = extraData['token'] as String;
+
+          return RestaurantOrderDetail(orderId: orderId, token: token);
+        },
       ),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),

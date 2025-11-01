@@ -62,4 +62,57 @@ class OrderService {
       return [];
     }
   }
+
+  // Get Order and order items by ID
+  Future<Order?> getOrderById(String token, int orderId) async {
+    final url = Uri.parse('$baseUrl/orders/$orderId');
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Forces to use UTF-8 encoding to avoid issues with special characters (Vietnamese)
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      return Order.fromJson(data);
+    } else {
+      print("Không thể lấy thông tin đơn hàng");
+      return null;
+    }
+  }
+
+  // Method update order status
+  Future<Order?> updateOrderStatus(
+    String token,
+    int orderId,
+    String orderStatus,
+  ) async {
+    final url = Uri.parse(
+      '$baseUrl/orders/$orderId/status?status=$orderStatus',
+    );
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+
+      body: jsonEncode({"status": orderStatus}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      return Order.fromJson(data);
+    } else {
+      print("Cập nhật trạng thái thất bại: ${response.body}");
+      return null;
+    }
+  }
 }

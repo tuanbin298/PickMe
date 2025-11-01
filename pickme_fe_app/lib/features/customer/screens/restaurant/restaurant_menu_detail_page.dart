@@ -46,11 +46,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
   void initState() {
     super.initState();
     _menuDataFuture = _loadMenuDetail();
-    print(
-      "🧭 Nhận params: id=${widget.restaurantId}, menuId=${widget.menuItemId}, token=${widget.token}",
-    );
   }
 
+  // Total toping
   double get _addOnsTotal {
     double total = 0;
     _selections.forEach((catName, addons) {
@@ -62,8 +60,10 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     return total;
   }
 
+  // Find topping by id
   AddOn? _findAddonById(String categoryName, int addonId) {
     final addons = _addonsByCategory[categoryName];
+
     if (addons == null) return null;
     try {
       return addons.firstWhere((a) => a.id == addonId);
@@ -72,9 +72,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     }
   }
 
+  // Method load detail meu
   Future<(Restaurant, RestaurantMenu)> _loadMenuDetail() async {
     try {
-      print("🛰️ Gửi request chi tiết món ăn...");
       final restaurant = await RestaurantService().getRestaurantById(
         restaurantId: widget.restaurantId,
         token: widget.token,
@@ -93,11 +93,12 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
       await _loadAddOnData();
       return (restaurant, menu);
     } catch (e) {
-      debugPrint('❌ Lỗi tải dữ liệu chi tiết món ăn: $e');
+      debugPrint('Lỗi tải dữ liệu chi tiết món ăn: $e');
       throw Exception('Không thể tải thông tin món ăn');
     }
   }
 
+  // Method load data of topping
   Future<void> _loadAddOnData() async {
     try {
       final service = CartService();
@@ -124,7 +125,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
     }
   }
 
-  /// ✅ Handle add to cart and return to menu page
+  /// Handle add to cart and return to menu page
   Future<void> _handleAddToCart(RestaurantMenu menu) async {
     if (_loadingAddToCart) return;
     setState(() => _loadingAddToCart = true);
@@ -135,8 +136,6 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
         addOnsPayload.add({'menuItemAddOnId': addonId, 'quantity': qty});
       });
     });
-
-    print("🛒 Gửi request thêm giỏ hàng: menuId=${menu.id}, qty=$quantity");
 
     try {
       final success = await CartService().addToCart(
@@ -154,12 +153,11 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
           '${menu.name} x$quantity đã được thêm vào giỏ hàng!',
         );
 
-        // 🕐 Chờ một nhịp nhỏ để đảm bảo dữ liệu cập nhật xong
         await Future.delayed(const Duration(milliseconds: 300));
 
         if (mounted) {
-          print("✅ Thêm giỏ hàng thành công — pop về menu");
-          context.pop(true); // gửi signal reload menu
+          print("Thêm giỏ hàng thành công — pop về menu");
+          context.pop(true);
         }
       } else {
         NotificationService.showError(
@@ -168,13 +166,14 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
         );
       }
     } catch (e) {
-      debugPrint('❌ Add to cart error: $e');
+      debugPrint('Add to cart error: $e');
       NotificationService.showError(context, 'Lỗi khi thêm vào giỏ hàng.');
     } finally {
       if (mounted) setState(() => _loadingAddToCart = false);
     }
   }
 
+  // Toggle for topping
   void _toggleAddon(String category, int addonId) {
     setState(() {
       _selections[category] ??= {};
@@ -207,6 +206,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
 
         return Scaffold(
           backgroundColor: Colors.white,
+          // Appbar
           appBar: AppBar(
             centerTitle: true,
             title: const Text(
@@ -225,7 +225,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
               ? Center(child: Text(_error!))
               : Column(
                   children: [
-                    // Nội dung chính
+                    // Main content
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
@@ -239,6 +239,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                               ),
                               child: Column(
                                 children: [
+                                  // Menu name
                                   Text(
                                     menu.name,
                                     textAlign: TextAlign.center,
@@ -247,7 +248,10 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
+
                                   const SizedBox(height: 6),
+
+                                  // Menu description
                                   Text(
                                     menu.description,
                                     textAlign: TextAlign.center,
@@ -259,6 +263,8 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 ],
                               ),
                             ),
+
+                            // Menu image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
@@ -270,7 +276,9 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
+
                             const SizedBox(height: 16),
+
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -288,6 +296,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                     .toList(),
                               ),
                             ),
+
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
@@ -296,6 +305,7 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // Note
                                   const Text(
                                     'Ghi chú cho cửa hàng',
                                     style: TextStyle(
@@ -303,7 +313,10 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+
                                   const SizedBox(height: 6),
+
+                                  // Input note
                                   TextField(
                                     decoration: InputDecoration(
                                       hintText:
@@ -318,7 +331,10 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                     maxLines: 3,
                                     onChanged: (v) => _specialNote = v,
                                   ),
+
                                   const SizedBox(height: 20),
+
+                                  // Quantity selector
                                   QuantitySelector(
                                     quantity: quantity,
                                     onDecrease: () {
@@ -332,11 +348,14 @@ class _RestaurantMenuDetailPageState extends State<RestaurantMenuDetailPage> {
                                 ],
                               ),
                             ),
+
                             const SizedBox(height: 40),
                           ],
                         ),
                       ),
                     ),
+
+                    // Price section
                     BottomPriceBar(
                       totalPrice: totalPrice,
                       loadingAddToCart: _loadingAddToCart,

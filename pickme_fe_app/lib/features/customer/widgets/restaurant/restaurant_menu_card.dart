@@ -26,6 +26,7 @@ class RestaurantMenuCard extends StatelessWidget {
     final priceText = UtilsMethod.formatMoney(m.price);
     final isFavorite = ValueNotifier<bool>(false);
 
+    // Method navigate to detail
     void navigateToDetail() async {
       final result = await context.pushNamed<bool>(
         'restaurant-menu-detail',
@@ -37,8 +38,8 @@ class RestaurantMenuCard extends StatelessWidget {
       );
 
       if (result == true && context.mounted) {
-        debugPrint('🛒 Đã thêm món, cập nhật giỏ hàng...');
-        onTap?.call(); // Gọi hàm reload cart
+        debugPrint('Đã thêm món, cập nhật giỏ hàng...');
+        onTap?.call();
       }
     }
 
@@ -100,6 +101,7 @@ class RestaurantMenuCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Name
                               Text(
                                 m.name,
                                 maxLines: 1,
@@ -109,7 +111,10 @@ class RestaurantMenuCard extends StatelessWidget {
                                   fontSize: 15,
                                 ),
                               ),
+
                               const SizedBox(height: 4),
+
+                              // Price
                               Text(
                                 priceText,
                                 style: TextStyle(
@@ -132,7 +137,6 @@ class RestaurantMenuCard extends StatelessWidget {
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
-                      print('❤️ Favorite tapped!');
                       isFavorite.value = !isFavorite.value;
                     },
                     child: Container(

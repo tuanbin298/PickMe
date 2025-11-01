@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
+import 'package:pickme_fe_app/core/theme/app_colors.dart';
+import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 import 'package:pickme_fe_app/features/customer/services/cart/cart_service.dart';
 
 class CartOverviewPage extends StatefulWidget {
@@ -15,17 +17,14 @@ class CartOverviewPage extends StatefulWidget {
 class _CartOverviewPageState extends State<CartOverviewPage> {
   final CartService _cartService = CartService();
   bool isLoading = true;
-  bool isDeleting = false; // ✅ Trạng thái loading khi xoá
+  bool isDeleting = false;
 
   List<Map<String, dynamic>> carts = [];
 
-  /// Cache số lượng món của từng nhà hàng (restaurantId -> count)
   Map<int, int> itemCounts = {};
 
-  /// Quản lý chế độ “Quản lý”
   bool isManaging = false;
 
-  /// Giữ danh sách cartId đã chọn
   Set<int> selectedCarts = {};
 
   @override
@@ -34,18 +33,18 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
     _fetchCarts();
   }
 
-  /// Lấy danh sách giỏ hàng + số lượng món ăn (song song)
+  //Method get cart items and quantity
   Future<void> _fetchCarts() async {
     try {
       final result = await _cartService.getAllCarts(token: widget.token);
 
-      // Gọi song song tất cả getCartItemCount
       final futures = <Future<void>>[];
       final counts = <int, int>{};
 
       for (final cart in result) {
         final restaurant = cart['restaurant'];
         final restaurantId = restaurant?['id'];
+
         if (restaurantId != null) {
           futures.add(
             _cartService
@@ -75,7 +74,7 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
     }
   }
 
-  /// Xoá tất cả các giỏ hàng đã chọn
+  //Delete all cart items in cart
   Future<void> _deleteSelectedCarts() async {
     if (selectedCarts.isEmpty) return;
 
@@ -102,7 +101,7 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
 
     if (confirm != true) return;
 
-    setState(() => isDeleting = true); // ✅ Bắt đầu hiệu ứng load
+    setState(() => isDeleting = true);
 
     try {
       for (final id in selectedCarts) {
@@ -123,7 +122,7 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
       if (!mounted) return;
       NotificationService.showError(context, "Xoá thất bại!");
     } finally {
-      if (mounted) setState(() => isDeleting = false); // ✅ Ẩn hiệu ứng load
+      if (mounted) setState(() => isDeleting = false);
     }
   }
 
@@ -134,9 +133,10 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      // Appbar
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
         centerTitle: true,
         title: const Text(
           "Giỏ hàng của tôi",
@@ -155,6 +155,8 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
             }
           },
         ),
+
+        // Button manage cart
         actions: [
           TextButton(
             onPressed: () {
@@ -193,10 +195,6 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                       final restaurantImage =
                           restaurant?['imageUrl'] ??
                           "https://via.placeholder.com/100x100.png?text=Restaurant";
-                      final distance =
-                          restaurant?['distance']?.toStringAsFixed(1) ?? "–";
-                      final timeEstimate =
-                          restaurant?['deliveryTime'] ?? "30 phút trở lên";
 
                       final count = itemCounts[restaurantId] ?? 0;
 
@@ -221,6 +219,7 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                                   });
                                 },
                               ),
+                            // Image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
@@ -232,6 +231,8 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                             ),
                           ],
                         ),
+
+                        // Restaurant name
                         title: Text(
                           restaurantName,
                           style: const TextStyle(
@@ -241,13 +242,16 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+
+                        // Food & time & distance
                         subtitle: Text(
-                          "$count món • $timeEstimate • $distance km",
+                          "$count món",
                           style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 13,
                           ),
                         ),
+
                         onTap: isManaging
                             ? () {
                                 setState(() {
@@ -260,10 +264,13 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                               }
                             : () {
                                 context.push(
-                                  "/cart-confirm",
+                                  "/cart",
                                   extra: {
                                     "token": widget.token,
-                                    "restaurant": restaurant,
+                                    "restaurant": Restaurant.fromJson(
+                                      restaurant,
+                                    ),
+                                    "cartItems": cart['cartItems'],
                                     "cartId": cart['id'],
                                   },
                                 );
@@ -272,6 +279,8 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                     },
                   ),
                 ),
+
+                // Manage UI
                 if (isManaging)
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -299,7 +308,9 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                           },
                         ),
                         const Text("Chọn tất cả"),
+
                         const Spacer(),
+
                         ElevatedButton(
                           onPressed: selectedCarts.isEmpty
                               ? null
@@ -322,7 +333,7 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
               ],
             ),
 
-          // ✅ Hiệu ứng overlay khi xoá
+          // Animation when delete
           AnimatedOpacity(
             opacity: isDeleting ? 1 : 0,
             duration: const Duration(milliseconds: 300),

@@ -24,6 +24,7 @@ class Cart {
     required this.updatedAt,
   });
 
+  // Parse data from JSON into model
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
       id: (json['id'] ?? 0).toInt(),
@@ -73,6 +74,7 @@ class CartItem {
     required this.createdAt,
   });
 
+  // Parse data from JSON into model
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
       id: (json['id'] ?? 0).toInt(),
@@ -93,7 +95,7 @@ class CartItem {
     );
   }
 
-  /// ✅ copyWith method — cho phép tạo bản sao có field thay đổi
+  // copyWith method
   CartItem copyWith({
     int? id,
     int? menuItemId,
@@ -151,6 +153,7 @@ class AddOn {
     required this.isRequired,
   });
 
+  // Parse data from JSON into model
   factory AddOn.fromJson(Map<String, dynamic> json) {
     return AddOn(
       id: json['id'] ?? 0,

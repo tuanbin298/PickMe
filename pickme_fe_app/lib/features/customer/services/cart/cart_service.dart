@@ -233,15 +233,14 @@ class CartService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-        // Mỗi phần tử trong data là giỏ hàng của 1 nhà hàng
+
         return data.map((e) => e as Map<String, dynamic>).toList();
       } else {
-        print('❌ Lỗi lấy danh sách giỏ hàng: ${response.statusCode}');
-        print('Body: ${response.body}');
+        print('Lỗi lấy danh sách giỏ hàng: ${response.statusCode}');
         return [];
       }
     } catch (e) {
-      print('⚠️ Lỗi kết nối khi lấy danh sách giỏ hàng: $e');
+      print('Lỗi kết nối khi lấy danh sách giỏ hàng: $e');
       return [];
     }
   }

@@ -49,16 +49,17 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
   void initState() {
     super.initState();
 
-    // ✅ Copy danh sách từ widget sang biến local trong State
+    // Copy list from widget into variable local in state
     cartItems = List<CartItem>.from(widget.cartItems);
 
-    // ✅ Tính subtotal ban đầu
+    // Calculate subtotal
     subtotal = cartItems.fold(
       0.0,
       (sum, item) => sum + item.unitPrice * item.quantity,
     );
   }
 
+  // Method update cart item quantity
   Future<void> _updateQuantity(CartItem item, int newQty) async {
     if (newQty <= 0) return;
 
@@ -66,14 +67,15 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
       token: widget.token,
       restaurantId: widget.restaurant.id,
       menuItemId: item.menuItemId,
-      quantity: newQty - item.quantity, // chỉ gửi phần chênh lệch
+      quantity: newQty - item.quantity,
     );
 
-    if (!mounted) return; // ✅ đảm bảo widget chưa bị dispose
+    if (!mounted) return;
 
     if (success) {
       setState(() {
         final index = cartItems.indexWhere((i) => i.id == item.id);
+
         if (index != -1) {
           final updatedItem = item.copyWith(quantity: newQty);
           cartItems[index] = updatedItem;
@@ -97,12 +99,14 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
       item.id,
     );
 
-    if (!mounted) return; // ✅ kiểm tra widget có còn tồn tại không
+    if (!mounted) return;
 
     if (success) {
       if (!mounted) return;
+
       setState(() {
         cartItems.remove(item);
+
         subtotal = cartItems.fold(
           0.0,
           (sum, i) => sum + i.unitPrice * i.quantity,

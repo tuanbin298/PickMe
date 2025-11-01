@@ -17,7 +17,6 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Nút giỏ hàng nằm đè lên nội dung cuộn
       body: Stack(
         children: [
           SafeArea(
@@ -26,33 +25,28 @@ class _HomepageState extends State<Homepage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header vị trí
+                  // Homepage header
                   const CustomLocationAppBar(),
+
                   const SizedBox(height: 10),
 
-                  // Thanh chọn danh mục
-                  CustomNavWidget(
-                    selectedIndex: selectedIndex,
-                    onItemSelected: _onItemSelected,
-                  ),
-
-                  // Danh sách nhà hàng công khai
+                  // Homepage restaurant
                   PublicRestaurantList(token: widget.token),
                 ],
               ),
             ),
           ),
 
-          // === 🛒 Floating Cart Button ===
+          //  Floating Cart Button
           Positioned(
             bottom: 20,
             right: 20,
             child: FloatingActionButton.extended(
               backgroundColor: AppColors.primary,
               onPressed: () {
-                // Điều hướng sang trang giỏ hàng với token
                 context.push('/cart-overview', extra: widget.token);
               },
+              // Label
               label: const Text(
                 "Giỏ hàng",
                 style: TextStyle(
@@ -60,6 +54,8 @@ class _HomepageState extends State<Homepage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+
+              // Icon
               icon: const Icon(Icons.shopping_cart, color: Colors.white),
             ),
           ),

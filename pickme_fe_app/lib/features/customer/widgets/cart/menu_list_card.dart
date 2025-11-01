@@ -9,10 +9,10 @@ class MenuListCard extends StatelessWidget {
   final double subtotal;
   final double total;
 
-  /// Callback khi thay đổi số lượng
+  //Callback when change quantity
   final Function(CartItem item, int newQuantity)? onUpdateQuantity;
 
-  /// Callback khi xóa item
+  /// Callback when delete item
   final Function(CartItem item)? onRemove;
 
   const MenuListCard({
@@ -31,15 +31,22 @@ class MenuListCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Restaurant name
           Text(
             restaurant.name,
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
+
           const SizedBox(height: 4),
+
           Row(
             children: [
+              // Icons
               const Icon(Icons.location_on, size: 14, color: Colors.grey),
+
               const SizedBox(width: 4),
+
+              // Restaurant address
               Expanded(
                 child: Text(
                   restaurant.address,
@@ -50,8 +57,10 @@ class MenuListCard extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 12),
 
+          // Empty cart
           if (cartItems.isEmpty)
             const Center(
               child: Text(
@@ -117,10 +126,15 @@ class MenuListCard extends StatelessWidget {
             ),
 
           const SizedBox(height: 8),
+
           _buildAmountRow("Tổng tạm tính", subtotal),
+
           const SizedBox(height: 8),
+
           _buildAmountRow("Voucher", 0),
+
           const Divider(height: 24, color: Colors.black12),
+
           _buildAmountRow(
             "Tổng cộng",
             total,
@@ -132,6 +146,7 @@ class MenuListCard extends StatelessWidget {
     );
   }
 
+  // Widget build card
   Widget _buildCard({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
@@ -149,6 +164,7 @@ class MenuListCard extends StatelessWidget {
     );
   }
 
+  // Widget build amout row
   Widget _buildAmountRow(
     String label,
     double value, {
@@ -196,13 +212,14 @@ class _MenuItemTile extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
+
         const SizedBox(width: 12),
 
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🍔 Tên món
+              // food name
               Text(
                 item.menuItemName,
                 style: const TextStyle(
@@ -210,19 +227,20 @@ class _MenuItemTile extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
+
               const SizedBox(height: 4),
 
-              // 🧀 Addons
-              if (item.addOns != null && item.addOns!.isNotEmpty)
+              // Addons
+              if (item.addOns.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 2.0),
                   child: Text(
-                    "+ ${item.addOns!.map((a) => a.name).join(', ')}",
+                    "+ ${item.addOns.map((a) => a.name).join(', ')}",
                     style: const TextStyle(fontSize: 12, color: Colors.black87),
                   ),
                 ),
 
-              // 📝 Ghi chú
+              //Note
               if (item.specialInstructions?.isNotEmpty ?? false)
                 Padding(
                   padding: const EdgeInsets.only(top: 2.0),
@@ -234,13 +252,13 @@ class _MenuItemTile extends StatelessWidget {
 
               const SizedBox(height: 6),
 
-              // 🔢 Số lượng & giá
+              // Quantity & Price
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Nút + -
                   Row(
                     children: [
+                      // Button -
                       IconButton(
                         icon: const Icon(
                           Icons.remove_circle_outline,
@@ -254,10 +272,14 @@ class _MenuItemTile extends StatelessWidget {
                             : null,
                         constraints: const BoxConstraints(),
                       ),
+
+                      // Quantity
                       Text(
                         "${item.quantity}",
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+
+                      // Button +
                       IconButton(
                         icon: const Icon(
                           Icons.add_circle_outline,
@@ -270,7 +292,7 @@ class _MenuItemTile extends StatelessWidget {
                     ],
                   ),
 
-                  // Tổng tiền món
+                  // Total price
                   Text(
                     UtilsMethod.formatMoney(item.unitPrice * item.quantity),
                     style: const TextStyle(

@@ -185,9 +185,10 @@ class AppRouter {
           return CartConfirmPage(
             token: extraData["token"] as String,
             restaurant: extraData["restaurant"] as Restaurant,
-            cartItems: extraData["cartItems"] as List<CartItem>,
+            cartItems: (extraData["cartItems"] ?? []) as List<CartItem>,
+
             cartId: extraData["cartId"] as int,
-            total: (extraData["total"] as num).toDouble(),
+            total: (extraData["total"] as num?)?.toDouble() ?? 0,
           );
         },
       ),

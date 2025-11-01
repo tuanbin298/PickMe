@@ -24,7 +24,6 @@ class Cart {
     required this.updatedAt,
   });
 
-  // Parse data from JSON into model
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
       id: (json['id'] ?? 0).toInt(),
@@ -74,7 +73,6 @@ class CartItem {
     required this.createdAt,
   });
 
-  // Parse data from JSON into model
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
       id: (json['id'] ?? 0).toInt(),
@@ -92,6 +90,39 @@ class CartItem {
           .map((e) => AddOn.fromJson(e))
           .toList(),
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+    );
+  }
+
+  /// ✅ copyWith method — cho phép tạo bản sao có field thay đổi
+  CartItem copyWith({
+    int? id,
+    int? menuItemId,
+    String? menuItemName,
+    String? menuItemDescription,
+    String? menuItemCategory,
+    String? menuItemImageUrl,
+    int? quantity,
+    double? unitPrice,
+    double? subtotal,
+    double? totalPrice,
+    String? specialInstructions,
+    List<AddOn>? addOns,
+    DateTime? createdAt,
+  }) {
+    return CartItem(
+      id: id ?? this.id,
+      menuItemId: menuItemId ?? this.menuItemId,
+      menuItemName: menuItemName ?? this.menuItemName,
+      menuItemDescription: menuItemDescription ?? this.menuItemDescription,
+      menuItemCategory: menuItemCategory ?? this.menuItemCategory,
+      menuItemImageUrl: menuItemImageUrl ?? this.menuItemImageUrl,
+      quantity: quantity ?? this.quantity,
+      unitPrice: unitPrice ?? this.unitPrice,
+      subtotal: subtotal ?? this.subtotal,
+      totalPrice: totalPrice ?? this.totalPrice,
+      specialInstructions: specialInstructions ?? this.specialInstructions,
+      addOns: addOns ?? this.addOns,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }
@@ -120,7 +151,6 @@ class AddOn {
     required this.isRequired,
   });
 
-  // Parse data from JSON into model
   factory AddOn.fromJson(Map<String, dynamic> json) {
     return AddOn(
       id: json['id'] ?? 0,

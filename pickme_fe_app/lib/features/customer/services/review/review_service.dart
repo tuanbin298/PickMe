@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 class ReviewService {
   final String baseUrl = dotenv.env['API_URL'] ?? '';
 
+  // Add new feedback
   Future<bool> addRestaurantReview({
     required String token,
     required Review review,
@@ -42,6 +43,7 @@ class ReviewService {
     }
   }
 
+  // Get restaurant feedback
   Future<List<Review>> getRestaurantReviewsByRestaurantId({
     required String token,
     required int restaurantId,

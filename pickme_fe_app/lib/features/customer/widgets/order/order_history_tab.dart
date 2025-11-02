@@ -125,6 +125,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                     fontSize: 13,
                                   ),
                                 ),
+
                                 const SizedBox(height: 6),
 
                                 // Order item name
@@ -135,6 +136,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
+
                                 const SizedBox(height: 8),
 
                                 // Order status
@@ -145,7 +147,9 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                       size: 18,
                                       color: orderColor,
                                     ),
+
                                     const SizedBox(width: 6),
+
                                     Text(
                                       orderText,
                                       style: TextStyle(
@@ -156,6 +160,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                     ),
                                   ],
                                 ),
+
                                 const SizedBox(height: 4),
 
                                 // Payment status
@@ -166,7 +171,9 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                       size: 18,
                                       color: paymentColor,
                                     ),
+
                                     const SizedBox(width: 6),
+
                                     Text(
                                       paymentText,
                                       style: TextStyle(
@@ -177,6 +184,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                     ),
                                   ],
                                 ),
+
                                 const SizedBox(height: 8),
 
                                 // Total price
@@ -187,7 +195,9 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                       size: 18,
                                       color: Colors.black54,
                                     ),
+
                                     const SizedBox(width: 6),
+
                                     Text(
                                       UtilsMethod.formatMoney(
                                         order.totalAmount ?? 0,
@@ -209,6 +219,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                       // feedback button
                       if (showFeedbackButton) ...[
                         const SizedBox(height: 14),
+
                         Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -230,6 +241,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Title
                               const Text(
                                 "Hài lòng với đơn hàng này?",
                                 style: TextStyle(
@@ -238,7 +250,10 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                   color: Colors.black87,
                                 ),
                               ),
+
                               const SizedBox(height: 10),
+
+                              // Btn feedback
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
@@ -273,7 +288,9 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(Icons.rate_review, size: 18),
+
                                       SizedBox(width: 8),
+
                                       Text(
                                         "Đánh giá ngay",
                                         style: TextStyle(

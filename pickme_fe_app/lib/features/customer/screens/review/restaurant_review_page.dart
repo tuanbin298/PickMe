@@ -44,6 +44,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
     _fetchExistingReview();
   }
 
+  // Method load feedback
   Future<void> _fetchExistingReview() async {
     final reviews = await _reviewService.getRestaurantReviewsByRestaurantId(
       token: widget.token,
@@ -58,6 +59,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
     });
   }
 
+  // Load image
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickMultiImage();
@@ -68,6 +70,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
     }
   }
 
+  // Subtmit feedback
   Future<void> _submitReview() async {
     if (selectedRating == 0) {
       NotificationService.showError(
@@ -117,6 +120,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
 
       return Scaffold(
         backgroundColor: AppColors.background,
+        // Appbar
         appBar: AppBar(
           title: const Text(
             "Đánh giá của bạn",
@@ -315,13 +319,21 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
         child: Column(
           children: [
             _buildRestaurantCard(),
+
             const SizedBox(height: 20),
+
             _buildRatingCard(),
+
             const SizedBox(height: 20),
+
             _buildCommentCard(),
+
             const SizedBox(height: 20),
+
             _buildImageUploadCard(),
+
             const SizedBox(height: 30),
+
             _buildSubmitButton(),
           ],
         ),

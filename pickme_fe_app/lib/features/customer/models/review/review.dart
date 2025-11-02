@@ -25,6 +25,7 @@ class Review {
     this.ownerResponse,
   });
 
+  // Parse data from json
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
       id: json['id'],
@@ -45,17 +46,6 @@ class Review {
       reviewType: json['reviewType'],
       ownerResponse: json['ownerResponse'],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "orderId": orderId,
-      "restaurantId": restaurantId,
-      "menuItemId": menuItemId,
-      "overallRating": overallRating,
-      "comment": comment,
-      "imageUrls": imageUrls,
-    };
   }
 
   Review copyWith({

@@ -94,7 +94,7 @@ class RestaurantMenuTabView extends StatelessWidget {
                 ),
 
                 // Tab Reviews
-                const RestaurantReviewTab(),
+                RestaurantReviewTab(token: token, restaurantId: restaurant.id),
               ],
             ),
           ),

@@ -63,11 +63,11 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
   Future<void> _updateQuantity(CartItem item, int newQty) async {
     if (newQty <= 0) return;
 
-    final success = await _cartService.addToCart(
+    final success = await _cartService.updateItemQuantity(
       token: widget.token,
-      restaurantId: widget.restaurant.id,
-      menuItemId: item.menuItemId,
-      quantity: newQty - item.quantity,
+      cartId: widget.cartId,
+      itemId: item.id,
+      quantity: newQty,
     );
 
     if (!mounted) return;

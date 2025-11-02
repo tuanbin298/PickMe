@@ -4,6 +4,7 @@ import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
 import 'package:pickme_fe_app/features/customer/services/cart/cart_service.dart';
+import 'package:pickme_fe_app/features/customer/models/cart/cart.dart';
 
 class CartOverviewPage extends StatefulWidget {
   final String token;
@@ -270,7 +271,13 @@ class _CartOverviewPageState extends State<CartOverviewPage> {
                                     "restaurant": Restaurant.fromJson(
                                       restaurant,
                                     ),
-                                    "cartItems": cart['cartItems'],
+                                    "cartItems": (cart['cartItems'] as List)
+                                        .map(
+                                          (e) => CartItem.fromJson(
+                                            e as Map<String, dynamic>,
+                                          ),
+                                        )
+                                        .toList(),
                                     "cartId": cart['id'],
                                   },
                                 );

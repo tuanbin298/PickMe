@@ -118,6 +118,7 @@ class MenuListCard extends StatelessWidget {
                     child: _MenuItemTile(
                       item: item,
                       onUpdateQuantity: onUpdateQuantity,
+                      onRemove: onRemove,
                     ),
                   ),
                   const Divider(height: 20, color: Colors.black12),
@@ -195,8 +196,13 @@ class MenuListCard extends StatelessWidget {
 class _MenuItemTile extends StatelessWidget {
   final CartItem item;
   final Function(CartItem item, int newQuantity)? onUpdateQuantity;
+  final Function(CartItem item)? onRemove;
 
-  const _MenuItemTile({required this.item, this.onUpdateQuantity});
+  const _MenuItemTile({
+    required this.item,
+    this.onUpdateQuantity,
+    this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +225,7 @@ class _MenuItemTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // food name
+              // Name
               Text(
                 item.menuItemName,
                 style: const TextStyle(
@@ -240,7 +246,7 @@ class _MenuItemTile extends StatelessWidget {
                   ),
                 ),
 
-              //Note
+              // Note
               if (item.specialInstructions?.isNotEmpty ?? false)
                 Padding(
                   padding: const EdgeInsets.only(top: 2.0),
@@ -264,12 +270,40 @@ class _MenuItemTile extends StatelessWidget {
                           Icons.remove_circle_outline,
                           color: Colors.grey,
                         ),
-                        onPressed: item.quantity > 1
-                            ? () => onUpdateQuantity?.call(
-                                item,
-                                item.quantity - 1,
-                              )
-                            : null,
+                        onPressed: () async {
+                          if (item.quantity > 1) {
+                            onUpdateQuantity?.call(item, item.quantity - 1);
+                          } else {
+                            final shouldDelete = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text("Xóa món này?"),
+                                content: const Text(
+                                  "Bạn có chắc chắn muốn xóa món này khỏi giỏ hàng không?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(false),
+                                    child: const Text("Hủy"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(true),
+                                    child: const Text(
+                                      "Xóa",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (shouldDelete == true) {
+                              onRemove?.call(item);
+                            }
+                          }
+                        },
                         constraints: const BoxConstraints(),
                       ),
 

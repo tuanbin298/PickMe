@@ -30,6 +30,7 @@ import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_or
 import 'package:pickme_fe_app/features/customer/screens/restaurant/restaurant_menu_detail_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/cart/cart_overview_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/review/restaurant_review_page.dart';
 import 'package:pickme_fe_app/features/merchant/screens/restaurant/restaurant_order/restaurant_order_detail.dart';
 import 'package:pickme_fe_app/features/not_found/not_found_page.dart';
 import 'package:pickme_fe_app/features/customer/models/restaurant/restaurant.dart';
@@ -215,6 +216,29 @@ class AppRouter {
         },
       ),
 
+      GoRoute(
+        path: '/orders/:orderId/review',
+        name: 'restaurant-review',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final token = extra["token"] as String;
+          final orderId = extra["orderId"] as int;
+          final restaurantId = (extra["restaurantId"] as int?) ?? 0;
+          final restaurantName =
+              extra["restaurantName"] as String? ?? "Unknown Restaurant";
+          final restaurantImage =
+              extra["restaurantImage"] as String? ??
+              "https://via.placeholder.com/150";
+
+          return RestaurantReviewPage(
+            token: token,
+            orderId: orderId,
+            restaurantId: restaurantId,
+            restaurantName: restaurantName,
+            restaurantImage: restaurantImage,
+          );
+        },
+      ),
       GoRoute(
         path: "/payment-qr",
         name: "payment-qr",

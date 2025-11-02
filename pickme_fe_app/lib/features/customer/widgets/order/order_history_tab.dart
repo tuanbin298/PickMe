@@ -74,6 +74,9 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
             final (paymentText, paymentIcon, paymentColor) = mapPaymentStatus(
               order.paymentStatus ?? "",
             );
+            final bool showFeedbackButton =
+                (order.status?.toLowerCase() == "completed" ||
+                order.status?.toLowerCase() == "delivered");
 
             return GestureDetector(
               onTap: () {
@@ -91,119 +94,201 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Row(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Orderitem image
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: Image.network(
-                          restaurant?.imageUrl ?? "",
-                          width: 160,
-                          height: 170,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-
-                      const SizedBox(width: 14),
-
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Order id
-                            Text(
-                              "Mã đơn: ${order.id}",
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13,
-                              ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Orderitem image
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Image.network(
+                              restaurant?.imageUrl ?? "",
+                              width: 160,
+                              height: 170,
+                              fit: BoxFit.cover,
                             ),
+                          ),
 
-                            const SizedBox(height: 6),
+                          const SizedBox(width: 14),
 
-                            // Order item name
-                            Text(
-                              restaurant?.name ?? "Không rõ tên quán",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-
-                            const SizedBox(height: 8),
-
-                            // Order status
-                            Row(
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(orderIcon, size: 18, color: orderColor),
-
-                                const SizedBox(width: 6),
-
+                                // Order id
                                 Text(
-                                  orderText,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: orderColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            // Payment status
-                            Row(
-                              children: [
-                                Icon(
-                                  paymentIcon,
-                                  size: 18,
-                                  color: paymentColor,
-                                ),
-
-                                const SizedBox(width: 6),
-
-                                Text(
-                                  paymentText,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: paymentColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 8),
-
-                            // Total price
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.attach_money,
-                                  size: 18,
-                                  color: Colors.black54,
-                                ),
-
-                                const SizedBox(width: 6),
-
-                                Text(
-                                  UtilsMethod.formatMoney(
-                                    order.totalAmount ?? 0,
-                                  ),
-
+                                  "Mã đơn: ${order.id}",
                                   style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black87,
+                                    color: Colors.grey,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+
+                                // Order item name
+                                Text(
+                                  restaurant?.name ?? "Không rõ tên quán",
+                                  style: const TextStyle(
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
+                                const SizedBox(height: 8),
+
+                                // Order status
+                                Row(
+                                  children: [
+                                    Icon(
+                                      orderIcon,
+                                      size: 18,
+                                      color: orderColor,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      orderText,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: orderColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+
+                                // Payment status
+                                Row(
+                                  children: [
+                                    Icon(
+                                      paymentIcon,
+                                      size: 18,
+                                      color: paymentColor,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      paymentText,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: paymentColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+
+                                // Total price
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.attach_money,
+                                      size: 18,
+                                      color: Colors.black54,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      UtilsMethod.formatMoney(
+                                        order.totalAmount ?? 0,
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+
+                      // feedback button
+                      if (showFeedbackButton) ...[
+                        const SizedBox(height: 14),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade50,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: Colors.orange.shade100),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.08),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Hài lòng với đơn hàng này?",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    context.push(
+                                      "/orders/${order.id}/review",
+                                      extra: {
+                                        "orderId": order.id,
+                                        "restaurantId": restaurant?.id,
+                                        "restaurantName":
+                                            restaurant?.name ??
+                                            "Không rõ tên quán",
+                                        "restaurantImage":
+                                            restaurant?.imageUrl ?? '',
+                                        "token": widget.token,
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    foregroundColor: Colors.white,
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 22,
+                                      vertical: 10,
+                                    ),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.rate_review, size: 18),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        "Đánh giá ngay",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

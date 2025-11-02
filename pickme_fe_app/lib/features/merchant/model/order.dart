@@ -18,6 +18,7 @@ class Order {
   final String? status;
   final String? paymentStatus;
   final List<OrderItem>? orderItems;
+  final DateTime? createdAt;
 
   Order({
     this.id,
@@ -35,6 +36,7 @@ class Order {
     this.status,
     this.paymentStatus,
     this.orderItems,
+    this.createdAt,
   });
 
   // Parse model into json
@@ -65,6 +67,9 @@ class Order {
                 .map((item) => OrderItem.fromJson(item))
                 .toList()
           : [],
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
     );
   }
 }

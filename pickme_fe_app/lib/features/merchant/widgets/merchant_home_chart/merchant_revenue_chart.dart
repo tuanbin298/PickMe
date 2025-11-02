@@ -1,22 +1,131 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:pickme_fe_app/core/common_services/utils_method.dart';
+import 'package:pickme_fe_app/features/merchant/services/order/order_service.dart';
+import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
 
 class MerchantRevenueChart extends StatefulWidget {
-  const MerchantRevenueChart({super.key});
+  final String token;
+
+  const MerchantRevenueChart({super.key, required this.token});
 
   @override
   State<MerchantRevenueChart> createState() => _MerchantRevenueChartState();
 }
 
 class _MerchantRevenueChartState extends State<MerchantRevenueChart> {
-  List<double> revenues = [100, 120, 90, 160, 200, 180, 220];
+  final OrderService _orderService = OrderService();
+  final RestaurantServices _restaurantServices = RestaurantServices();
+
+  // List revenues of last 7 days
+  List<double> revenues = List.filled(7, 0);
+
+  // Display days format dd/MM
+  late List<String> displayDays;
+
+  // Key format yyyy-MM-dd
+  late List<String> dateKeys; // key thật yyyy-MM-dd
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  // Method load data of order
+  Future<void> _loadData() async {
+    try {
+      // ---- 1. Get restaurants list ----
+      final restaurants = await _restaurantServices.getRestaurantsByOwner(
+        widget.token,
+      );
+
+      // ---- 2. Create list of last 7 days ----
+      final now = DateTime.now();
+      final start = now.subtract(
+        const Duration(days: 6),
+      ); //Take the current date and subtract 6 days.
+
+      //2.1 Create 2 list
+
+      //List of last 7 days follow format yyyy-MM-dd (key in dailyRevenue)
+      dateKeys = List.generate(
+        7,
+        (i) => DateFormat('yyyy-MM-dd').format(start.add(Duration(days: i))),
+      );
+
+      // List of last 7 days follow format dd/MM (display in chart)
+      displayDays = List.generate(
+        7,
+        (i) => DateFormat('dd/MM').format(start.add(Duration(days: i))),
+      );
+
+      //3. ---- Create MAP to store revenue per days (key: dateKeys)----
+      Map<String, double> dailyRevenue = {for (var key in dateKeys) key: 0};
+
+      //4. ---- Get orders of specific restaurant ----
+      final futures = restaurants.map(
+        (restaurant) => _orderService.getAllOrdersOfRestaurant(
+          widget.token,
+          restaurant.id ?? 0,
+        ),
+      );
+      final results = await Future.wait(futures);
+
+      // 5. Loop in orders to results to synthetic revenue per day (field: createdAt, totalAmount)
+      for (var orders in results) {
+        for (var order in orders) {
+          if (order.createdAt == null || order.totalAmount == null) continue;
+          final dateStr = DateFormat('yyyy-MM-dd').format(order.createdAt!);
+          if (dailyRevenue.containsKey(dateStr)) {
+            dailyRevenue[dateStr] =
+                (dailyRevenue[dateStr] ?? 0) + (order.totalAmount ?? 0);
+          }
+        }
+      }
+
+      // Translate map into list<double> to draw chart
+      // dailyRevenue contain revenue
+      // dateKeys contain date
+      setState(() {
+        revenues = dateKeys
+            .map(
+              (key) => ((dailyRevenue[key] ?? 0).clamp(
+                0,
+                double.infinity,
+              )).toDouble(),
+            )
+            .toList();
+
+        isLoading = false;
+      });
+
+      // print(revenues);
+    } catch (e) {
+      print('Error loading revenue: $e');
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Loading
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // The highest revenue to calculate axis Y
+    final maxRevenue = revenues.isNotEmpty
+        ? revenues.reduce((a, b) => a > b ? a : b)
+        : 0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text
+        // Title
         const Text(
           "Doanh thu 7 ngày gần đây",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -24,45 +133,39 @@ class _MerchantRevenueChartState extends State<MerchantRevenueChart> {
 
         const SizedBox(height: 10),
 
-        // Line chart
+        // Chart UI
         SizedBox(
-          height: 200,
+          height: 220,
           child: LineChart(
             LineChartData(
-              // Axis X have 7 points: Monday -> Sunday
               minX: 0,
+              //Bottom axis
               maxX: 6,
-
-              // Axis y have 55 points: 0 -> 20
               minY: 0,
-              maxY: 250,
-              gridData: const FlGridData(show: true), //grid lines in chart
-              borderData: FlBorderData(show: true), //border
-              // Config for 4 axis
+              // Left axis
+              maxY: maxRevenue + (maxRevenue > 0 ? maxRevenue * 0.2 : 100),
+              gridData: const FlGridData(show: true), //Show grid line in chart
+              // Bottom axis
+              borderData: FlBorderData(show: true),
               titlesData: FlTitlesData(
-                // Bottom axis
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 30,
                     interval: 1,
                     getTitlesWidget: (value, meta) {
-                      final days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-
-                      if (value.toInt() >= 0 && value.toInt() < days.length) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Text(
-                            days[value.toInt()],
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        );
+                      final i = value.toInt();
+                      if (i < 0 || i >= displayDays.length) {
+                        return const SizedBox.shrink();
                       }
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
 
-                      return const SizedBox.shrink();
+                        // Display date
+                        child: Text(
+                          displayDays[i],
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -71,12 +174,24 @@ class _MerchantRevenueChartState extends State<MerchantRevenueChart> {
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 40,
-                    interval: 50,
-                    getTitlesWidget: (value, meta) => Text(
-                      value.toInt().toString(),
-                      style: const TextStyle(fontSize: 12),
-                    ),
+                    reservedSize: 65,
+                    getTitlesWidget: (value, meta) {
+                      final interval = (maxRevenue / 4).clamp(
+                        1,
+                        double.infinity,
+                      );
+                      if (value % interval != 0) {
+                        return const SizedBox.shrink();
+                      }
+                      //Revenue
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Text(
+                          UtilsMethod.formatMoney(value),
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      );
+                    },
                   ),
                 ),
 
@@ -91,10 +206,24 @@ class _MerchantRevenueChartState extends State<MerchantRevenueChart> {
                 ),
               ),
 
-              // Display data
+              // Tooltip when user touch
+              lineTouchData: LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  tooltipBgColor: Colors.black87,
+                  getTooltipItems: (touchedSpots) {
+                    return touchedSpots.map((spot) {
+                      return LineTooltipItem(
+                        '${displayDays[spot.x.toInt()]}: ${UtilsMethod.formatMoney(spot.y)}',
+                        const TextStyle(color: Colors.white),
+                      );
+                    }).toList();
+                  },
+                ),
+              ),
+
+              // Line char
               lineBarsData: [
                 LineChartBarData(
-                  isCurved: true,
                   color: Colors.green,
                   barWidth: 3,
                   isStrokeCapRound: true,

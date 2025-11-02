@@ -45,12 +45,12 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
             const SizedBox(height: 20),
 
             // Revenue chart
-            MerchantRevenueChart(),
+            MerchantRevenueChart(token: widget.token),
 
             const SizedBox(height: 20),
 
             // Order chart
-            MerchantOrderChart(),
+            MerchantOrderChart(token: widget.token),
           ],
         ),
       ),

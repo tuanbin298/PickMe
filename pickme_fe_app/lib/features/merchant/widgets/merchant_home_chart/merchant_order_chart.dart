@@ -1,51 +1,105 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:pickme_fe_app/features/merchant/services/order/order_service.dart';
+import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
 
 class MerchantOrderChart extends StatefulWidget {
-  const MerchantOrderChart({super.key});
+  final String token;
+
+  const MerchantOrderChart({super.key, required this.token});
 
   @override
   State<MerchantOrderChart> createState() => _MerchantOrderChartState();
 }
 
 class _MerchantOrderChartState extends State<MerchantOrderChart> {
-  final Map<String, double> orderStatus = {
-    "Hoàn thành": 45,
-    "Đang xử lý": 30,
-    "Chờ xác nhận": 15,
-    "Đã hủy": 10,
+  final OrderService _orderService = OrderService();
+  final RestaurantServices _restaurantServices = RestaurantServices();
+
+  // Store order status percent
+  Map<String, double> orderStatusRatio = {};
+
+  bool isLoading = true;
+
+  // Store labels
+  final Map<String, String> statusLabels = {
+    "COMPLETED": "Hoàn thành",
+    "CANCELLED": "Đã hủy",
   };
 
-  final List<Color> colorsStatus = [
-    Colors.green,
-    Colors.orange,
-    Colors.blue,
-    Colors.red,
-  ];
+  // Store color
+  final List<Color> colorsStatus = [Colors.green, Colors.red];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrderData();
+  }
+
+  // Method load data of order
+  Future<void> _loadOrderData() async {
+    try {
+      // ---- 1. Get restaurants list ----
+      final restaurants = await _restaurantServices.getRestaurantsByOwner(
+        widget.token,
+      );
+
+      //2. ---- Get orders of specific restaurant ----
+      final futures = restaurants.map(
+        (restaurant) => _orderService.getAllOrdersOfRestaurant(
+          widget.token,
+          restaurant.id ?? 0,
+        ),
+      );
+      final results = await Future.wait(futures);
+
+      // Combine all orders
+      final allOrders = results.expand((orders) => orders).toList();
+
+      // Count the number of each state
+      Map<String, int> statusCounts = {};
+      for (var order in allOrders) {
+        final status = order.status ?? "UNKNOWN";
+        statusCounts[status] = (statusCounts[status] ?? 0) + 1;
+      }
+
+      // total number of orders
+      final totalOrders = statusCounts.values.fold<int>(
+        0,
+        (sum, count) => sum + count,
+      );
+
+      // Calculate percentage by state
+      Map<String, double> ratio = {};
+      statusCounts.forEach((key, count) {
+        if (totalOrders > 0) {
+          ratio[key] = (count / totalOrders) * 100;
+        }
+      });
+
+      setState(() {
+        orderStatusRatio = ratio;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error loading order status: $e");
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<PieChartSectionData> sections = [];
-    int i = 0;
+    // Loading
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-    // Create each section for Pie Chart
-    orderStatus.forEach((key, value) {
-      sections.add(
-        PieChartSectionData(
-          value: value,
-          color: colorsStatus[i % colorsStatus.length],
-          title: '${value.toStringAsFixed(0)}%',
-          radius: 55,
-          titleStyle: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      );
+    // Empty
+    if (orderStatusRatio.isEmpty) {
+      return const Text("Chưa có dữ liệu đơn hàng");
+    }
 
-      i++;
-    });
+    final sections = _buildChartSections();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,8 +115,8 @@ class _MerchantOrderChartState extends State<MerchantOrderChart> {
         // Pie Chart
         Center(
           child: SizedBox(
-            height: 200,
-            width: 200,
+            height: 220,
+            width: 220,
             child: PieChart(
               PieChartData(
                 sections: sections,
@@ -75,43 +129,65 @@ class _MerchantOrderChartState extends State<MerchantOrderChart> {
 
         const SizedBox(height: 16),
 
-        // Annotate
+        // Annotation state
         _buildAnnotate(),
       ],
     );
   }
 
-  // Widget Annotate
+  // Pie chart
+  List<PieChartSectionData> _buildChartSections() {
+    final List<PieChartSectionData> sections = [];
+    int i = 0;
+
+    // Loop in orderStatusRatio
+    orderStatusRatio.forEach((key, value) {
+      sections.add(
+        PieChartSectionData(
+          value: value,
+          color: colorsStatus[i % colorsStatus.length],
+          title: '${value.toStringAsFixed(0)}%',
+          radius: 55,
+          titleStyle: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      );
+      i++;
+    });
+
+    return sections;
+  }
+
+  // Widget build annotate
   Widget _buildAnnotate() {
+    int i = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      // Loop in orderStatus array
-      children: orderStatus.entries.map((entry) {
-        // Turn every key in orderStatus array into its index
-        //  "Hoàn thành" : index 0
-        int index = orderStatus.keys.toList().indexOf(entry.key);
+      // Loop in orderStatusRatio
+      children: orderStatusRatio.entries.map((entry) {
+        final label = statusLabels[entry.key] ?? entry.key;
+        final color = colorsStatus[i % colorsStatus.length];
+        i++;
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             children: [
-              // Colors dot
               Container(
                 width: 14,
                 height: 14,
-                decoration: BoxDecoration(
-                  // colorsStauts[0] => Hoành thành is green
-                  color: colorsStatus[index],
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
 
               const SizedBox(width: 8),
 
-              // Annotate
+              // Label
               Flexible(
                 child: Text(
-                  "${entry.key} (${entry.value.toStringAsFixed(0)}%)",
+                  "$label (${entry.value.toStringAsFixed(1)}%)",
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 14),
                 ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 import 'package:pickme_fe_app/features/merchant/model/restaurant.dart';
 import 'package:pickme_fe_app/features/merchant/services/order/order_service.dart';
 import 'package:pickme_fe_app/features/merchant/services/restaurant/restaurant_services.dart';
+import 'package:pickme_fe_app/features/merchant/services/revenue/revenue_service.dart';
 
 class MerchantOverviewSection extends StatefulWidget {
   final String token;
@@ -16,9 +18,12 @@ class MerchantOverviewSection extends StatefulWidget {
 class _MerchantOverviewSectionState extends State<MerchantOverviewSection> {
   final RestaurantServices _restaurantServices = RestaurantServices();
   final OrderService _orderService = OrderService();
+  final RevenueService _revenueService = RevenueService();
 
   late Future<List<Restaurant>> _futureRestaurants;
   int? _orderCount;
+
+  num? _totalResRevenue;
 
   @override
   void initState() {
@@ -29,6 +34,7 @@ class _MerchantOverviewSectionState extends State<MerchantOverviewSection> {
   // Fetch api to get restaurants owner
   void _loadRestaurants() {
     int totalOrder = 0;
+    num totalRevenue = 0;
 
     _futureRestaurants = _restaurantServices.getRestaurantsByOwner(
       widget.token,
@@ -45,9 +51,17 @@ class _MerchantOverviewSectionState extends State<MerchantOverviewSection> {
 
           totalOrder += count;
 
+          final revenue = await _revenueService.getRevenueByRestaurantId(
+            widget.token,
+            restaurant.id ?? 0,
+          );
+
+          totalRevenue += revenue;
+
           if (mounted) {
             setState(() {
               _orderCount = totalOrder;
+              _totalResRevenue = totalRevenue;
             });
           }
         }
@@ -110,6 +124,17 @@ class _MerchantOverviewSectionState extends State<MerchantOverviewSection> {
                       value: (_orderCount ?? 0).toString(),
                       icon: Icons.receipt_long,
                       color: Colors.orange,
+                    ),
+
+                    // Total revenue
+                    _buildInfoCard(
+                      title: "Tổng doanh thu",
+                      value: UtilsMethod.formatMoney(
+                        (_totalResRevenue ?? 0).toDouble(),
+                      ),
+
+                      icon: Icons.attach_money,
+                      color: Colors.green,
                     ),
                   ],
                 );

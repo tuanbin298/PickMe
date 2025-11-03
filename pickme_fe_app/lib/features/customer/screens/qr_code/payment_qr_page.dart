@@ -1,10 +1,98 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pickme_fe_app/features/customer/models/payment/payment.dart';
+import 'package:pickme_fe_app/features/customer/services/payment/payment_service.dart';
 
-class PaymentQrPage extends StatelessWidget {
+class PaymentQrPage extends StatefulWidget {
   final String qrCodeUrl;
+  final Payment payment;
+  final String token;
 
-  const PaymentQrPage({super.key, required this.qrCodeUrl});
+  const PaymentQrPage({
+    super.key,
+    required this.qrCodeUrl,
+    required this.token,
+    required this.payment,
+  });
+
+  @override
+  State<PaymentQrPage> createState() => _PaymentQrPageState();
+}
+
+class _PaymentQrPageState extends State<PaymentQrPage> {
+  final PaymentService _paymentService = PaymentService();
+
+  //  Time variable
+  Timer? _pollingTimer;
+  int _elapsedSeconds = 0;
+  final int _maxSeconds = 300;
+
+  @override
+  void initState() {
+    super.initState();
+    _startPolling();
+  }
+
+  // Create timer run every 5s, call API get payment in 5 min
+  void _startPolling() {
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      _elapsedSeconds += 5;
+
+      final payment = await _paymentService.getPaymentById(
+        widget.token,
+        widget.payment.id ?? 0,
+      );
+
+      if (payment != null) {
+        // Payment success
+        if (payment.paymentStatus == "PAID") {
+          _stopPolling();
+
+          if (mounted) {
+            context.go('/payment-success', extra: payment);
+          }
+          return;
+        }
+
+        // Payment failed
+      } else {
+        _stopPolling();
+        if (mounted) {
+          context.go(
+            '/payment-failed',
+            extra: {"payment": payment, "token": widget.token},
+          );
+        }
+        return;
+      }
+
+      // Waiting customer to payment in 5 min
+      if (_elapsedSeconds >= _maxSeconds) {
+        _stopPolling();
+
+        if (mounted) {
+          context.go(
+            '/payment-failed',
+            extra: {"payment": payment, "token": widget.token},
+          );
+        }
+        return;
+      }
+    });
+  }
+
+  // Cancel calling API get payment
+  void _stopPolling() {
+    _pollingTimer?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _stopPolling();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +109,7 @@ class PaymentQrPage extends StatelessWidget {
           children: [
             // Image QR
             Image.network(
-              qrCodeUrl,
+              widget.qrCodeUrl,
               width: 250,
               height: 250,
               fit: BoxFit.contain,
@@ -36,21 +124,16 @@ class PaymentQrPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 10),
 
-            // Button to navigate
-            ElevatedButton(
-              onPressed: () {
-                context.go("/home-page");
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 12,
-                ),
+            const Text(
+              'Vui lòng hoàn tất thanh toán trong 5 phút.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.redAccent,
+                fontWeight: FontWeight.w500,
               ),
-              child: const Text('Quay lại'),
             ),
           ],
         ),

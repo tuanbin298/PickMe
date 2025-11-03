@@ -42,4 +42,32 @@ class PaymentService {
       return null;
     }
   }
+
+  // Get payment by id
+  Future<Payment?> getPaymentById(String token, int paymentId) async {
+    final url = Uri.parse('$baseUrl/payments/$paymentId');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Decode UTF-8 data to correctly display Vietnamese characters
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        return Payment.fromJson(data);
+      } else {
+        print('Lỗi tải thông tin thanh toán (status ${response.statusCode})');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi kết nối khi tải thông tin thanh toán: $e');
+      return null;
+    }
+  }
 }

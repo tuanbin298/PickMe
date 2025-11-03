@@ -38,15 +38,24 @@ class _OrderConfirmPageState extends State<OrderConfirmPage> {
       paymentMethod: paymentMethod,
     );
 
+    if (!mounted) return;
+
     if (payment != null) {
       if (payment.paymentMethod == "SEPAY") {
-        context.go("/payment-qr", extra: {"qrCodeUrl": payment.qrCodeUrl});
+        context.go(
+          "/payment-qr",
+          extra: {
+            "qrCodeUrl": payment.qrCodeUrl,
+            "payment": payment,
+            "token": widget.token,
+          },
+        );
         return;
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Thanh toán thất bại!"),
+          content: Text("Lỗi tạo đơn hàng!"),
           backgroundColor: Colors.red,
         ),
       );

@@ -54,10 +54,10 @@ class RestaurantService {
       );
 
       if (response.statusCode == 200) {
-        // Decode UTF-8 để hiển thị tiếng Việt chính xác
+        // Decode UTF-8 data to correctly display Vietnamese characters
         final data = jsonDecode(utf8.decode(response.bodyBytes));
 
-        // API trả về 1 object { id, name, ... }
+        // API return 1 object { id, name, ... }
         if (data is Map<String, dynamic>) {
           return Restaurant.fromJson(data);
         } else {

@@ -5,8 +5,11 @@ import 'package:pickme_fe_app/features/auth/screens/otp_verification_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/reset_password_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/login_page.dart';
 import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
+import 'package:pickme_fe_app/features/customer/models/payment/payment.dart';
 import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/notification/sepay_failed_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/notification/sepay_success_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_confirm_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_detail_page.dart';
 import 'package:pickme_fe_app/core/common_widgets/profile/account_info_page.dart';
@@ -239,13 +242,40 @@ class AppRouter {
           );
         },
       ),
+
       GoRoute(
         path: "/payment-qr",
         name: "payment-qr",
         builder: (context, state) {
           final extraData = state.extra as Map<String, dynamic>;
+          final token = extraData["token"] as String;
+          final payment = extraData["payment"] as Payment;
 
-          return PaymentQrPage(qrCodeUrl: extraData["qrCodeUrl"] as String);
+          return PaymentQrPage(
+            qrCodeUrl: extraData["qrCodeUrl"] as String,
+            token: token,
+            payment: payment,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: "/payment-success",
+        name: "payment-success",
+        builder: (context, state) {
+          final payment = state.extra as Payment;
+
+          return SepaySuccessPage(payment: payment);
+        },
+      ),
+
+      GoRoute(
+        path: "/payment-failed",
+        name: "payment-failed",
+        builder: (context, state) {
+          final payment = state.extra as Payment;
+
+          return SepayFailedPage(payment: payment);
         },
       ),
 

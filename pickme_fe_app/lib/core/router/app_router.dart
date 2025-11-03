@@ -319,7 +319,12 @@ class AppRouter {
         path: "/map",
         name: "map",
         builder: (context, state) {
-          return MapPage();
+          final extra = state.extra as Map<String, dynamic>?;
+
+          final lat = extra != null ? extra['restaurantLat'] as double? : null;
+          final lng = extra != null ? extra['restaurantLng'] as double? : null;
+
+          return MapPage(pickupLatitude: lat, pickupLongitude: lng);
         },
       ),
 

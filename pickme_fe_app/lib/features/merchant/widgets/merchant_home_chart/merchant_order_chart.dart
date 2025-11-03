@@ -21,14 +21,20 @@ class _MerchantOrderChartState extends State<MerchantOrderChart> {
 
   bool isLoading = true;
 
-  // Store labels
+  // Store labels - color
+  final Map<String, Color> statusColors = {
+    "COMPLETED": Colors.green,
+    "CANCELLED": Colors.red,
+    "PENDING": Colors.orange,
+    "CONFIRMED": Colors.blue,
+  };
+
   final Map<String, String> statusLabels = {
     "COMPLETED": "Hoàn thành",
     "CANCELLED": "Đã hủy",
+    "PENDING": "Chờ xác nhận",
+    "CONFIRMED": "Đã xác nhận",
   };
-
-  // Store color
-  final List<Color> colorsStatus = [Colors.green, Colors.red];
 
   @override
   void initState() {
@@ -138,14 +144,13 @@ class _MerchantOrderChartState extends State<MerchantOrderChart> {
   // Pie chart
   List<PieChartSectionData> _buildChartSections() {
     final List<PieChartSectionData> sections = [];
-    int i = 0;
 
     // Loop in orderStatusRatio
     orderStatusRatio.forEach((key, value) {
       sections.add(
         PieChartSectionData(
           value: value,
-          color: colorsStatus[i % colorsStatus.length],
+          color: statusColors[key] ?? Colors.grey,
           title: '${value.toStringAsFixed(0)}%',
           radius: 55,
           titleStyle: const TextStyle(
@@ -155,7 +160,6 @@ class _MerchantOrderChartState extends State<MerchantOrderChart> {
           ),
         ),
       );
-      i++;
     });
 
     return sections;
@@ -163,14 +167,12 @@ class _MerchantOrderChartState extends State<MerchantOrderChart> {
 
   // Widget build annotate
   Widget _buildAnnotate() {
-    int i = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       // Loop in orderStatusRatio
       children: orderStatusRatio.entries.map((entry) {
+        final color = statusColors[entry.key] ?? Colors.grey;
         final label = statusLabels[entry.key] ?? entry.key;
-        final color = colorsStatus[i % colorsStatus.length];
-        i++;
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),

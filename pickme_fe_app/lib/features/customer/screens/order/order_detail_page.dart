@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/order/order.dart';
@@ -61,10 +62,58 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             return const Center(child: Text("Không tìm thấy đơn hàng"));
           }
 
+          // Check status to open map
+          final bool canNavigateToMap =
+              order.status != "COMPLETED" && order.status != "CANCELLED";
+
           // Render UI
           return ListView(
             padding: const EdgeInsets.all(8),
             children: [
+              // Navigate map section
+              if (canNavigateToMap)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.map, color: Colors.blue),
+
+                      const SizedBox(width: 10),
+
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            context.push(
+                              '/map',
+                              extra: {
+                                'restaurantLat': order.restaurant?.latitude,
+                                'restaurantLng': order.restaurant?.longitude,
+                              },
+                            );
+                          },
+                          child: const Text(
+                            "Xem đường đi đến quán",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,

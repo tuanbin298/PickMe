@@ -3,17 +3,20 @@
 ## Bước 1: Tạo Web Service
 
 ### 1.1 Truy cập Render Dashboard
+
 - URL: https://render.com/
 - Login bằng GitHub account
 - Click "New" → "Web Service"
 
 ### 1.2 Connect Repository
+
 - Select "tuanbin298/PickMe" repository
 - Branch: "minhanh"
 - **Root Directory**: `PickMeApplication`
 - Click "Continue"
 
 ### 1.3 Service Configuration
+
 ```
 Service Name: pickme-backend
 Runtime: Java
@@ -23,6 +26,7 @@ Plan: Free
 ```
 
 ### 1.4 Advanced Settings
+
 ```
 Auto Deploy: Yes
 Health Check Path: /actuator/health
@@ -33,6 +37,7 @@ Health Check Path: /actuator/health
 **Cần thêm các biến sau vào Render Dashboard:**
 
 ### Database Configuration
+
 ```
 DATABASE_URL=jdbc:postgresql://ep-solitary-thunder-ad72gnev-pooler.c-2.us-east-1.aws.neon.tech/pickmeapplication?sslmode=require&channel_binding=require
 DB_USERNAME=neondb_owner
@@ -40,6 +45,7 @@ DB_PASSWORD=npg_7QKchdN0pnJX
 ```
 
 ### Application Settings
+
 ```
 SPRING_PROFILES_ACTIVE=prod
 JWT_SECRET=pickme_jwt_secret_key_2024_production_super_secure_long_string_123456789
@@ -47,12 +53,14 @@ JWT_EXPIRATION=86400000
 ```
 
 ### Email Configuration
+
 ```
 MAIL_USERNAME=[YOUR_GMAIL_ADDRESS]
 MAIL_PASSWORD=[YOUR_GMAIL_APP_PASSWORD]
 ```
 
 ### Payment Configuration
+
 ```
 SEPAY_BANK_NAME=VPBank
 SEPAY_ACCOUNT_NUMBER=0868767029
@@ -61,6 +69,7 @@ SEPAY_WEBHOOK_SECRET=sepay_webhook_secret_2024
 ```
 
 ### CORS (Will be updated after frontend deployment)
+
 ```
 CORS_ORIGINS=https://localhost:3000
 ```
@@ -74,10 +83,12 @@ CORS_ORIGINS=https://localhost:3000
 ## Bước 4: Test Deployment
 
 ### Health Check
+
 - URL: `https://[your-service-name].onrender.com/actuator/health`
 - Expected Response: `{"status":"UP"}`
 
 ### API Endpoints
+
 - Swagger (Dev only): `https://[your-service-name].onrender.com/swagger-ui.html`
 - Auth Test: `POST https://[your-service-name].onrender.com/api/auth/register`
 
@@ -91,12 +102,14 @@ CORS_ORIGINS=https://localhost:3000
 ## ⚠️ Troubleshooting
 
 ### Common Issues:
+
 1. **Build Failed**: Check Java version, Maven dependencies
 2. **Health Check Failed**: Verify `/actuator/health` endpoint
 3. **Database Connection**: Check Neon.tech credentials
 4. **Memory Issues**: App restart due to 512MB limit
 
 ### Solutions:
+
 - Check build logs in Render dashboard
 - Verify environment variables
 - Test database connection locally

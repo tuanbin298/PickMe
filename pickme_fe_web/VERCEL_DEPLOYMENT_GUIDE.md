@@ -3,6 +3,7 @@
 ## Bước 1: Chuẩn bị Repository
 
 1. **Đảm bảo code đã được push lên GitHub**:
+
 ```bash
 cd pickme_fe_web
 git add .
@@ -17,6 +18,7 @@ git push origin main
 1. **Truy cập**: https://vercel.com/
 2. **Đăng nhập** bằng tài khoản GitHub
 3. **Import Project**:
+
    - Click **"Add New"** → **"Project"**
    - Select GitHub repository: `PickMe`
    - **Root Directory**: `pickme_fe_web`
@@ -25,21 +27,25 @@ git push origin main
    - **Output Directory**: `dist`
 
 4. **Environment Variables**:
+
    ```
    VITE_API_URL=https://your-backend-url.onrender.com/api
    ```
-   *(Thay `your-backend-url` bằng URL thực của backend từ Render)*
+
+   _(Thay `your-backend-url` bằng URL thực của backend từ Render)_
 
 5. **Deploy**: Click **"Deploy"**
 
 ### **Option 2: Deploy qua Vercel CLI**
 
 1. **Install Vercel CLI**:
+
 ```bash
 npm i -g vercel
 ```
 
 2. **Login và Deploy**:
+
 ```bash
 cd pickme_fe_web
 vercel login
@@ -79,15 +85,18 @@ CORS_ORIGINS=https://your-frontend.vercel.app,https://your-custom-domain.com
 ### Lỗi thường gặp:
 
 1. **Build Failed**:
+
    - Kiểm tra `package.json` và dependencies
    - Xem build logs trong Vercel dashboard
 
 2. **API Connection Failed**:
+
    - Verify `VITE_API_URL` environment variable
    - Check CORS settings in backend
    - Kiểm tra backend có running không
 
 3. **404 on Refresh**:
+
    - Đã có `vercel.json` với routing config
    - Nếu vẫn lỗi, check routing trong React app
 
@@ -96,6 +105,7 @@ CORS_ORIGINS=https://your-frontend.vercel.app,https://your-custom-domain.com
    - Optimize images và bundle size
 
 ### Useful Commands:
+
 ```bash
 # Check deployment status
 vercel ls

@@ -2,7 +2,7 @@ services:
   - type: web
     name: pickme-backend
     env: java
-    region: oregon  # or singapore for Asia
+    region: oregon # or singapore for Asia
     buildCommand: mvn clean install -DskipTests
     startCommand: java -Xmx512m -Dserver.port=$PORT -jar target/PickMeApplication-1.0-SNAPSHOT.jar --spring.profiles.active=prod
     plan: free

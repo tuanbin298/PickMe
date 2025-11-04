@@ -60,10 +60,13 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
       closingMinute,
     );
 
-    if (_pickupTime.isBefore(now)) return false; // Giờ đã qua
-    if (_pickupTime.isAfter(closingDateTime)) return false; // Sau giờ đóng cửa
-    if (_pickupTime.difference(now).inMinutes < 15)
-      return false; // Cách < 15 phút
+    if (_pickupTime.isBefore(now)) return false; // The time has passed
+    if (_pickupTime.isAfter(closingDateTime)) {
+      return false; // After closing hours
+    }
+    if (_pickupTime.difference(now).inMinutes < 15) {
+      return false; // < 15 minutes away
+    }
     return true;
   }
 

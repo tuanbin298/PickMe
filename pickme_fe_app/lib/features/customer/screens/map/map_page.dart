@@ -95,6 +95,8 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       _currentLocation = LatLng(position.latitude, position.longitude);
     });
+
+    // print(_currentLocation);
   }
 
   // Move screen to current location

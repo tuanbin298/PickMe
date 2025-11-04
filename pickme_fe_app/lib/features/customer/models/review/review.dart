@@ -25,14 +25,23 @@ class Review {
     this.ownerResponse,
   });
 
-  // Parse data from json
+  /// ✅ Parse JSON -> Review
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
-      id: json['id'],
-      orderId: json['orderId'] ?? 0,
-      restaurantId: json['restaurantId'],
-      menuItemId: json['menuItemId'],
-      overallRating: json['overallRating'] ?? json['rating'] ?? 0,
+      id: json['id'] is int ? json['id'] : int.tryParse('${json['id']}'),
+      orderId: json['orderId'] is int
+          ? json['orderId']
+          : int.tryParse('${json['orderId']}') ?? 0,
+      restaurantId: json['restaurantId'] is int
+          ? json['restaurantId']
+          : int.tryParse('${json['restaurantId']}'),
+      menuItemId: json['menuItemId'] is int
+          ? json['menuItemId']
+          : int.tryParse('${json['menuItemId']}'),
+      overallRating:
+          json['overallRating'] ??
+          json['rating'] ??
+          0, // có API trả rating, có API trả overallRating
       comment: json['comment'] ?? '',
       imageUrls:
           (json['imageUrls'] as List?)
@@ -40,12 +49,29 @@ class Review {
               .toList() ??
           [],
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'])
+          ? DateTime.tryParse(json['createdAt'].toString())
           : null,
       reviewerName: json['reviewerName'],
       reviewType: json['reviewType'],
       ownerResponse: json['ownerResponse'],
     );
+  }
+
+  /// ✅ Convert Review -> JSON (dùng cho API POST/PUT)
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) 'id': id,
+      'orderId': orderId,
+      if (restaurantId != null) 'restaurantId': restaurantId,
+      if (menuItemId != null) 'menuItemId': menuItemId,
+      'overallRating': overallRating,
+      'comment': comment,
+      'imageUrls': imageUrls,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (reviewerName != null) 'reviewerName': reviewerName,
+      if (reviewType != null) 'reviewType': reviewType,
+      if (ownerResponse != null) 'ownerResponse': ownerResponse,
+    };
   }
 
   Review copyWith({

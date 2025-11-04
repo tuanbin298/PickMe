@@ -152,8 +152,14 @@ class AppRouter {
         builder: (context, state) {
           final extraData = state.extra as Map<String, dynamic>;
           final restaurant = extraData['restaurant'] as Restaurant;
-          final token = extraData['token'] as String? ?? '';
-          return RestaurantMenuPage(restaurant: restaurant, token: token);
+          final token = extraData['token'] as String;
+          final initialTabIndex = extraData['initialTabIndex'] as int? ?? 0;
+
+          return RestaurantMenuPage(
+            restaurant: restaurant,
+            token: token,
+            initialTabIndex: initialTabIndex,
+          );
         },
       ),
 

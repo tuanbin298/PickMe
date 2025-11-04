@@ -70,7 +70,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/payments/order/*/status").permitAll()
                         // Other public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        // Swagger endpoints - Allow all Swagger related paths
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
+                        .requestMatchers("/swagger-resources/**").permitAll()
+                        .requestMatchers("/webjars/**").permitAll()
+                        // Health check and root endpoints
+                        .requestMatchers("/", "/health", "/actuator/**").permitAll()
                         .requestMatchers("/api/demo/**").permitAll()
                         // Public endpoints for customers (no authentication required)
                         .requestMatchers("/api/restaurants/public/**").permitAll()
@@ -95,20 +101,23 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // ✅ Danh sách origins được phép (localhost + cloudflare tunnel)
-        List<String> allowedOrigins = List.of(
+        // ✅ For production testing, allow all origins temporarily
+        configuration.setAllowedOriginPatterns(List.of("*"));  // Allow all origins for now
+        
+        // Alternative: Specific origins only
+        /*
+        List<String> allowedOrigins = new java.util.ArrayList<>(List.of(
             "http://localhost:3000",
             "http://localhost:5173", 
-            "http://localhost:8080"
-        );
+            "http://localhost:8080",
+            "https://pickme-9c6r.onrender.com"
+        ));
         
-        // ✅ Thêm Cloudflare Tunnel URL nếu có
         if (cloudflaredUrl != null && !cloudflaredUrl.trim().isEmpty()) {
-            allowedOrigins = new java.util.ArrayList<>(allowedOrigins);
             allowedOrigins.add(cloudflaredUrl.trim());
         }
-        
         configuration.setAllowedOrigins(allowedOrigins);
+        */
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of(
             "Authorization", 

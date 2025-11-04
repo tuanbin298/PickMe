@@ -13,7 +13,10 @@ import 'package:pickme_fe_app/features/customer/services/restaurant/restaurant_s
 import 'package:pickme_fe_app/features/customer/widgets/map/restaurant_marker_dialog.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  final double? pickupLatitude;
+  final double? pickupLongitude;
+
+  const MapPage({super.key, this.pickupLatitude, this.pickupLongitude});
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -41,8 +44,24 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _getCurrentLocation().then((_) {
+      // Set polyline to destination if pickupLatitude and pickupLongitude not null
+      _setPickupDestination();
+    });
     _getRestaurantLocation();
+  }
+
+  // Set polyline to destination if pickupLatitude and pickupLongitude not null
+  Future<void> _setPickupDestination() async {
+    if (widget.pickupLatitude != null && widget.pickupLongitude != null) {
+      setState(() {
+        _destination = LatLng(widget.pickupLatitude!, widget.pickupLongitude!);
+      });
+
+      if (_currentLocation != null) {
+        await fetchRoute();
+      }
+    }
   }
 
   // Method get current location

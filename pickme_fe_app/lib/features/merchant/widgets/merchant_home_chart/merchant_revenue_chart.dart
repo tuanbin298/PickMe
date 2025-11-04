@@ -174,21 +174,14 @@ class _MerchantRevenueChartState extends State<MerchantRevenueChart> {
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 65,
+                    reservedSize: 50,
+                    interval: (maxRevenue / 4).clamp(1, double.infinity),
                     getTitlesWidget: (value, meta) {
-                      final interval = (maxRevenue / 4).clamp(
-                        1,
-                        double.infinity,
-                      );
-                      if (value % interval != 0) {
-                        return const SizedBox.shrink();
-                      }
-                      //Revenue
                       return Padding(
                         padding: const EdgeInsets.only(right: 4.0),
                         child: Text(
                           UtilsMethod.formatMoney(value),
-                          style: const TextStyle(fontSize: 11),
+                          style: const TextStyle(fontSize: 6),
                         ),
                       );
                     },

@@ -32,7 +32,7 @@ class ReviewService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Review submitted successfully!');
-        print('📤 Sending review body: $body');
+        print('Sending review body: $body');
 
         return true;
       } else {
@@ -125,12 +125,12 @@ class ReviewService {
 
         return reviews;
       } else {
-        print('❌ Failed to load my reviews (${response.statusCode})');
+        print(' Failed to load my reviews (${response.statusCode})');
         print('Response: ${response.body}');
         return [];
       }
     } catch (e) {
-      print('💥 Error fetching my reviews: $e');
+      print('Error fetching my reviews: $e');
       return [];
     }
   }

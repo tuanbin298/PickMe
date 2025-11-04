@@ -34,7 +34,7 @@ class _RestaurantFeedbackPageState extends State<RestaurantFeedbackPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
-
+      // Appbar
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         centerTitle: true,
@@ -49,6 +49,7 @@ class _RestaurantFeedbackPageState extends State<RestaurantFeedbackPage> {
       body: FutureBuilder<List<Review>>(
         future: _reviewsFuture,
         builder: (context, snapshot) {
+          // loadingg
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }

@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class PickupTimeCard extends StatelessWidget {
   final DateTime pickupTime;
-  final String closingTime; // Dạng "HH:mm"
+  final String closingTime; //  "HH:mm"
   final VoidCallback onAdjust;
 
   const PickupTimeCard({
@@ -18,7 +18,7 @@ class PickupTimeCard extends StatelessWidget {
     final now = DateTime.now();
     final timeFormat = DateFormat('h:mm a');
 
-    // 🔹 Parse closingTime (String) -> DateTime cùng ngày với pickupTime
+    // Parse closingTime (String) -> DateTime
     final closingParts = closingTime.split(':');
     final closingHour = int.tryParse(closingParts[0]) ?? 23;
     final closingMinute =
@@ -36,21 +36,21 @@ class PickupTimeCard extends StatelessWidget {
     Color warningColor = Colors.orange.shade900;
     Color backgroundColor = Colors.orange.shade50;
 
-    // 🧠 Logic kiểm tra các trường hợp
+    // Case
     if (pickupTime.isBefore(now)) {
-      // 1️⃣ Giờ lấy đã qua
+      // 1. The time to get it is over.
       warningText =
           "Giờ lấy (${timeFormat.format(pickupTime)}) đã qua. Vui lòng chọn thời gian trong tương lai.";
       warningColor = Colors.red.shade900;
       backgroundColor = Colors.red.shade50;
     } else if (pickupTime.isAfter(closingDateTime)) {
-      // 2️⃣ Giờ lấy vượt quá giờ đóng cửa
+      // 2, Pick up time exceeds closing time
       warningText =
           "Giờ lấy (${timeFormat.format(pickupTime)}) đã vượt quá giờ đóng cửa của quán (${timeFormat.format(closingDateTime)}). Vui lòng chọn lại thời gian khác.";
       warningColor = Colors.red.shade900;
       backgroundColor = Colors.red.shade50;
     } else if (pickupTime.difference(now).inMinutes < 15) {
-      // 3️⃣ Giờ lấy gần hơn 15 phút
+      // 3. Time taken closer to 15 minutes
       warningText =
           "Thời gian lấy phải cách thời gian hiện tại ít nhất 15 phút để cửa hàng có thời gian chuẩn bị món. Vui lòng chọn lại khung giờ sau ${timeFormat.format(now.add(const Duration(minutes: 15)))}.";
       warningColor = Colors.orange.shade900;
@@ -71,9 +71,10 @@ class PickupTimeCard extends StatelessWidget {
               TextButton(onPressed: onAdjust, child: const Text("Điều chỉnh")),
             ],
           ),
+
           const SizedBox(height: 6),
 
-          // Hiển thị giờ lấy
+          //Dispaly pick time
           Text(
             timeFormat.format(pickupTime),
             style: const TextStyle(
@@ -82,9 +83,10 @@ class PickupTimeCard extends StatelessWidget {
               color: Colors.orange,
             ),
           ),
+
           const SizedBox(height: 6),
 
-          // Hiển thị cảnh báo nếu có
+          // Show warning
           if (warningText != null)
             Container(
               width: double.infinity,

@@ -315,7 +315,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                             },
                                           );
 
-                                          // ✅ Nếu người dùng vừa đánh giá xong, reload lại danh sách review
+                                          // Reload feedback page when user finish feedback
                                           if (result == true) {
                                             setState(() {
                                               _reviewsFuture =
@@ -327,7 +327,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                             'restaurant-menu',
                                             pathParameters: {
                                               'id':
-                                                  restaurant?.id?.toString() ??
+                                                  restaurant?.id.toString() ??
                                                   '',
                                             },
                                             extra: {

@@ -57,23 +57,6 @@ class Review {
     );
   }
 
-  /// Convert Review -> JSON (dùng cho API POST/PUT)
-  Map<String, dynamic> toJson() {
-    return {
-      if (id != null) 'id': id,
-      'orderId': orderId,
-      if (restaurantId != null) 'restaurantId': restaurantId,
-      if (menuItemId != null) 'menuItemId': menuItemId,
-      'overallRating': overallRating,
-      'comment': comment,
-      'imageUrls': imageUrls,
-      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
-      if (reviewerName != null) 'reviewerName': reviewerName,
-      if (reviewType != null) 'reviewType': reviewType,
-      if (ownerResponse != null) 'ownerResponse': ownerResponse,
-    };
-  }
-
   Review copyWith({
     int? id,
     int? orderId,

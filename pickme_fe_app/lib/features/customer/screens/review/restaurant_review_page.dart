@@ -93,7 +93,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
         );
       }
     } catch (e) {
-      print("❌ Lỗi khi gửi đánh giá: $e");
+      print("Lỗi khi gửi đánh giá: $e");
       NotificationService.showError(
         context,
         "Đã xảy ra lỗi. Vui lòng thử lại.",

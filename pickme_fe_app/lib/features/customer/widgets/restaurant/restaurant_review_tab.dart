@@ -132,6 +132,34 @@ class _RestaurantReviewTabState extends State<RestaurantReviewTab> {
                       // Comment
                       Text(comment, style: const TextStyle(fontSize: 14)),
 
+                      if (review.imageUrls.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: review.imageUrls.map((url) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                url,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  width: 80,
+                                  height: 80,
+                                  color: Colors.grey.shade200,
+                                  child: const Icon(
+                                    Icons.broken_image,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+
                       const SizedBox(height: 6),
 
                       // Date

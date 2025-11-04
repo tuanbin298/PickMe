@@ -156,8 +156,14 @@ class AppRouter {
         builder: (context, state) {
           final extraData = state.extra as Map<String, dynamic>;
           final restaurant = extraData['restaurant'] as Restaurant;
-          final token = extraData['token'] as String? ?? '';
-          return RestaurantMenuPage(restaurant: restaurant, token: token);
+          final token = extraData['token'] as String;
+          final initialTabIndex = extraData['initialTabIndex'] as int? ?? 0;
+
+          return RestaurantMenuPage(
+            restaurant: restaurant,
+            token: token,
+            initialTabIndex: initialTabIndex,
+          );
         },
       ),
 
@@ -449,13 +455,14 @@ class AppRouter {
 
           GoRoute(
             path: "/merchant/restaurant/:id/feedbacks",
-            name: "merchant-restaurant:id/feedbacks",
+            name: "merchant-restaurant-feedbacks",
             builder: (context, state) {
-              // Take token from parent widget (RestaurantNavigateBottom)
               final bottomWidget = context
                   .findAncestorWidgetOfExactType<RestaurantNavigateBottom>();
               final token = bottomWidget?.token ?? '';
-              final restaurantId = state.pathParameters["id"]!;
+
+              // ✅ Convert path param to int
+              final restaurantId = int.parse(state.pathParameters["id"]!);
 
               return RestaurantFeedbackPage(
                 restaurantId: restaurantId,

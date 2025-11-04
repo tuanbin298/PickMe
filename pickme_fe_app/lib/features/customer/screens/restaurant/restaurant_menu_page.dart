@@ -7,15 +7,19 @@ import 'package:pickme_fe_app/features/customer/widgets/restaurant/restaurant_me
 import 'package:pickme_fe_app/core/common_services/utils_method.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import '../../../customer/services/cart/cart_service.dart';
+import '../../../customer/services/restaurant/restaurant_service.dart';
 import '../../../customer/models/cart/cart.dart';
 
 class RestaurantMenuPage extends StatefulWidget {
   final Restaurant restaurant;
   final String token;
+  final int initialTabIndex;
+
   const RestaurantMenuPage({
     super.key,
     required this.restaurant,
     required this.token,
+    this.initialTabIndex = 0,
   });
 
   @override
@@ -31,6 +35,8 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
   late TabController _tabController;
 
   final CartService _cartService = CartService();
+  final RestaurantService _restaurantService = RestaurantService();
+  Restaurant? _restaurant;
   int _cartItemCount = 0;
   double _cartTotalPrice = 0.0;
   bool _isCartLoading = true;
@@ -40,7 +46,26 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
     super.initState();
     _menusFuture = _loadMenu();
     _loadCartData();
+    _fetchFullRestaurantInfo(widget.restaurant.id);
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.index = widget.initialTabIndex;
+  }
+
+  Future<void> _fetchFullRestaurantInfo(int id) async {
+    try {
+      final fullRestaurant = await _restaurantService.getRestaurantById(
+        restaurantId: id,
+        token: widget.token,
+      );
+
+      if (mounted && fullRestaurant != null) {
+        setState(() {
+          _restaurant = fullRestaurant;
+        });
+      }
+    } catch (e) {
+      debugPrint("⚠️ Lỗi khi tải thông tin quán đầy đủ: $e");
+    }
   }
 
   // Method get menu of restaurant
@@ -101,7 +126,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final restaurant = widget.restaurant;
+    final restaurant = _restaurant ?? widget.restaurant;
     final bool isClosed = !restaurant.isOpen;
 
     return Scaffold(

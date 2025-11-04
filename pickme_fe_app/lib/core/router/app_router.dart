@@ -455,13 +455,14 @@ class AppRouter {
 
           GoRoute(
             path: "/merchant/restaurant/:id/feedbacks",
-            name: "merchant-restaurant:id/feedbacks",
+            name: "merchant-restaurant-feedbacks",
             builder: (context, state) {
-              // Take token from parent widget (RestaurantNavigateBottom)
               final bottomWidget = context
                   .findAncestorWidgetOfExactType<RestaurantNavigateBottom>();
               final token = bottomWidget?.token ?? '';
-              final restaurantId = state.pathParameters["id"]!;
+
+              // ✅ Convert path param to int
+              final restaurantId = int.parse(state.pathParameters["id"]!);
 
               return RestaurantFeedbackPage(
                 restaurantId: restaurantId,

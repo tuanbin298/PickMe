@@ -45,6 +45,28 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
   final CartService _cartService = CartService();
   final OrderService _orderService = OrderService();
 
+  bool get _isPickupTimeValid {
+    final now = DateTime.now();
+    final closingParts = widget.restaurant.closingTime.split(':');
+    final closingHour = int.tryParse(closingParts[0]) ?? 23;
+    final closingMinute =
+        int.tryParse(closingParts.length > 1 ? closingParts[1] : '0') ?? 0;
+
+    final closingDateTime = DateTime(
+      _pickupTime.year,
+      _pickupTime.month,
+      _pickupTime.day,
+      closingHour,
+      closingMinute,
+    );
+
+    if (_pickupTime.isBefore(now)) return false; // Giờ đã qua
+    if (_pickupTime.isAfter(closingDateTime)) return false; // Sau giờ đóng cửa
+    if (_pickupTime.difference(now).inMinutes < 15)
+      return false; // Cách < 15 phút
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -278,6 +300,7 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
           // TimePicker
           PickupTimeCard(
             pickupTime: _pickupTime,
+            closingTime: widget.restaurant.closingTime,
             onAdjust: () => _selectTime(context),
           ),
 
@@ -313,13 +336,22 @@ class _CartConfirmPageState extends State<CartConfirmPage> {
           width: double.infinity,
           height: 48,
           child: ElevatedButton(
-            onPressed: _createOrder,
+            onPressed: !_isPickupTimeValid
+                ? () {
+                    NotificationService.showError(
+                      context,
+                      "Thời gian lấy không hợp lệ. Vui lòng chọn thời gian sau 15 phút và trước khi quán đóng cửa.",
+                    );
+                  }
+                : _createOrder,
+
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
+              backgroundColor: _isPickupTimeValid ? Colors.orange : Colors.grey,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
+
             child: isLoading
                 ? const SizedBox(
                     height: 24,

@@ -25,7 +25,7 @@ class Review {
     this.ownerResponse,
   });
 
-  /// ✅ Parse JSON -> Review
+  /// Parse JSON -> Review
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
       id: json['id'] is int ? json['id'] : int.tryParse('${json['id']}'),
@@ -57,7 +57,7 @@ class Review {
     );
   }
 
-  /// ✅ Convert Review -> JSON (dùng cho API POST/PUT)
+  /// Convert Review -> JSON (dùng cho API POST/PUT)
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,

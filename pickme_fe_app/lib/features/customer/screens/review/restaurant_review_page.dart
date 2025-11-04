@@ -5,6 +5,7 @@ import 'package:pickme_fe_app/core/common_widgets/notification_service.dart';
 import 'package:pickme_fe_app/core/theme/app_colors.dart';
 import 'package:pickme_fe_app/features/customer/models/review/review.dart';
 import 'package:pickme_fe_app/features/customer/services/review/review_service.dart';
+import 'package:pickme_fe_app/core/common_services/upload_image_cloudinary.dart';
 import 'package:go_router/go_router.dart';
 
 class RestaurantReviewPage extends StatefulWidget {
@@ -33,9 +34,12 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
   final List<File> _selectedImages = [];
   final _reviewService = ReviewService();
 
+  // Create instance object of UploadImageCloudinary
+  final UploadImageCloudinary _uploadImageCloudinary = UploadImageCloudinary();
+
   bool isSubmitting = false;
 
-  // 📸 Chọn nhiều ảnh
+  // Pick multiple images using ImagePicker
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickMultiImage();
@@ -46,7 +50,7 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
     }
   }
 
-  // 🚀 Gửi đánh giá
+  // Submit the restaurant review
   Future<void> _submitReview() async {
     if (selectedRating == 0) {
       NotificationService.showError(
@@ -58,26 +62,44 @@ class _RestaurantReviewPageState extends State<RestaurantReviewPage> {
 
     setState(() => isSubmitting = true);
 
-    final review = Review(
-      orderId: widget.orderId,
-      restaurantId: widget.restaurantId,
-      overallRating: selectedRating,
-      comment: _commentController.text.trim(),
-      imageUrls: [], // sẽ upload ảnh sau khi backend hỗ trợ
-    );
+    try {
+      List<String> uploadedUrls = [];
+      for (var file in _selectedImages) {
+        final url = await _uploadImageCloudinary.uploadImage(file);
+        if (url != null) uploadedUrls.add(url);
+      }
 
-    final success = await _reviewService.addRestaurantReview(
-      token: widget.token,
-      review: review,
-    );
+      final review = Review(
+        orderId: widget.orderId,
+        restaurantId: widget.restaurantId,
+        overallRating: selectedRating,
+        comment: _commentController.text.trim(),
+        imageUrls: uploadedUrls,
+      );
 
-    setState(() => isSubmitting = false);
+      final success = await _reviewService.addRestaurantReview(
+        token: widget.token,
+        review: review,
+      );
 
-    if (success) {
-      NotificationService.showSuccess(context, "Đánh giá thành công!");
-      context.pop(); // quay lại trang trước
-    } else {
-      NotificationService.showError(context, "Gửi đánh giá thất bại");
+      if (success) {
+        NotificationService.showSuccess(context, "Gửi đánh giá thành công!");
+
+        context.pop(true);
+      } else {
+        NotificationService.showError(
+          context,
+          "Gửi đánh giá thất bại. Vui lòng thử lại.",
+        );
+      }
+    } catch (e) {
+      print("❌ Lỗi khi gửi đánh giá: $e");
+      NotificationService.showError(
+        context,
+        "Đã xảy ra lỗi. Vui lòng thử lại.",
+      );
+    } finally {
+      setState(() => isSubmitting = false);
     }
   }
 

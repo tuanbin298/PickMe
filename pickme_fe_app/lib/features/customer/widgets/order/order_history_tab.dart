@@ -19,8 +19,9 @@ class OrderHistoryTab extends StatefulWidget {
 class _OrderHistoryTabState extends State<OrderHistoryTab> {
   final OrderService _orderService = OrderService();
   final ReviewService _reviewService = ReviewService();
-
+  // Load the user's order history
   late Future<List<Order>> _historyOrder;
+  // Fetch all reviews made by the user
   Future<List<Review>>? _reviewsFuture;
   List<Review> _reviews = [];
 
@@ -31,19 +32,20 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
     _reviewsFuture = _fetchAllReviews();
   }
 
+  /// Fetches all reviews submitted by the current user.
   Future<List<Review>> _fetchAllReviews() async {
     try {
-      debugPrint("📥 Đang tải tất cả review của user hiện tại...");
+      debugPrint("Đang tải tất cả review của user hiện tại...");
       final reviews = await _reviewService.getMyReviews(token: widget.token);
-      debugPrint("✅ Tải thành công ${reviews.length} review");
+      debugPrint("Tải thành công ${reviews.length} review");
       for (var r in reviews) {
         debugPrint(
-          "➡️ Review: id=${r.id}, type=${r.reviewType}, comment=${r.comment}",
+          "Review: id=${r.id}, type=${r.reviewType}, comment=${r.comment}",
         );
       }
       return reviews;
     } catch (e) {
-      debugPrint("⚠️ Lỗi tải danh sách review: $e");
+      debugPrint(" Lỗi tải danh sách review: $e");
       return [];
     }
   }
@@ -53,16 +55,19 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
     return FutureBuilder<List<Order>>(
       future: _historyOrder,
       builder: (context, snapshot) {
+        // Show loading indicator while fetching order history
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
+        // Show error if fetching order history fails
         if (snapshot.hasError) {
           return Center(child: Text("Lỗi tải dữ liệu: ${snapshot.error}"));
         }
 
         final ordersHistory = snapshot.data ?? [];
 
+        // Show empty state if no orders found
         if (ordersHistory.isEmpty) {
           return const Center(
             child: Column(
@@ -82,6 +87,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
         return FutureBuilder<List<Review>>(
           future: _reviewsFuture ?? Future.value([]),
           builder: (context, reviewSnap) {
+            // Show loading indicator while fetching reviews
             if (reviewSnap.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -95,19 +101,21 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                 final order = ordersHistory[index];
                 final restaurant = order.restaurant;
 
+                // Map order and payment status to display text, icon and color
                 final (orderText, orderIcon, orderColor) = mapOrderStatus(
                   order.status ?? "",
                 );
+
                 final (paymentText, paymentIcon, paymentColor) =
                     mapPaymentStatus(order.paymentStatus ?? "");
 
+                // Determine if feedback button should be shown (completed/delivered orders)
                 final bool showFeedbackButton =
                     (order.status?.toLowerCase() == "completed" ||
                     order.status?.toLowerCase() == "delivered");
 
-                // ⚙️ Tạm thời xác định review theo reviewType do API chưa trả restaurantId
                 final existingReview = _reviews.firstWhere(
-                  (r) => r.reviewType == "RESTAURANT",
+                  (r) => r.restaurantId == order.restaurant?.id,
                   orElse: () =>
                       Review(orderId: -1, overallRating: 0, comment: ''),
                 );
@@ -119,6 +127,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                 );
 
                 return GestureDetector(
+                  // Navigate to order details page
                   onTap: () {
                     context.push(
                       "/orders/${order.id}",
@@ -137,9 +146,11 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Order information row
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Restaurant image
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(14),
                                 child: Image.network(
@@ -163,6 +174,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // Order ID
                                     Text(
                                       "Mã đơn: ${order.id}",
                                       style: const TextStyle(
@@ -171,6 +183,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                       ),
                                     ),
                                     const SizedBox(height: 6),
+                                    // Restaurant name
                                     Text(
                                       restaurant?.name ?? "Không rõ tên quán",
                                       style: const TextStyle(
@@ -179,6 +192,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                       ),
                                     ),
                                     const SizedBox(height: 8),
+                                    // Order status
                                     Row(
                                       children: [
                                         Icon(
@@ -198,6 +212,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                       ],
                                     ),
                                     const SizedBox(height: 4),
+                                    // Payment status
                                     Row(
                                       children: [
                                         Icon(
@@ -217,6 +232,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                       ],
                                     ),
                                     const SizedBox(height: 8),
+                                    // Total amount
                                     Row(
                                       children: [
                                         const Icon(
@@ -243,7 +259,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                             ],
                           ),
 
-                          // 🔶 Nút đánh giá / xem lại đánh giá
+                          // Feedback button for completed/delivered orders
                           if (showFeedbackButton) ...[
                             const SizedBox(height: 14),
                             Container(
@@ -283,24 +299,9 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: ElevatedButton(
-                                      onPressed: () {
-                                        if (hasReviewed) {
-                                          context.pushNamed(
-                                            'restaurant-menu',
-                                            pathParameters: {
-                                              'id':
-                                                  restaurant?.id?.toString() ??
-                                                  '',
-                                            },
-                                            extra: {
-                                              'restaurant': restaurant,
-                                              'token': widget.token,
-                                              'initialTabIndex':
-                                                  1, // 👈 chuyển đến tab review
-                                            },
-                                          );
-                                        } else {
-                                          context.push(
+                                      onPressed: () async {
+                                        if (!hasReviewed) {
+                                          final result = await context.push(
                                             "/orders/${order.id}/review",
                                             extra: {
                                               "orderId": order.id,
@@ -311,6 +312,28 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                               "restaurantImage":
                                                   restaurant?.imageUrl ?? '',
                                               "token": widget.token,
+                                            },
+                                          );
+
+                                          // ✅ Nếu người dùng vừa đánh giá xong, reload lại danh sách review
+                                          if (result == true) {
+                                            setState(() {
+                                              _reviewsFuture =
+                                                  _fetchAllReviews();
+                                            });
+                                          }
+                                        } else {
+                                          context.pushNamed(
+                                            'restaurant-menu',
+                                            pathParameters: {
+                                              'id':
+                                                  restaurant?.id?.toString() ??
+                                                  '',
+                                            },
+                                            extra: {
+                                              'restaurant': restaurant,
+                                              'token': widget.token,
+                                              'initialTabIndex': 1,
                                             },
                                           );
                                         }

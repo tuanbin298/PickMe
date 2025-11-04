@@ -18,19 +18,18 @@ public class SwaggerConfig {
     @Value("${CLOUDFLARED_URL:}")
     private String cloudflaredUrl;
     
-    @Value("${APP_BASE_URL:http://localhost:8080}")
+    @Value("${APP_BASE_URL:https://pickme-9c6r.onrender.com}")
     private String appBaseUrl;
 
     @Bean
     public OpenAPI customOpenAPI() {
-        // ✅ Cloudflare Tunnel URL
-        String actualCloudflaredUrl = "https://shops-miss-joshua-warm.trycloudflare.com";
-        
         // 🔍 DEBUG: Log giá trị environment variables
         System.out.println("🔍 SwaggerConfig DEBUG:");
         System.out.println("   CLOUDFLARED_URL (from env) = '" + cloudflaredUrl + "'");
-        System.out.println("   CLOUDFLARED_URL (forced) = '" + actualCloudflaredUrl + "'");
         System.out.println("   APP_BASE_URL = '" + appBaseUrl + "'");
+        
+        // ✅ Use APP_BASE_URL as primary server (production on Render)
+        String primaryServerUrl = appBaseUrl;
         
         OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
@@ -45,17 +44,19 @@ public class SwaggerConfig {
                                 .name("MIT License")
                                 .url("https://opensource.org/licenses/MIT")));
         
-        // ✅ Thêm Cloudflare Tunnel server TRƯỚC (làm default)
-        System.out.println("✅ Adding Cloudflare Tunnel server: " + actualCloudflaredUrl);
+        // ✅ Add primary server (Render production URL)
+        System.out.println("✅ Adding primary server: " + primaryServerUrl);
         openAPI.addServersItem(new Server()
-                .url(actualCloudflaredUrl)
-                .description("Cloudflare Tunnel HTTPS Server (Default)"));
+                .url(primaryServerUrl)
+                .description("Production Server"));
         
-        // ✅ Add localhost server sau
-        System.out.println("✅ Adding localhost server: " + appBaseUrl);
-        openAPI.addServersItem(new Server()
-                        .url(appBaseUrl)
-                        .description("Local Development Server"));
+        // ✅ Add Cloudflare Tunnel for development (if configured)
+        if (cloudflaredUrl != null && !cloudflaredUrl.isEmpty()) {
+            System.out.println("✅ Adding development server: " + cloudflaredUrl);
+            openAPI.addServersItem(new Server()
+                    .url(cloudflaredUrl)
+                    .description("Development Server (Cloudflare Tunnel)"));
+        }
         
         return openAPI
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))

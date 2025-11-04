@@ -51,6 +51,9 @@ class _OrderConfirmPageState extends State<OrderConfirmPage> {
           },
         );
         return;
+      } else if (payment.paymentMethod == "CASH") {
+        context.go("/cash-notifi", extra: {"payment": payment});
+        return;
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

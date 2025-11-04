@@ -8,6 +8,7 @@ import 'package:pickme_fe_app/features/auth/screens/register_page.dart';
 import 'package:pickme_fe_app/features/customer/models/payment/payment.dart';
 import 'package:pickme_fe_app/features/customer/screens/home/home_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/map/map_page.dart';
+import 'package:pickme_fe_app/features/customer/screens/notification/cash_notifi_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/notification/sepay_failed_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/notification/sepay_success_page.dart';
 import 'package:pickme_fe_app/features/customer/screens/order/order_confirm_page.dart';
@@ -276,6 +277,17 @@ class AppRouter {
           final payment = state.extra as Payment;
 
           return SepayFailedPage(payment: payment);
+        },
+      ),
+
+      GoRoute(
+        path: "/cash-notifi",
+        name: "cash-notifi",
+        builder: (context, state) {
+          final extraData = state.extra as Map<String, dynamic>;
+          final payment = extraData["payment"] as Payment;
+
+          return CashNotifiPage(payment: payment);
         },
       ),
 

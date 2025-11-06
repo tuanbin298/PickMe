@@ -4,9 +4,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.dto.mapper.RestaurantMapper;
+import org.example.dto.response.AdminFeedbackResponse;
+import org.example.dto.response.AdminPaymentResponse;
+import org.example.dto.response.AdminUserResponse;
 import org.example.dto.response.RestaurantResponse;
+import org.example.entity.Payment;
 import org.example.entity.Restaurant;
+import org.example.entity.Review;
 import org.example.entity.User;
+import org.example.repository.PaymentRepository;
+import org.example.repository.RestaurantRepository;
+import org.example.repository.ReviewRepository;
+import org.example.repository.UserRepository;
 import org.example.service.RestaurantService;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*", allowCredentials = "true")
@@ -32,6 +42,18 @@ public class AdminController {
     
     @Autowired
     private RestaurantMapper restaurantMapper;
+    
+    @Autowired
+    private PaymentRepository paymentRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private ReviewRepository reviewRepository;
+    
+    @Autowired
+    private RestaurantRepository restaurantRepository;
 
     @GetMapping("/restaurants")
     @PreAuthorize("hasRole('ADMIN')")
@@ -78,5 +100,48 @@ public class AdminController {
         Restaurant rejectedRestaurant = restaurantService.rejectRestaurant(restaurantId, currentUser, reason);
         RestaurantResponse response = restaurantMapper.toResponse(rejectedRestaurant);
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/payments")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all payments", description = "Get all payments in the system (Admin only)")
+    public ResponseEntity<List<AdminPaymentResponse>> getAllPayments(Authentication authentication) {
+        List<Payment> payments = paymentRepository.findAll();
+        List<AdminPaymentResponse> responses = payments.stream()
+                .map(AdminPaymentResponse::from)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
+    }
+    
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all users", description = "Get all users in the system (Admin only)")
+    public ResponseEntity<List<AdminUserResponse>> getAllUsers(Authentication authentication) {
+        List<User> users = userRepository.findAll();
+        List<AdminUserResponse> responses = users.stream()
+                .map(AdminUserResponse::from)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
+    }
+    
+    @GetMapping("/feedbacks")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all feedbacks", description = "Get all feedbacks/reviews in the system (Admin only)")
+    public ResponseEntity<List<AdminFeedbackResponse>> getAllFeedbacks(Authentication authentication) {
+        List<Review> reviews = reviewRepository.findAll();
+        List<AdminFeedbackResponse> responses = reviews.stream()
+                .map(review -> {
+                    AdminFeedbackResponse response = AdminFeedbackResponse.from(review);
+                    
+                    // Set restaurant name for restaurant reviews
+                    if (review.getReviewType() == org.example.entity.ReviewType.RESTAURANT) {
+                        restaurantRepository.findById(review.getTargetId())
+                                .ifPresent(restaurant -> response.setRestaurantName(restaurant.getName()));
+                    }
+                    
+                    return response;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
     }
 }

@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.pickme.app"
-        minSdk = 21  // Required for modern Android features
+        minSdk = flutter.minSdkVersion  // Required for modern Android features
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"

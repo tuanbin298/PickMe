@@ -8,16 +8,24 @@ import org.example.dto.response.AdminFeedbackResponse;
 import org.example.dto.response.AdminPaymentResponse;
 import org.example.dto.response.AdminUserResponse;
 import org.example.dto.response.RestaurantResponse;
+import org.example.dto.response.OrderResponse;
+import org.example.dto.response.MenuItemResponse;
 import org.example.entity.Payment;
 import org.example.entity.Restaurant;
 import org.example.entity.Review;
 import org.example.entity.User;
+import org.example.entity.Order;
+import org.example.entity.MenuItem;
 import org.example.repository.PaymentRepository;
 import org.example.repository.RestaurantRepository;
 import org.example.repository.ReviewRepository;
 import org.example.repository.UserRepository;
+import org.example.repository.OrderRepository;
+import org.example.repository.MenuItemRepository;
 import org.example.service.RestaurantService;
 import org.example.service.UserService;
+import org.example.dto.mapper.OrderMapper;
+import org.example.dto.mapper.MenuItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,6 +62,18 @@ public class AdminController {
     
     @Autowired
     private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private MenuItemRepository menuItemRepository;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private MenuItemMapper menuItemMapper;
 
     @GetMapping("/restaurants")
     @PreAuthorize("hasRole('ADMIN')")
@@ -142,6 +162,24 @@ public class AdminController {
                     return response;
                 })
                 .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/orders")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all orders", description = "Get all orders in the system (Admin only)")
+    public ResponseEntity<List<OrderResponse>> getAllOrders(Authentication authentication) {
+        List<Order> orders = orderRepository.findAll();
+        List<OrderResponse> responses = orderMapper.toSummaryResponseList(orders);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/menu-items")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all menu items", description = "Get all menu items across restaurants (Admin only)")
+    public ResponseEntity<List<MenuItemResponse>> getAllMenuItems(Authentication authentication) {
+        List<MenuItem> items = menuItemRepository.findAll();
+        List<MenuItemResponse> responses = menuItemMapper.toResponseList(items);
         return ResponseEntity.ok(responses);
     }
 }

@@ -7,6 +7,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.example.dto.request.LoginRequest;
 import org.example.dto.request.RegisterRequest;
 import org.example.dto.request.SendOtpRequest;
@@ -135,9 +142,26 @@ public class AuthController {
     @Operation(summary = "Test CORS configuration", description = "Debug endpoint to test CORS")
     public ResponseEntity<java.util.Map<String, Object>> corsTest() {
         return ResponseEntity.ok(java.util.Map.of(
-            "message", "CORS is working!",
-            "timestamp", java.time.LocalDateTime.now(),
-            "server", "PickMe Application"
-        ));
+                "message", "CORS is working!",
+                "timestamp", java.time.LocalDateTime.now(),
+                "server", "PickMe Application"));
+    }
+
+    @GetMapping("/public/timezone")
+    @Operation(summary = "Test timezone", description = "Debug endpoint to test timezone")
+    public Map<String, Object> testTimezone() {
+        Map<String, Object> result = new HashMap<>();
+
+        LocalTime now1 = LocalTime.now();
+        LocalTime now2 = LocalTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalTime now3 = LocalTime.now(ZoneId.systemDefault());
+
+        result.put("LocalTime.now()", now1.toString());
+        result.put("LocalTime.now(Asia/Ho_Chi_Minh)", now2.toString());
+        result.put("LocalTime.now(systemDefault)", now3.toString());
+        result.put("systemDefault timezone", ZoneId.systemDefault().toString());
+        result.put("Vietnam time now", ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).toString());
+
+        return result;
     }
 }

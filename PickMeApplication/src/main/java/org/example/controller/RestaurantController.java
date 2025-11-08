@@ -23,8 +23,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/restaurants")
@@ -255,12 +261,12 @@ public class RestaurantController {
     @Operation(summary = "Get status for multiple restaurants", description = "Get status for multiple restaurants by IDs")
     public ResponseEntity<List<RestaurantStatusResponse>> getRestaurantsStatus(
             @RequestBody List<Long> restaurantIds) {
-        
+
         List<Restaurant> restaurants = restaurantService.getRestaurantsStatus(restaurantIds);
         List<RestaurantStatusResponse> responses = restaurants.stream()
-            .map(restaurantService::toStatusResponse)
-            .toList();
-        
+                .map(restaurantService::toStatusResponse)
+                .toList();
+
         return ResponseEntity.ok(responses);
     }
 }

@@ -101,9 +101,9 @@ public class RestaurantService {
         return restaurantRepository.findByApprovalStatus(ApprovalStatus.APPROVED);
     }
 
-    public Optional<Restaurant> getApprovedRestaurantById(Long id) {
-        return restaurantRepository.findByIdAndApprovalStatus(id, ApprovalStatus.APPROVED);
-    }
+        public Optional<Restaurant> getApprovedRestaurantById(Long id) {
+            return restaurantRepository.findByIdAndApprovalStatus(id, ApprovalStatus.APPROVED);
+        }
 
     public List<Restaurant> getAllRestaurants(User admin) {
         validateAdmin(admin);

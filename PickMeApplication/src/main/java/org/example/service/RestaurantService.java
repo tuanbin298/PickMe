@@ -38,6 +38,9 @@ public class RestaurantService {
     @Autowired
     private GeometryFactory geometryFactory;
     
+    @Autowired
+    private org.example.util.TimeZoneUtil timeZoneUtil;
+    
     // SRID 4326 là WGS84 (World Geodetic System 1984) - standard cho GPS coordinates
     private static final int SRID = 4326;
     
@@ -286,6 +289,9 @@ public class RestaurantService {
      * Convert Restaurant to RestaurantStatusResponse
      */
     public RestaurantStatusResponse toStatusResponse(Restaurant restaurant) {
+        // Debug timezone info
+        timeZoneUtil.logCurrentTimes();
+        
         RestaurantStatusResponse response = new RestaurantStatusResponse();
         response.setId(restaurant.getId());
         response.setName(restaurant.getName());
@@ -310,25 +316,13 @@ public class RestaurantService {
         switch (status) {
             case "OPEN":
                 if (minutesUntil > 0) {
-                    long hours = minutesUntil / 60;
-                    long mins = minutesUntil % 60;
-                    if (hours > 0) {
-                        return String.format("Open • Closes in %d hours %d minutes", hours, mins);
-                    } else {
-                        return String.format("Open • Closes in %d minutes", mins);
-                    }
+                    return formatTimeMessage("Open • Closes in", minutesUntil);
                 }
                 return "Open";
                 
             case "CLOSED":
                 if (minutesUntil > 0) {
-                    long hours = minutesUntil / 60;
-                    long mins = minutesUntil % 60;
-                    if (hours > 0) {
-                        return String.format("Closed • Opens in %d hours %d minutes", hours, mins);
-                    } else {
-                        return String.format("Closed • Opens in %d minutes", mins);
-                    }
+                    return formatTimeMessage("Closed • Opens in", minutesUntil);
                 }
                 return "Closed";
                 
@@ -343,6 +337,19 @@ public class RestaurantService {
                 
             default:
                 return status;
+        }
+    }
+    
+    private String formatTimeMessage(String prefix, long totalMinutes) {
+        long hours = totalMinutes / 60;
+        long minutes = totalMinutes % 60;
+        
+        if (hours > 0 && minutes > 0) {
+            return String.format("%s %d hours %d minutes", prefix, hours, minutes);
+        } else if (hours > 0) {
+            return String.format("%s %d hours", prefix, hours);
+        } else {
+            return String.format("%s %d minutes", prefix, minutes);
         }
     }
 }

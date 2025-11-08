@@ -293,17 +293,16 @@ public class Restaurant {
             return false;
         }
         
-        LocalTime now = LocalTime.now();
+        // Use Vietnam timezone (UTC+7)
+        LocalTime now = LocalTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
         
         // Handle normal hours (e.g., 08:00 - 22:00)
         if (closingTime.isAfter(openingTime)) {
-            return (now.isAfter(openingTime) || now.equals(openingTime)) && 
-                   (now.isBefore(closingTime) || now.equals(closingTime));
+            return !now.isBefore(openingTime) && now.isBefore(closingTime);
         } 
         // Handle overnight hours (e.g., 22:00 - 06:00)
         else {
-            return (now.isAfter(openingTime) || now.equals(openingTime)) || 
-                   (now.isBefore(closingTime) || now.equals(closingTime));
+            return !now.isBefore(openingTime) || now.isBefore(closingTime);
         }
     }
     
@@ -320,13 +319,11 @@ public class Restaurant {
         
         // Handle normal hours (e.g., 08:00 - 22:00)
         if (closingTime.isAfter(openingTime)) {
-            return (time.isAfter(openingTime) || time.equals(openingTime)) && 
-                   (time.isBefore(closingTime) || time.equals(closingTime));
+            return !time.isBefore(openingTime) && time.isBefore(closingTime);
         } 
         // Handle overnight hours (e.g., 22:00 - 06:00)
         else {
-            return (time.isAfter(openingTime) || time.equals(openingTime)) || 
-                   (time.isBefore(closingTime) || time.equals(closingTime));
+            return !time.isBefore(openingTime) || time.isBefore(closingTime);
         }
     }
     
@@ -343,45 +340,76 @@ public class Restaurant {
         return isOpen() ? "OPEN" : "CLOSED";
     }
     
+    /**
+     * Get open status at a specific time (for testing)
+     */
+    public String getOpenStatusAt(LocalTime time) {
+        if (!isActive) {
+            return "INACTIVE";
+        }
+        if (!isApproved()) {
+            return "PENDING_APPROVAL";
+        }
+        if (openingTime == null || closingTime == null) {
+            return "NO_HOURS_SET";
+        }
+        return isOpenAt(time) ? "OPEN" : "CLOSED";
+    }
+    
     public long getMinutesUntilStatusChange() {
+        // Use Vietnam timezone (UTC+7)
+        LocalTime now = LocalTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
+        return getMinutesUntilStatusChangeAt(now);
+    }
+    
+    /**
+     * Calculate minutes until status change at a specific time (for testing)
+     */
+    public long getMinutesUntilStatusChangeAt(LocalTime currentTime) {
         if (!isActive || !isApproved() || openingTime == null || closingTime == null) {
             return -1; // Unknown
         }
         
-        LocalTime now = LocalTime.now();
+        boolean isCurrentlyOpen = isOpenAt(currentTime);
         
-        if (isOpen()) {
+        if (isCurrentlyOpen) {
             // Calculate minutes until closing
             if (closingTime.isAfter(openingTime)) {
-                // Normal hours
-                return java.time.Duration.between(now, closingTime).toMinutes();
+                // Normal hours (e.g., 08:00 - 22:00)
+                return java.time.Duration.between(currentTime, closingTime).toMinutes();
             } else {
-                // Overnight hours - if we're past midnight, calculate to closing time
-                if (now.isBefore(closingTime)) {
-                    return java.time.Duration.between(now, closingTime).toMinutes();
+                // Overnight hours (e.g., 22:00 - 06:00)
+                if (currentTime.isBefore(closingTime)) {
+                    // We're past midnight, calculate to closing time
+                    return java.time.Duration.between(currentTime, closingTime).toMinutes();
                 } else {
-                    // We're before midnight, calculate until next day closing
-                    return java.time.Duration.between(now, LocalTime.of(23, 59, 59)).toMinutes() + 
-                           java.time.Duration.between(LocalTime.MIDNIGHT, closingTime).toMinutes() + 1;
+                    // We're before midnight, calculate to closing time next day
+                    long minutesToMidnight = java.time.Duration.between(currentTime, LocalTime.MAX).toMinutes() + 1;
+                    long minutesFromMidnightToClose = java.time.Duration.between(LocalTime.MIDNIGHT, closingTime).toMinutes();
+                    return minutesToMidnight + minutesFromMidnightToClose;
                 }
             }
         } else {
             // Calculate minutes until opening
             if (closingTime.isAfter(openingTime)) {
-                // Normal hours
-                if (now.isBefore(openingTime)) {
-                    return java.time.Duration.between(now, openingTime).toMinutes();
+                // Normal hours (e.g., 08:00 - 22:00)
+                if (currentTime.isBefore(openingTime)) {
+                    // Before opening time today
+                    return java.time.Duration.between(currentTime, openingTime).toMinutes();
                 } else {
-                    // After closing, calculate to next day opening
-                    return java.time.Duration.between(now, LocalTime.of(23, 59, 59)).toMinutes() + 
-                           java.time.Duration.between(LocalTime.MIDNIGHT, openingTime).toMinutes() + 1;
+                    // After closing time, calculate to opening time next day
+                    long minutesToMidnight = java.time.Duration.between(currentTime, LocalTime.MAX).toMinutes() + 1;
+                    long minutesFromMidnightToOpen = java.time.Duration.between(LocalTime.MIDNIGHT, openingTime).toMinutes();
+                    return minutesToMidnight + minutesFromMidnightToOpen;
                 }
             } else {
-                // Overnight hours
-                if (now.isAfter(closingTime) && now.isBefore(openingTime)) {
-                    return java.time.Duration.between(now, openingTime).toMinutes();
+                // Overnight hours (e.g., 22:00 - 06:00)
+                if (currentTime.isAfter(closingTime) && currentTime.isBefore(openingTime)) {
+                    // Between closing and opening (closed period)
+                    return java.time.Duration.between(currentTime, openingTime).toMinutes();
                 } else {
-                    return -1; // Should be open
+                    // Should be open, this shouldn't happen
+                    return -1;
                 }
             }
         }
